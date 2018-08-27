@@ -484,7 +484,6 @@ module "ec2_asg_windows_no_codedeploy" {
   primary_ebs_volume_size    = "60"
   scaling_max                = "2"
   cw_high_operator           = "GreaterThanThreshold"
-  encrypt_ebs_volume         = "False"
   install_codedeploy_agent   = "False"
 
   addtional_ssm_bootstrap_list = [
