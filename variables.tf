@@ -170,14 +170,8 @@ variable "enable_ebs_optimization" {
   default     = false
 }
 
-variable "encrypt_ebs_volume" {
-  description = "Specifies whether to encrypt the EBS volume."
-  type        = "string"
-  default     = false
-}
-
 variable "encrypt_secondary_ebs_volume" {
-  description = "Encrypt EBS Volume? true or false"
+  description = "Encrypt secondary EBS Volume? true or false"
   type        = "string"
   default     = false
 }
