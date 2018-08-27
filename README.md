@@ -29,8 +29,7 @@
 | enable_ebs_optimization | Use EBS Optimized? true or false | string | `false` | no |
 | enable_rackspace_ticket | Specifies whether alarms will generate Rackspace tickets. true or false | string | `false` | no |
 | enable_scaling_notification | true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | string | `false` | no |
-| encrypt_ebs_volume | Specifies whether to encrypt the EBS volume. | string | `false` | no |
-| encrypt_secondary_ebs_volume | Encrypt EBS Volume? true or false | string | `false` | no |
+| encrypt_secondary_ebs_volume | Encrypt secondary EBS Volume? true or false | string | `false` | no |
 | environment | Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test | string | `Development` | no |
 | health_check_grace_period | Number of seconds grace during which no autoscaling actions will be taken. | string | `300` | no |
 | health_check_type | Define the type of healthcheck for the AutoScaling group. | string | `EC2` | no |
