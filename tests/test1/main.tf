@@ -121,7 +121,6 @@ module "ec2_asg_centos7_with_codedeploy" {
   primary_ebs_volume_size    = "60"
   scaling_max                = "2"
   cw_high_operator           = "GreaterThanThreshold"
-  encrypt_ebs_volume         = "False"
   install_codedeploy_agent   = "False"
 
   addtional_ssm_bootstrap_list = [
@@ -244,7 +243,6 @@ module "ec2_asg_centos7_no_codedeploy" {
   primary_ebs_volume_size    = "60"
   scaling_max                = "2"
   cw_high_operator           = "GreaterThanThreshold"
-  encrypt_ebs_volume         = "False"
   install_codedeploy_agent   = "False"
 
   addtional_ssm_bootstrap_list = [
