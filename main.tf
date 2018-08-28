@@ -165,13 +165,28 @@ EOF
     },
   ]
 
+  ecs_setup = "${var.ecs_cluster_name != "" ? "echo ECS_Cluster=${var.ecs_cluster_name} >> /etc/ecs/ecs.config" : "" }"
+
   user_data_map = {
-    rhel6    = "${file("${path.module}/text/rhel_centos_6_userdata.sh")}"
-    rhel7    = "${file("${path.module}/text/rhel_centos_7_userdata.sh")}"
-    centos6  = "${file("${path.module}/text/rhel_centos_6_userdata.sh")}"
-    centos7  = "${file("${path.module}/text/rhel_centos_7_userdata.sh")}"
-    ubuntu14 = "${file("${path.module}/text/ubuntu_userdata.sh")}"
-    ubuntu16 = "${file("${path.module}/text/ubuntu_userdata.sh")}"
+    amazon    = "amazon_linux_userdata.sh"
+    amazon2   = "amazon_linux_userdata.sh"
+    amazoneks = "amazon_linux_userdata.sh"
+    amazonecs = "amazon_linux_userdata.sh"
+    rhel6     = "rhel_centos_6_userdata.sh"
+    rhel7     = "rhel_centos_7_userdata.sh"
+    centos6   = "rhel_centos_6_userdata.sh"
+    centos7   = "rhel_centos_7_userdata.sh"
+    ubuntu14  = "ubuntu_userdata.sh"
+    ubuntu16  = "ubuntu_userdata.sh"
+    windows   = "windows_userdata.ps1"
+  }
+}
+
+data "template_file" "user_data" {
+  template = "${file("${path.module}/text/${lookup(local.user_data_map, var.ec2_os)}")}"
+
+  vars {
+    ecssetup = "${local.ecs_setup}"
   }
 }
 
@@ -284,7 +299,7 @@ resource "aws_iam_instance_profile" "instance_role_instance_profile" {
 resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
   name_prefix          = "${join("-",compact(list("LaunchConfigWith2ndEbs", var.resource_name, format("%03d-",count.index+1))))}"
   count                = "${var.secondary_ebs_volume_size != "" ? 1 : 0}"
-  user_data_base64     = "${base64encode(lookup(local.user_data_map, var.ec2_os, ""))}"
+  user_data_base64     = "${base64encode(data.template_file.user_data.rendered)}"
   enable_monitoring    = "${var.detailed_monitoring}"
   image_id             = "${var.image_id}"
   key_name             = "${var.key_pair}"
@@ -316,7 +331,7 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
 resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
   name_prefix          = "${join("-",compact(list("LaunchConfigNo2ndEbs", var.resource_name, format("%03d-",count.index+1))))}"
   count                = "${var.secondary_ebs_volume_size != "" ? 0 : 1}"
-  user_data_base64     = "${base64encode(lookup(local.user_data_map, var.ec2_os, ""))}"
+  user_data_base64     = "${base64encode(data.template_file.user_data.rendered)}"
   enable_monitoring    = "${var.detailed_monitoring}"
   image_id             = "${var.image_id}"
   key_name             = "${var.key_pair}"
