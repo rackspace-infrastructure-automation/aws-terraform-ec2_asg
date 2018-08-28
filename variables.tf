@@ -113,7 +113,7 @@ variable "ec2_scale_down_cool_down" {
 variable "ec2_scale_down_adjustment" {
   description = "Number of EC2 instances to scale down by at a time."
   type        = "string"
-  default     = "1"
+  default     = "-1"
 }
 
 variable "ec2_scale_up_adjustment" {
@@ -356,6 +356,18 @@ variable "terminated_instances" {
 
 variable "ecs_cluster_name" {
   description = "The name of the ECS cluster to pass into the userdata script. This could be combined with the output of the aws-terraform-ecs module. Only used if the selected OS is either amazoneks or amazonecs."
+  type        = "string"
+  default     = ""
+}
+
+variable "eks_cluster_name" {
+  description = "The name of the EKS cluster to pass into the userdata script. This is ignored for all os's except amazon EKS"
+  type        = "string"
+  default     = ""
+}
+
+variable "eks_bootstrap_arguments" {
+  description = "Any optional parameters for the EKS Bootstrapping script. This is ignored for all os's except amazon EKS"
   type        = "string"
   default     = ""
 }
