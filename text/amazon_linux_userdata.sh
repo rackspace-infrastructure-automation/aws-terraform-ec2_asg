@@ -1,6 +1,6 @@
 #!/bin/bash
 
-${ecssetup}
+${ecssetup}${ekssetup}
 
 # Ensure SSM installed on Amazon Linux
 # in cases where it is not available / removed

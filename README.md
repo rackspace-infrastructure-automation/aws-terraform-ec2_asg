@@ -1,3 +1,23 @@
+# aws-terraform-ec2_asg
+
+This module creates one or more autoscaling groups.
+
+## Basic Usage
+
+```
+module "asg" {
+ source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.2"
+
+ ec2_os              = "amazon"
+ subnets             = ["${module.vpc.private_subnets}"]
+ image_id            = "${var.image_id}"
+ resource_name       = "my_asg"
+ security_group_list = ["${module.sg.private_web_security_group_id}"]
+}
+```
+
+Full working references are available at [examples](examples)
+
 
 ## Inputs
 
@@ -22,10 +42,13 @@
 | cw_scaling_metric | The metric to be used for scaling. | string | `CPUUtilization` | no |
 | detailed_monitoring | Enable Detailed Monitoring? true or false | string | `true` | no |
 | ec2_os | Intended Operating System/Distribution of Instance. Valid inputs are ('amazon', 'rhel6', 'rhel7', 'centos6', 'centos7', 'ubuntu14', 'ubuntu16', 'windows') | string | - | yes |
-| ec2_scale_down_adjustment | Number of EC2 instances to scale down by at a time. | string | `1` | no |
+| ec2_scale_down_adjustment | Number of EC2 instances to scale down by at a time. | string | `-1` | no |
 | ec2_scale_down_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
 | ec2_scale_up_adjustment | Number of EC2 instances to scale up by at a time. | string | `1` | no |
 | ec2_scale_up_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
+| ecs_cluster_name | The name of the ECS cluster to pass into the userdata script. This could be combined with the output of the aws-terraform-ecs module. Only used if the selected OS is either amazoneks or amazonecs. | string | `` | no |
+| eks_bootstrap_arguments | Any optional parameters for the EKS Bootstrapping script. This is ignored for all os's except amazon EKS | string | `` | no |
+| eks_cluster_name | The name of the EKS cluster to pass into the userdata script. This is ignored for all os's except amazon EKS | string | `` | no |
 | enable_ebs_optimization | Use EBS Optimized? true or false | string | `false` | no |
 | enable_rackspace_ticket | Specifies whether alarms will generate Rackspace tickets. true or false | string | `false` | no |
 | enable_scaling_notification | true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | string | `false` | no |
@@ -64,4 +87,5 @@
 | Name | Description |
 |------|-------------|
 | asg_name_list | List of ASG names |
+| iam_role | Name of the created IAM Instance role. |
 

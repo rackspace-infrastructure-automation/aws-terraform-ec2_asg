@@ -1,3 +1,25 @@
+/**
+ * # aws-terraform-ec2_asg
+ *
+ *This module creates one or more autoscaling groups.
+ *
+ *## Basic Usage
+ *
+ *```
+ *module "asg" {
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.2"
+ *
+ *  ec2_os              = "amazon"
+ *  subnets             = ["${module.vpc.private_subnets}"]
+ *  image_id            = "${var.image_id}"
+ *  resource_name       = "my_asg"
+ *  security_group_list = ["${module.sg.private_web_security_group_id}"]
+ *}
+ *```
+ *
+ * Full working references are available at [examples](examples)
+ */
+
 locals {
   # This is a list of ssm main steps
   default_ssm_cmd_list = [
@@ -115,14 +137,16 @@ EOF
   ssm_command_count = 6
 
   ebs_device_map = {
-    rhel6    = "/dev/sdf"
-    rhel7    = "/dev/sdf"
-    centos6  = "/dev/sdf"
-    centos7  = "/dev/sdf"
-    windows  = "xvdf"
-    ubuntu14 = "/dev/sdf"
-    ubuntu16 = "/dev/sdf"
-    amazon   = "/dev/sdf"
+    rhel6     = "/dev/sdf"
+    rhel7     = "/dev/sdf"
+    centos6   = "/dev/sdf"
+    centos7   = "/dev/sdf"
+    windows   = "xvdf"
+    ubuntu14  = "/dev/sdf"
+    ubuntu16  = "/dev/sdf"
+    amazon    = "/dev/sdf"
+    amazoneks = "/dev/sdf"
+    amazonecs = "/dev/xvdcz"
   }
 
   cwagent_config = "${var.ec2_os != "windows" ? "linux_cw_agent_param.txt" : "windows_cw_agent_param.txt"}"
@@ -166,6 +190,7 @@ EOF
   ]
 
   ecs_setup = "${var.ecs_cluster_name != "" ? "echo ECS_Cluster=${var.ecs_cluster_name} >> /etc/ecs/ecs.config" : "" }"
+  eks_setup = "${var.eks_cluster_name != "" ? "/etc/eks/bootstrap.sh ${var.eks_cluster_name} ${var.eks_bootstrap_arguments}" : "" }"
 
   user_data_map = {
     amazon    = "amazon_linux_userdata.sh"
@@ -187,6 +212,7 @@ data "template_file" "user_data" {
 
   vars {
     ecssetup = "${local.ecs_setup}"
+    ekssetup = "${local.eks_setup}"
   }
 }
 
