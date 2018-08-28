@@ -353,3 +353,9 @@ variable "terminated_instances" {
   type        = "string"
   default     = "30"
 }
+
+variable "ecs_cluster_name" {
+  description = "The name of the ECS cluster to pass into the userdata script. This could be combined with the output of the aws-terraform-ecs module. Only used if the selected OS is either amazoneks or amazonecs."
+  type        = "string"
+  default     = ""
+}
