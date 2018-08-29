@@ -184,8 +184,7 @@ EOF
 }
 
 module "ec2_asg_centos7_no_codedeploy" {
-  //  source    = "../../module"
-  source    = "../../"
+  source    = "../../module"
   ec2_os    = "centos7"
   asg_count = "2"
 
