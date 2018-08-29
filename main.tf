@@ -205,6 +205,27 @@ EOF
     ubuntu16  = "ubuntu_userdata.sh"
     windows   = "windows_userdata.ps1"
   }
+
+  sns_topic = "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency"
+
+  alarm_action_config = "${var.rackspace_managed ? "managed":"unmanaged"}"
+
+  alarm_actions = {
+    managed = ["${local.sns_topic}"]
+
+    unmanaged = "${var.custom_alarm_sns_topic}"
+  }
+
+  ok_action_config = "${var.rackspace_managed ? "managed":"unmanaged"}"
+
+  ok_actions = {
+    managed = ["${local.sns_topic}"]
+
+    unmanaged = "${var.custom_ok_sns_topic}"
+  }
+
+  alarm_setting = "${local.alarm_actions[local.alarm_action_config]}"
+  ok_setting    = "${local.ok_actions[local.ok_action_config]}"
 }
 
 data "template_file" "user_data" {
@@ -454,7 +475,7 @@ resource "aws_autoscaling_notification" "rs_support_emergency" {
     "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
   ]
 
-  topic_arn = "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency"
+  topic_arn = "${join(",", local.alarm_setting)}"
 }
 
 #
@@ -473,8 +494,8 @@ resource "aws_cloudwatch_metric_alarm" "group_terminating_instances" {
   evaluation_periods  = "1"
   unit                = "Count"
   metric_name         = "GroupTerminatingInstances"
-  alarm_actions       = ["${compact(list("${var.enable_rackspace_ticket ? "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency" : ""}"))}"]
-  ok_actions          = ["${compact(list("${var.enable_rackspace_ticket ? "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency" : ""}"))}"]
+  alarm_actions       = ["${local.alarm_setting}"]
+  ok_actions          = ["${local.ok_setting}"]
 
   dimensions {
     AutoScalingGroupName = "${element(aws_autoscaling_group.autoscalegrp.*.name, count.index)}"

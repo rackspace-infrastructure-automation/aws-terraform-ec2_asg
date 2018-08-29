@@ -31,6 +31,8 @@ Full working references are available at [examples](examples)
 | asg_wait_for_elb_capacity | Setting this will cause Terraform to wait for exactly this number of healthy instances in all attached load balancers on both create and update operations. | string | `` | no |
 | backup_tag_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | string | `False` | no |
 | cloudwatch_log_retention | The number of days to retain Cloudwatch Logs for this instance. | string | `30` | no |
+| custom_alarm_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. | list | `<list>` | no |
+| custom_ok_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the OK actions to. | list | `<list>` | no |
 | cw_high_evaluations | The number of periods over which data is compared to the specified threshold. | string | `3` | no |
 | cw_high_operator | Math operator used by CloudWatch for alarms and triggers. | string | `GreaterThanThreshold` | no |
 | cw_high_period | Time the specified statistic is applied. Must be in seconds that is also a multiple of 60. | string | `60` | no |
@@ -50,7 +52,6 @@ Full working references are available at [examples](examples)
 | eks_bootstrap_arguments | Any optional parameters for the EKS Bootstrapping script. This is ignored for all os's except amazon EKS | string | `` | no |
 | eks_cluster_name | The name of the EKS cluster to pass into the userdata script. This is ignored for all os's except amazon EKS | string | `` | no |
 | enable_ebs_optimization | Use EBS Optimized? true or false | string | `false` | no |
-| enable_rackspace_ticket | Specifies whether alarms will generate Rackspace tickets. true or false | string | `false` | no |
 | enable_scaling_notification | true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | string | `false` | no |
 | encrypt_secondary_ebs_volume | Encrypt secondary EBS Volume? true or false | string | `false` | no |
 | environment | Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test | string | `Development` | no |
@@ -67,6 +68,7 @@ Full working references are available at [examples](examples)
 | primary_ebs_volume_iops | Iops value required for use with io1 EBS volumes. This value should be 3 times the EBS volume size | string | `0` | no |
 | primary_ebs_volume_size | EBS Volume Size in GB | string | `60` | no |
 | primary_ebs_volume_type | EBS Volume Type. e.g. gp2, io1, st1, sc1 | string | `gp2` | no |
+| rackspace_managed | Boolean parameter controlling if instance will be fully managed by Rackspace support teams, created CloudWatch alarms that generate tickets, and utilize Rackspace managed SSM documents. | string | `true` | no |
 | resource_name | Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module | string | - | yes |
 | scaling_max | The maximum size of the Auto Scaling group. | string | `2` | no |
 | scaling_min | The minimum count of EC2 instances in the Auto Scaling group. | string | `1` | no |

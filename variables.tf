@@ -342,10 +342,22 @@ variable "cw_scaling_metric" {
   default     = "CPUUtilization"
 }
 
-variable "enable_rackspace_ticket" {
-  description = "Specifies whether alarms will generate Rackspace tickets. true or false"
+variable "rackspace_managed" {
+  description = "Boolean parameter controlling if instance will be fully managed by Rackspace support teams, created CloudWatch alarms that generate tickets, and utilize Rackspace managed SSM documents."
   type        = "string"
-  default     = false
+  default     = true
+}
+
+variable "custom_alarm_sns_topic" {
+  description = "If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to."
+  type        = "list"
+  default     = []
+}
+
+variable "custom_ok_sns_topic" {
+  description = "If not Rackspace managed, you can use custom SNS topics to send the OK actions to."
+  type        = "list"
+  default     = []
 }
 
 variable "terminated_instances" {
