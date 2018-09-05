@@ -189,9 +189,6 @@ EOF
     },
   ]
 
-  ecs_setup = "${var.ecs_cluster_name != "" ? "echo ECS_Cluster=${var.ecs_cluster_name} >> /etc/ecs/ecs.config" : "" }"
-  eks_setup = "${var.eks_cluster_name != "" ? "/etc/eks/bootstrap.sh ${var.eks_cluster_name} ${var.eks_bootstrap_arguments}" : "" }"
-
   user_data_map = {
     amazon    = "amazon_linux_userdata.sh"
     amazon2   = "amazon_linux_userdata.sh"
@@ -232,8 +229,8 @@ data "template_file" "user_data" {
   template = "${file("${path.module}/text/${lookup(local.user_data_map, var.ec2_os)}")}"
 
   vars {
-    ecssetup = "${local.ecs_setup}"
-    ekssetup = "${local.eks_setup}"
+    initial_commands = "${var.initial_userdata_commands != "" ? "${var.initial_userdata_commands}" : "" }"
+    final_commands   = "${var.final_userdata_commands != "" ? "${var.final_userdata_commands}" : "" }"
   }
 }
 
