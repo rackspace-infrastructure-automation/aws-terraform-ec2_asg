@@ -83,7 +83,7 @@ module "ec2_asg_centos7_with_codedeploy" {
   scaling_min                            = "1"
   cloudwatch_log_retention               = "30"
   secondary_ebs_volume_size              = "60"
-  enable_rackspace_ticket                = "False"
+  rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
@@ -205,7 +205,7 @@ module "ec2_asg_centos7_no_codedeploy" {
   scaling_min                            = "1"
   cloudwatch_log_retention               = "30"
   secondary_ebs_volume_size              = "60"
-  enable_rackspace_ticket                = "False"
+  rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
@@ -327,7 +327,7 @@ module "ec2_asg_windows_with_codedeploy" {
   scaling_min                            = "1"
   cloudwatch_log_retention               = "30"
   secondary_ebs_volume_size              = "60"
-  enable_rackspace_ticket                = "False"
+  rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
@@ -446,7 +446,7 @@ module "ec2_asg_windows_no_codedeploy" {
   scaling_min                            = "1"
   cloudwatch_log_retention               = "30"
   secondary_ebs_volume_size              = "60"
-  enable_rackspace_ticket                = "False"
+  rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]

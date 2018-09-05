@@ -64,10 +64,10 @@ module "ec2_asg" {
   scaling_min                            = "1"
   cloudwatch_log_retention               = "30"
   secondary_ebs_volume_size              = "60"
-  enable_rackspace_ticket                = "False"
+  rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}","${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
   image_id                               = "${data.aws_ami.amazon_centos_7.image_id}"
