@@ -366,20 +366,14 @@ variable "terminated_instances" {
   default     = "30"
 }
 
-variable "ecs_cluster_name" {
-  description = "The name of the ECS cluster to pass into the userdata script. This could be combined with the output of the aws-terraform-ecs module. Only used if the selected OS is either amazoneks or amazonecs."
+variable "initial_userdata_commands" {
+  description = "Commands to be given at the start of userdata for an instance. This should generally not include bootstrapping or ssm install."
   type        = "string"
   default     = ""
 }
 
-variable "eks_cluster_name" {
-  description = "The name of the EKS cluster to pass into the userdata script. This is ignored for all os's except amazon EKS"
-  type        = "string"
-  default     = ""
-}
-
-variable "eks_bootstrap_arguments" {
-  description = "Any optional parameters for the EKS Bootstrapping script. This is ignored for all os's except amazon EKS"
+variable "final_userdata_commands" {
+  description = "Commands to be given at the end of userdata for an instance. This should generally not include bootstrapping or ssm install."
   type        = "string"
   default     = ""
 }
