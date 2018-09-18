@@ -180,7 +180,6 @@ EOF
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
-  asg_wait_for_elb_capacity     = ""
 }
 
 module "ec2_asg_centos7_no_codedeploy" {
@@ -302,7 +301,6 @@ EOF
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
-  asg_wait_for_elb_capacity     = ""
 }
 
 module "ec2_asg_windows_with_codedeploy" {
@@ -421,7 +419,6 @@ EOF
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
-  asg_wait_for_elb_capacity     = ""
 }
 
 module "ec2_asg_windows_no_codedeploy" {
@@ -540,5 +537,4 @@ EOF
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
-  asg_wait_for_elb_capacity     = ""
 }

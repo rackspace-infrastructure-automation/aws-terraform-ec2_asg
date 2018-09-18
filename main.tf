@@ -429,7 +429,6 @@ resource "aws_autoscaling_group" "autoscalegrp" {
   metrics_granularity       = "1Minute"
   target_group_arns         = ["${var.target_group_arns}"]
   wait_for_capacity_timeout = "${var.asg_wait_for_capacity_timeout}"
-  wait_for_elb_capacity     = "${var.asg_wait_for_elb_capacity != "" ? var.asg_wait_for_elb_capacity : var.scaling_min}"
 
   tags = ["${
     concat(

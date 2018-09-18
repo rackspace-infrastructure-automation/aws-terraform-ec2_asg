@@ -20,12 +20,6 @@ variable "asg_wait_for_capacity_timeout" {
   default     = "10m"
 }
 
-variable "asg_wait_for_elb_capacity" {
-  description = "Setting this will cause Terraform to wait for exactly this number of healthy instances in all attached load balancers on both create and update operations."
-  type        = "string"
-  default     = ""
-}
-
 variable "detailed_monitoring" {
   description = "Enable Detailed Monitoring? true or false"
   type        = "string"
