@@ -28,7 +28,6 @@ Full working references are available at [examples](examples)
 | addtional_ssm_bootstrap_step_count | Count of steps added for input 'addtional_ssm_bootstrap_list'. This is required since 'addtional_ssm_bootstrap_list' is a list of maps | string | `0` | no |
 | asg_count | Number of identical ASG's to deploy | string | `1` | no |
 | asg_wait_for_capacity_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | string | `10m` | no |
-| asg_wait_for_elb_capacity | Setting this will cause Terraform to wait for exactly this number of healthy instances in all attached load balancers on both create and update operations. | string | `` | no |
 | backup_tag_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | string | `False` | no |
 | cloudwatch_log_retention | The number of days to retain Cloudwatch Logs for this instance. | string | `30` | no |
 | custom_alarm_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. | list | `<list>` | no |
@@ -48,16 +47,15 @@ Full working references are available at [examples](examples)
 | ec2_scale_down_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
 | ec2_scale_up_adjustment | Number of EC2 instances to scale up by at a time. | string | `1` | no |
 | ec2_scale_up_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
-| ecs_cluster_name | The name of the ECS cluster to pass into the userdata script. This could be combined with the output of the aws-terraform-ecs module. Only used if the selected OS is either amazoneks or amazonecs. | string | `` | no |
-| eks_bootstrap_arguments | Any optional parameters for the EKS Bootstrapping script. This is ignored for all os's except amazon EKS | string | `` | no |
-| eks_cluster_name | The name of the EKS cluster to pass into the userdata script. This is ignored for all os's except amazon EKS | string | `` | no |
 | enable_ebs_optimization | Use EBS Optimized? true or false | string | `false` | no |
 | enable_scaling_notification | true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | string | `false` | no |
 | encrypt_secondary_ebs_volume | Encrypt secondary EBS Volume? true or false | string | `false` | no |
 | environment | Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test | string | `Development` | no |
+| final_userdata_commands | Commands to be given at the end of userdata for an instance. This should generally not include bootstrapping or ssm install. | string | `` | no |
 | health_check_grace_period | Number of seconds grace during which no autoscaling actions will be taken. | string | `300` | no |
 | health_check_type | Define the type of healthcheck for the AutoScaling group. | string | `EC2` | no |
 | image_id | The AMI ID to be used to build the EC2 Instance. | string | - | yes |
+| initial_userdata_commands | Commands to be given at the start of userdata for an instance. This should generally not include bootstrapping or ssm install. | string | `` | no |
 | install_codedeploy_agent | Install codedeploy agent on instance(s)? true or false | string | `false` | no |
 | instance_role_managed_policy_arn_count | The number of policy ARNs provided/set in variable 'instance_role_managed_policy_arns' | string | `0` | no |
 | instance_role_managed_policy_arns | List of IAM policy ARNs for the InstanceRole IAM role. IAM ARNs can be found within the Policies section of the AWS IAM console. e.g. ['arn:aws:iam::aws:policy/AmazonEC2FullAccess', 'arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM', 'arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole'] | list | `<list>` | no |

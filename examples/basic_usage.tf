@@ -161,5 +161,4 @@ EOF
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
-  asg_wait_for_elb_capacity     = ""
 }
