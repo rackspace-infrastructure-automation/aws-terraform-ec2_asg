@@ -208,7 +208,7 @@ EOF
   alarm_action_config = "${var.rackspace_managed ? "managed":"unmanaged"}"
 
   alarm_actions = {
-    managed = ["${local.sns_topic}"]
+    managed = "${local.sns_topic}"
 
     unmanaged = "${var.custom_alarm_sns_topic}"
   }
@@ -216,7 +216,7 @@ EOF
   ok_action_config = "${var.rackspace_managed ? "managed":"unmanaged"}"
 
   ok_actions = {
-    managed = ["${local.sns_topic}"]
+    managed = "${local.sns_topic}"
 
     unmanaged = "${var.custom_ok_sns_topic}"
   }
@@ -460,7 +460,7 @@ resource "aws_autoscaling_notification" "scaling_notifications" {
 }
 
 resource "aws_autoscaling_notification" "rs_support_emergency" {
-  count = "${var.asg_count}"
+  count = "${local.alarm_action_config == "managed" || var.enable_custom_alarm_sns_topic ? var.asg_count : 0}"
 
   group_names = [
     "${element(aws_autoscaling_group.autoscalegrp.*.name, count.index)}",
@@ -471,7 +471,7 @@ resource "aws_autoscaling_notification" "rs_support_emergency" {
     "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
   ]
 
-  topic_arn = "${join(",", local.alarm_setting)}"
+  topic_arn = "${local.alarm_setting}"
 }
 
 #
@@ -490,8 +490,8 @@ resource "aws_cloudwatch_metric_alarm" "group_terminating_instances" {
   evaluation_periods  = "1"
   unit                = "Count"
   metric_name         = "GroupTerminatingInstances"
-  alarm_actions       = ["${local.alarm_setting}"]
-  ok_actions          = ["${local.ok_setting}"]
+  alarm_actions       = ["${compact(list(local.alarm_setting))}"]
+  ok_actions          = ["${compact(list(local.ok_setting))}"]
 
   dimensions {
     AutoScalingGroupName = "${element(aws_autoscaling_group.autoscalegrp.*.name, count.index)}"
