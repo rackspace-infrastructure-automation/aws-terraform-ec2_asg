@@ -30,8 +30,8 @@ Full working references are available at [examples](examples)
 | asg_wait_for_capacity_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | string | `10m` | no |
 | backup_tag_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | string | `False` | no |
 | cloudwatch_log_retention | The number of days to retain Cloudwatch Logs for this instance. | string | `30` | no |
-| custom_alarm_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. | list | `<list>` | no |
-| custom_ok_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the OK actions to. | list | `<list>` | no |
+| custom_alarm_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. | string | `` | no |
+| custom_ok_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the OK actions to. | string | `` | no |
 | cw_high_evaluations | The number of periods over which data is compared to the specified threshold. | string | `3` | no |
 | cw_high_operator | Math operator used by CloudWatch for alarms and triggers. | string | `GreaterThanThreshold` | no |
 | cw_high_period | Time the specified statistic is applied. Must be in seconds that is also a multiple of 60. | string | `60` | no |
@@ -47,6 +47,7 @@ Full working references are available at [examples](examples)
 | ec2_scale_down_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
 | ec2_scale_up_adjustment | Number of EC2 instances to scale up by at a time. | string | `1` | no |
 | ec2_scale_up_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
+| enable_custom_alarm_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. If you will be providing a custom SNS topic, please set this to true. If not, set to false. | string | `false` | no |
 | enable_ebs_optimization | Use EBS Optimized? true or false | string | `false` | no |
 | enable_scaling_notification | true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | string | `false` | no |
 | encrypt_secondary_ebs_volume | Encrypt secondary EBS Volume? true or false | string | `false` | no |

@@ -342,16 +342,22 @@ variable "rackspace_managed" {
   default     = true
 }
 
+variable "enable_custom_alarm_sns_topic" {
+  description = "If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. If you will be providing a custom SNS topic, please set this to true. If not, set to false."
+  type        = "string"
+  default     = false
+}
+
 variable "custom_alarm_sns_topic" {
   description = "If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to."
-  type        = "list"
-  default     = []
+  type        = "string"
+  default     = ""
 }
 
 variable "custom_ok_sns_topic" {
   description = "If not Rackspace managed, you can use custom SNS topics to send the OK actions to."
-  type        = "list"
-  default     = []
+  type        = "string"
+  default     = ""
 }
 
 variable "terminated_instances" {
