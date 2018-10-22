@@ -144,6 +144,7 @@ EOF
     windows   = "xvdf"
     ubuntu14  = "/dev/sdf"
     ubuntu16  = "/dev/sdf"
+    ubuntu18  = "/dev/sdf"
     amazon    = "/dev/sdf"
     amazoneks = "/dev/sdf"
     amazonecs = "/dev/xvdcz"
@@ -200,6 +201,7 @@ EOF
     centos7   = "rhel_centos_7_userdata.sh"
     ubuntu14  = "ubuntu_userdata.sh"
     ubuntu16  = "ubuntu_userdata.sh"
+    ubuntu18  = "ubuntu_userdata.sh"
     windows   = "windows_userdata.ps1"
   }
 
