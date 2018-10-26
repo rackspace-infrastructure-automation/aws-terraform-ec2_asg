@@ -31,6 +31,12 @@ variable "ec2_os" {
   type        = "string"
 }
 
+variable "enable_rolling_updates" {
+  description = "Should this autoscaling group be targeted by the ASG Instance Replacement tool to ensure all instances are using thelatest launch configuration."
+  type        = "string"
+  default     = true
+}
+
 variable "environment" {
   description = "Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test"
   type        = "string"
