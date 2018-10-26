@@ -188,6 +188,11 @@ EOF
       value               = "Target-${var.resource_name}"
       propagate_at_launch = true
     },
+    {
+      key                 = "InstanceReplacement"
+      value               = "${var.enable_rolling_updates ? "True" : "False"}"
+      propagate_at_launch = false
+    },
   ]
 
   user_data_map = {

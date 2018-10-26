@@ -49,6 +49,7 @@ Full working references are available at [examples](examples)
 | ec2_scale_up_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
 | enable_custom_alarm_sns_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. If you will be providing a custom SNS topic, please set this to true. If not, set to false. | string | `false` | no |
 | enable_ebs_optimization | Use EBS Optimized? true or false | string | `false` | no |
+| enable_rolling_updates | Should this autoscaling group be targeted by the ASG Instance Replacement tool to ensure all instances are using thelatest launch configuration. | string | `true` | no |
 | enable_scaling_notification | true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | string | `false` | no |
 | encrypt_secondary_ebs_volume | Encrypt secondary EBS Volume? true or false | string | `false` | no |
 | environment | Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test | string | `Development` | no |
