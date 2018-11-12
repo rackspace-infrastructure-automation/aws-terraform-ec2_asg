@@ -107,6 +107,19 @@ EOF
       {
         "action": "aws:runDocument",
         "inputs": {
+          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-SetMotd",
+          "documentType": "SSMDocument"
+        },
+        "name": "SetMotd",
+        "timeoutSeconds": 300
+      }
+EOF
+    },
+    {
+      ssm_add_step = <<EOF
+      {
+        "action": "aws:runDocument",
+        "inputs": {
           "documentPath": "AWS-UpdateSSMAgent",
           "documentType": "SSMDocument"
         },
