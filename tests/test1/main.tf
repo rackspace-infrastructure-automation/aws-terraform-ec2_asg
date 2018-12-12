@@ -43,7 +43,7 @@ resource "random_string" "sqs_rstring" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.0.1"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=master"
 
   vpc_name = "EC2-ASG-BaseNetwork-Test1"
 }
@@ -53,7 +53,7 @@ resource "aws_sqs_queue" "ec2-asg-test_sqs" {
 }
 
 module "sns_sqs" {
-  source     = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=v0.0.1"
+  source     = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=master"
   topic_name = "${random_string.sqs_rstring.result}-ec2-asg-test-topic"
 
   create_subscription_1 = true

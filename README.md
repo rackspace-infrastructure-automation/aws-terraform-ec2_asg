@@ -18,7 +18,6 @@ module "asg" {
 
 Full working references are available at [examples](examples)
 
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -90,4 +89,3 @@ Full working references are available at [examples](examples)
 |------|-------------|
 | asg_name_list | List of ASG names |
 | iam_role | Name of the created IAM Instance role. |
-
