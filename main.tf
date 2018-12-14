@@ -428,7 +428,7 @@ resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
 resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
   name                   = "${join("-",compact(list("ec2_scale_down_policy", var.resource_name, format("%03d",count.index+1))))}"
   count                  = "${var.asg_count}"
-  scaling_adjustment     = "${var.ec2_scale_down_adjustment}"
+  scaling_adjustment     = "${var.ec2_scale_down_adjustment > 0 ? 0 - var.ec2_scale_down_adjustment : var.ec2_scale_down_adjustment}"
   adjustment_type        = "ChangeInCapacity"
   cooldown               = "${var.ec2_scale_down_cool_down}"
   autoscaling_group_name = "${element(aws_autoscaling_group.autoscalegrp.*.name, count.index)}"
