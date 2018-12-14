@@ -42,7 +42,7 @@ Full working references are available at [examples](examples)
 | cw_scaling_metric | The metric to be used for scaling. | string | `CPUUtilization` | no |
 | detailed_monitoring | Enable Detailed Monitoring? true or false | string | `true` | no |
 | ec2_os | Intended Operating System/Distribution of Instance. Valid inputs are ('amazon', 'rhel6', 'rhel7', 'centos6', 'centos7', 'ubuntu14', 'ubuntu16', 'windows') | string | - | yes |
-| ec2_scale_down_adjustment | Number of EC2 instances to scale down by at a time. | string | `-1` | no |
+| ec2_scale_down_adjustment | Number of EC2 instances to scale down by at a time. Positive numbers will be converted to negative. | string | `-1` | no |
 | ec2_scale_down_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
 | ec2_scale_up_adjustment | Number of EC2 instances to scale up by at a time. | string | `1` | no |
 | ec2_scale_up_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
