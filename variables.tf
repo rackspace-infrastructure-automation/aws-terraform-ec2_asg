@@ -111,7 +111,7 @@ variable "ec2_scale_down_cool_down" {
 }
 
 variable "ec2_scale_down_adjustment" {
-  description = "Number of EC2 instances to scale down by at a time."
+  description = "Number of EC2 instances to scale down by at a time. Positive numbers will be converted to negative."
   type        = "string"
   default     = "-1"
 }
