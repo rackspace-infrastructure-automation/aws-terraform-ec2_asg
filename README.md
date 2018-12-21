@@ -18,6 +18,7 @@ module "asg" {
 
 Full working references are available at [examples](examples)
 
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -41,7 +42,7 @@ Full working references are available at [examples](examples)
 | cw_low_threshold | The value against which the specified statistic is compared. | string | `30` | no |
 | cw_scaling_metric | The metric to be used for scaling. | string | `CPUUtilization` | no |
 | detailed_monitoring | Enable Detailed Monitoring? true or false | string | `true` | no |
-| ec2_os | Intended Operating System/Distribution of Instance. Valid inputs are ('amazon', 'rhel6', 'rhel7', 'centos6', 'centos7', 'ubuntu14', 'ubuntu16', 'windows') | string | - | yes |
+| ec2_os | Intended Operating System/Distribution of Instance. Valid inputs are ('amazon', 'rhel6', 'rhel7', 'centos6', 'centos7', 'ubuntu14', 'ubuntu16', 'windows2008', 'windows2012R2', 'windows2016') | string | - | yes |
 | ec2_scale_down_adjustment | Number of EC2 instances to scale down by at a time. Positive numbers will be converted to negative. | string | `-1` | no |
 | ec2_scale_down_cool_down | Time in seconds before any further trigger-related scaling can occur. | string | `60` | no |
 | ec2_scale_up_adjustment | Number of EC2 instances to scale up by at a time. | string | `1` | no |
@@ -55,7 +56,7 @@ Full working references are available at [examples](examples)
 | final_userdata_commands | Commands to be given at the end of userdata for an instance. This should generally not include bootstrapping or ssm install. | string | `` | no |
 | health_check_grace_period | Number of seconds grace during which no autoscaling actions will be taken. | string | `300` | no |
 | health_check_type | Define the type of healthcheck for the AutoScaling group. | string | `EC2` | no |
-| image_id | The AMI ID to be used to build the EC2 Instance. | string | - | yes |
+| image_id | The AMI ID to be used to build the EC2 Instance. If not provided, an AMI ID will be queried with an OS specified in variable ec2_os. | string | `` | no |
 | initial_userdata_commands | Commands to be given at the start of userdata for an instance. This should generally not include bootstrapping or ssm install. | string | `` | no |
 | install_codedeploy_agent | Install codedeploy agent on instance(s)? true or false | string | `false` | no |
 | instance_role_managed_policy_arn_count | The number of policy ARNs provided/set in variable 'instance_role_managed_policy_arns' | string | `0` | no |
@@ -87,5 +88,7 @@ Full working references are available at [examples](examples)
 
 | Name | Description |
 |------|-------------|
+| asg_image_id | Image ID used for EC2 provisioning |
 | asg_name_list | List of ASG names |
 | iam_role | Name of the created IAM Instance role. |
+

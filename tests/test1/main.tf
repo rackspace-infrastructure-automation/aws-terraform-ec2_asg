@@ -89,7 +89,6 @@ module "ec2_asg_centos7_with_codedeploy" {
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
-  image_id                               = "${data.aws_ami.amazon_centos_7.image_id}"
   cw_low_period                          = "300"
   key_pair                               = "CircleCI"
   tenancy                                = "default"
@@ -305,7 +304,7 @@ EOF
 
 module "ec2_asg_windows_with_codedeploy" {
   source    = "../../module"
-  ec2_os    = "windows"
+  ec2_os    = "windows2016"
   asg_count = "2"
 
   #  load_balancer_names                    = ["${aws_elb.my_elb.name}"]
@@ -423,7 +422,7 @@ EOF
 
 module "ec2_asg_windows_no_codedeploy" {
   source    = "../../module"
-  ec2_os    = "windows"
+  ec2_os    = "windows2016"
   asg_count = "2"
 
   #  load_balancer_names                    = ["${aws_elb.my_elb.name}"]

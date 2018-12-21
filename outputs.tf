@@ -7,3 +7,8 @@ output "iam_role" {
   description = "Name of the created IAM Instance role."
   value       = "${aws_iam_role.mod_ec2_instance_role.id}"
 }
+
+output "asg_image_id" {
+  description = "Image ID used for EC2 provisioning"
+  value       = "${var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id}"
+}
