@@ -47,7 +47,7 @@ resource "random_string" "name_rstring" {
   special = false
 }
 
-module "vpc" {
+module "vpc_test" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=master"
 
   vpc_name = "${random_string.name_rstring.result}-ec2-asg-basenetwork-test1"
@@ -57,7 +57,7 @@ resource "aws_sqs_queue" "ec2-asg-test_sqs" {
   name = "${random_string.sqs_rstring.result}-my-example-queue"
 }
 
-module "sns_sqs" {
+module "sns_sqs_test" {
   source     = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=master"
   topic_name = "${random_string.sqs_rstring.result}-ec2-asg-test-topic"
 
@@ -66,7 +66,7 @@ module "sns_sqs" {
   endpoint_1            = "${aws_sqs_queue.ec2-asg-test_sqs.arn}"
 }
 
-module "ec2_asg_centos7_with_codedeploy" {
+module "ec2_asg_centos7_with_codedeploy_test" {
   source    = "../../module"
   ec2_os    = "centos7"
   asg_count = "2"
@@ -186,7 +186,7 @@ EOF
   asg_wait_for_capacity_timeout = "10m"
 }
 
-module "ec2_asg_centos7_no_codedeploy" {
+module "ec2_asg_centos7_no_codedeploy_test" {
   source    = "../../module"
   ec2_os    = "centos7"
   asg_count = "2"
@@ -307,7 +307,7 @@ EOF
   asg_wait_for_capacity_timeout = "10m"
 }
 
-module "ec2_asg_windows_with_codedeploy" {
+module "ec2_asg_windows_with_codedeploy_test" {
   source    = "../../module"
   ec2_os    = "windows2016"
   asg_count = "2"
@@ -425,7 +425,7 @@ EOF
   asg_wait_for_capacity_timeout = "10m"
 }
 
-module "ec2_asg_windows_no_codedeploy" {
+module "ec2_asg_windows_no_codedeploy_test" {
   source    = "../../module"
   ec2_os    = "windows2016"
   asg_count = "2"
