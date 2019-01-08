@@ -42,10 +42,15 @@ resource "random_string" "sqs_rstring" {
   special = false
 }
 
+resource "random_string" "name_rstring" {
+  length  = 8
+  special = false
+}
+
 module "vpc" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=master"
 
-  vpc_name = "EC2-ASG-BaseNetwork-Test1"
+  vpc_name = "${random_string.name_rstring.result}-ec2-asg-basenetwork-test1"
 }
 
 resource "aws_sqs_queue" "ec2-asg-test_sqs" {
@@ -104,7 +109,7 @@ module "ec2_asg_centos7_with_codedeploy" {
   cw_high_threshold          = "60"
   scaling_notification_topic = "${module.sns_sqs.topic_arn}"
   cw_low_threshold           = "30"
-  resource_name              = "ec2_asg_centos7_with_codedeploy"
+  resource_name              = "${random_string.name_rstring.result}-ec2_asg_centos7_with_codedeploy"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
@@ -225,7 +230,7 @@ module "ec2_asg_centos7_no_codedeploy" {
   cw_high_threshold          = "60"
   scaling_notification_topic = "${module.sns_sqs.topic_arn}"
   cw_low_threshold           = "30"
-  resource_name              = "ec2_asg_centos7_no_codedeploy"
+  resource_name              = "${random_string.name_rstring.result}-ec2_asg_centos7_no_codedeploy"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
@@ -346,7 +351,7 @@ module "ec2_asg_windows_with_codedeploy" {
   cw_high_threshold          = "60"
   scaling_notification_topic = "${module.sns_sqs.topic_arn}"
   cw_low_threshold           = "30"
-  resource_name              = "ec2_asg_windows_with_codedeploy"
+  resource_name              = "${random_string.name_rstring.result}-ec2_asg_windows_with_codedeploy"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
@@ -464,7 +469,7 @@ module "ec2_asg_windows_no_codedeploy" {
   cw_high_threshold          = "60"
   scaling_notification_topic = "${module.sns_sqs.topic_arn}"
   cw_low_threshold           = "30"
-  resource_name              = "ec2_asg_windows_no_codedeploy"
+  resource_name              = "${random_string.name_rstring.result}-ec2_asg_windows_no_codedeploy"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
