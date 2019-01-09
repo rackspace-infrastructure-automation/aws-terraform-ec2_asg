@@ -25,121 +25,44 @@ locals {
   default_ssm_cmd_list = [
     {
       ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AWS-ConfigureAWSPackage",
-          "documentParameters": {
-            "action": "Install",
-            "name": "AmazonCloudWatchAgent"
-          },
-          "documentType": "SSMDocument"
-        },
-        "name": "InstallCWAgent",
-        "timeoutSeconds": 300
-      }
+      {"action":"aws:runDocument","inputs":{"documentPath":"AWS-ConfigureAWSPackage","documentParameters":{"action":"Install","name":"AmazonCloudWatchAgent"},"documentType":"SSMDocument"},"name":"InstallCWAgent","timeoutSeconds":300}
 EOF
     },
     {
       ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AmazonCloudWatch-ManageAgent",
-          "documentParameters": {
-            "action": "configure",
-            "optionalConfigurationSource": "ssm",
-            "optionalConfigurationLocation": "${aws_ssm_parameter.cwagentparam.name}",
-            "optionalRestart": "yes",
-            "name": "AmazonCloudWatchAgent"
-          },
-          "documentType": "SSMDocument"
-        },
-        "name": "ConfigureCWAgent",
-        "timeoutSeconds": 300
-      }
+      {"action":"aws:runDocument","inputs":{"documentPath":"AmazonCloudWatch-ManageAgent","documentParameters":{"action":"configure","optionalConfigurationSource":"ssm","optionalConfigurationLocation":"${aws_ssm_parameter.cwagentparam.name}","optionalRestart":"yes","name":"AmazonCloudWatchAgent"},"documentType":"SSMDocument"},"name":"ConfigureCWAgent","timeoutSeconds":300}
 EOF
     },
     {
       ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-ConfigureAWSTimeSync",
-          "documentType": "SSMDocument"
-        },
-        "name": "SetupTimeSync",
-        "timeoutSeconds": 300
-      }
+      {"action":"aws:runDocument","inputs":{"documentPath":"arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-ConfigureAWSTimeSync","documentType":"SSMDocument"},"name":"SetupTimeSync","timeoutSeconds":300}
 EOF
     },
     {
       ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_ScaleFT",
-          "documentType": "SSMDocument"
-        },
-        "name": "SetupPassport",
-        "timeoutSeconds": 300
-      }
+      {"action":"aws:runDocument","inputs":{"documentPath":"arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_ScaleFT","documentType":"SSMDocument"},"name":"SetupPassport","timeoutSeconds":300}
 EOF
     },
     {
       ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package",
-          "documentParameters": {
-            "Packages": "sysstat ltrace strace iptraf tcpdump"
-          },
-          "documentType": "SSMDocument"
-        },
-        "name": "DiagnosticTools",
-        "timeoutSeconds": 300
-      }
+      {"action":"aws:runDocument","inputs":{"documentPath":"arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package","documentParameters":{"Packages":"sysstat ltrace strace iptraf tcpdump"},"documentType":"SSMDocument"},"name":"DiagnosticTools","timeoutSeconds":300}
 EOF
     },
     {
       ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-SetMotd",
-          "documentType": "SSMDocument"
-        },
-        "name": "SetMotd",
-        "timeoutSeconds": 300
-      }
+      {"action":"aws:runDocument","inputs":{"documentPath":"arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-SetMotd","documentType":"SSMDocument"},"name":"SetMotd","timeoutSeconds":300}
 EOF
     },
     {
       ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AWS-UpdateSSMAgent",
-          "documentType": "SSMDocument"
-        },
-        "name": "UpdateSSMAgent",
-        "timeoutSeconds": 300
-      }
+      {"action":"aws:runDocument","inputs":{"documentPath":"AWS-UpdateSSMAgent","documentType":"SSMDocument"},"name":"UpdateSSMAgent","timeoutSeconds":300}
 EOF
     },
   ]
 
   ssm_codedeploy_include = {
     enabled = <<EOF
-    {
-      "action": "aws:runDocument",
-      "inputs": {
-        "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_CodeDeploy",
-        "documentType": "SSMDocument"
-      },
-      "name": "InstallCodeDeployAgent"
-    }
+    {"action":"aws:runDocument","inputs":{"documentPath":"arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_CodeDeploy","documentType":"SSMDocument"},"name":"InstallCodeDeployAgent"}
 EOF
 
     disabled = ""
