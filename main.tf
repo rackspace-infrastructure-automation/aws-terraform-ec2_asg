@@ -166,7 +166,7 @@ EOF
     amazonecs     = "/dev/xvdcz"
   }
 
-  cwagent_config = "${var.ec2_os != "windows" ? "linux_cw_agent_param.txt" : "windows_cw_agent_param.txt"}"
+  cwagent_config = "${var.ec2_os != "windows" ? "linux_cw_agent_param.json" : "windows_cw_agent_param.json"}"
 
   tags = [
     {
