@@ -150,6 +150,10 @@ EOF
   ssm_command_count = 6
 
   ebs_device_map = {
+    amazon        = "/dev/sdf"
+    amazon2       = "/dev/sdf"
+    amazoneks     = "/dev/sdf"
+    amazonecs     = "/dev/xvdcz"
     rhel6         = "/dev/sdf"
     rhel7         = "/dev/sdf"
     centos6       = "/dev/sdf"
@@ -160,10 +164,6 @@ EOF
     ubuntu14      = "/dev/sdf"
     ubuntu16      = "/dev/sdf"
     ubuntu18      = "/dev/sdf"
-    amazon        = "/dev/sdf"
-    amazon2       = "/dev/sdf"
-    amazoneks     = "/dev/sdf"
-    amazonecs     = "/dev/xvdcz"
   }
 
   cwagent_config = "${var.ec2_os != "windows" ? "linux_cw_agent_param.json" : "windows_cw_agent_param.json"}"
@@ -214,8 +214,8 @@ EOF
   user_data_map = {
     amazon        = "amazon_linux_userdata.sh"
     amazon2       = "amazon_linux_userdata.sh"
-    amazoneks     = "amazon_linux_userdata.sh"
     amazonecs     = "amazon_linux_userdata.sh"
+    amazoneks     = "amazon_linux_userdata.sh"
     rhel6         = "rhel_centos_6_userdata.sh"
     rhel7         = "rhel_centos_7_userdata.sh"
     centos6       = "rhel_centos_6_userdata.sh"
@@ -252,6 +252,8 @@ EOF
   ami_owner_mapping = {
     amazon        = "137112412989"
     amazon2       = "137112412989"
+    amazonecs     = "591542846629"
+    amazoneks     = "602401143452"
     centos6       = "679593333241"
     centos7       = "679593333241"
     rhel6         = "309956199498"
@@ -267,6 +269,8 @@ EOF
   ami_name_mapping = {
     amazon        = "amzn-ami-hvm-2018.03.0.*gp2"
     amazon2       = "amzn2-ami-hvm-2.0.*-ebs"
+    amazonecs     = "amzn-ami-2017.09.*-amazon-ecs-optimized"
+    amazoneks     = "amazon-eks-node-*"
     centos6       = "CentOS Linux 6 x86_64 HVM EBS*"
     centos7       = "CentOS Linux 7 x86_64 HVM EBS*"
     rhel6         = "RHEL-6.*_HVM_GA-*x86_64*"
