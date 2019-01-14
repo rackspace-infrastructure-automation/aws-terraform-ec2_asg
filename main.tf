@@ -49,7 +49,7 @@ EOF
           "documentParameters": {
             "action": "configure",
             "optionalConfigurationSource": "ssm",
-            "optionalConfigurationLocation": "${aws_ssm_parameter.cwagentparam.name}",
+            "optionalConfigurationLocation": "${var.provide_custom_cw_agent_config ? var.custom_cw_agent_config_ssm_param : aws_ssm_parameter.cwagentparam.name}",
             "optionalRestart": "yes",
             "name": "AmazonCloudWatchAgent"
           },

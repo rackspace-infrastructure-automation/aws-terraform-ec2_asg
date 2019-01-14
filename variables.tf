@@ -384,3 +384,15 @@ variable "final_userdata_commands" {
   type        = "string"
   default     = ""
 }
+
+variable "provide_custom_cw_agent_config" {
+  description = "Set to true if a custom cloudwatch agent configuration has been provided in variable custom_cw_agent_config_ssm_param."
+  type        = "string"
+  default     = false
+}
+
+variable "custom_cw_agent_config_ssm_param" {
+  description = "SSM Parameter Store name that contains a custom CloudWatch agent configuration that you would like to use as an alternative to the default provided."
+  type        = "string"
+  default     = ""
+}

@@ -30,6 +30,7 @@ Full working references are available at [examples](examples)
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | string | `"False"` | no |
 | cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | string | `"30"` | no |
 | custom\_alarm\_sns\_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. | string | `""` | no |
+| custom\_cw\_agent\_config\_ssm\_param | SSM Parameter Store name that contains a custom CloudWatch agent configuration that you would like to use as an alternative to the default provided. | string | `""` | no |
 | custom\_ok\_sns\_topic | If not Rackspace managed, you can use custom SNS topics to send the OK actions to. | string | `""` | no |
 | cw\_high\_evaluations | The number of periods over which data is compared to the specified threshold. | string | `"3"` | no |
 | cw\_high\_operator | Math operator used by CloudWatch for alarms and triggers. | string | `"GreaterThanThreshold"` | no |
@@ -67,6 +68,7 @@ Full working references are available at [examples](examples)
 | primary\_ebs\_volume\_iops | Iops value required for use with io1 EBS volumes. This value should be 3 times the EBS volume size | string | `"0"` | no |
 | primary\_ebs\_volume\_size | EBS Volume Size in GB | string | `"60"` | no |
 | primary\_ebs\_volume\_type | EBS Volume Type. e.g. gp2, io1, st1, sc1 | string | `"gp2"` | no |
+| provide\_custom\_cw\_agent\_config | Set to true if a custom cloudwatch agent configuration has been provided in variable custom_cw_agent_config_ssm_param. | string | `"false"` | no |
 | rackspace\_managed | Boolean parameter controlling if instance will be fully managed by Rackspace support teams, created CloudWatch alarms that generate tickets, and utilize Rackspace managed SSM documents. | string | `"true"` | no |
 | resource\_name | Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module | string | n/a | yes |
 | scaling\_max | The maximum size of the Auto Scaling group. | string | `"2"` | no |

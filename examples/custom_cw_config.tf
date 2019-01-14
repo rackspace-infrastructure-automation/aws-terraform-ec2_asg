@@ -159,6 +159,32 @@ EOF
     },
   ]
 
-  encrypt_secondary_ebs_volume  = "False"
-  asg_wait_for_capacity_timeout = "10m"
+  encrypt_secondary_ebs_volume     = "False"
+  asg_wait_for_capacity_timeout    = "10m"
+  provide_custom_cw_agent_config   = true
+  custom_cw_agent_config_ssm_param = "${aws_ssm_parameter.custom_cwagentparam.name}"
+}
+
+resource "random_string" "res_name" {
+  length  = 8
+  upper   = false
+  lower   = true
+  special = false
+  number  = false
+}
+
+resource "aws_ssm_parameter" "custom_cwagentparam" {
+  name        = "custom_cw_param-${random_string.res_name.result}"
+  description = "Custom Cloudwatch Agent configuration"
+  type        = "String"
+  value       = "${data.template_file.custom_cwagentparam.rendered}"
+}
+
+data "template_file" "custom_cwagentparam" {
+  template = "${file("./text/linux_cw_agent_param.json")}"
+
+  vars {
+    application_log_group_name = "custom_app_log_group_name"
+    system_log_group_name      = "custom_system_log_group_name"
+  }
 }
