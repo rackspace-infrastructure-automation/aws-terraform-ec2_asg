@@ -21,6 +21,8 @@
  */
 
 locals {
+  cw_config_parameter_name = "CWAgent-${var.resource_name}"
+
   # This is a list of ssm main steps
   default_ssm_cmd_list = [
     {
@@ -49,7 +51,7 @@ EOF
           "documentParameters": {
             "action": "configure",
             "optionalConfigurationSource": "ssm",
-            "optionalConfigurationLocation": "${var.provide_custom_cw_agent_config ? var.custom_cw_agent_config_ssm_param : aws_ssm_parameter.cwagentparam.name}",
+            "optionalConfigurationLocation": "${var.provide_custom_cw_agent_config ? var.custom_cw_agent_config_ssm_param : local.cw_config_parameter_name}",
             "optionalRestart": "yes",
             "name": "AmazonCloudWatchAgent"
           },
@@ -663,7 +665,8 @@ resource "aws_ssm_document" "ssm_bootstrap_doc" {
 }
 
 resource "aws_ssm_parameter" "cwagentparam" {
-  name        = "CWAgent-${var.resource_name}"
+  count       = "${var.provide_custom_cw_agent_config ? 0 : 1}"
+  name        = "${local.cw_config_parameter_name}"
   description = "${var.resource_name} Cloudwatch Agent configuration"
   type        = "String"
   value       = "${replace(replace(file("${path.module}/text/${local.cwagent_config}"),"((SYSTEM_LOG_GROUP_NAME))",aws_cloudwatch_log_group.system_logs.name),"((APPLICATION_LOG_GROUP_NAME))",aws_cloudwatch_log_group.application_logs.name)}"
