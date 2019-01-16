@@ -379,43 +379,48 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
 }
 
 resource "aws_iam_policy" "create_instance_role_policy" {
+  count       = "${var.instance_profile_override ? 0 : 1}"
   name        = "InstanceRolePolicy-${var.resource_name}"
   description = "Rackspace Instance Role Policies for EC2"
   policy      = "${data.aws_iam_policy_document.mod_ec2_instance_role_policies.json}"
 }
 
 resource "aws_iam_role" "mod_ec2_instance_role" {
+  count              = "${var.instance_profile_override ? 0 : 1}"
   name               = "InstanceRole-${var.resource_name}"
   path               = "/"
   assume_role_policy = "${data.aws_iam_policy_document.mod_ec2_assume_role_policy_doc.json}"
 }
 
 resource "aws_iam_role_policy_attachment" "attach_ssm_policy" {
+  count      = "${var.instance_profile_override ? 0 : 1}"
   role       = "${aws_iam_role.mod_ec2_instance_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
 
 resource "aws_iam_role_policy_attachment" "attach_codedeploy_policy" {
-  count      = "${var.install_codedeploy_agent ? 1 : 0}"
+  count      = "${var.install_codedeploy_agent && var.instance_profile_override != true ? 1 : 0}"
   role       = "${aws_iam_role.mod_ec2_instance_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy"
 }
 
 resource "aws_iam_role_policy_attachment" "attach_instance_role_policy" {
+  count      = "${var.instance_profile_override ? 0 : 1}"
   role       = "${aws_iam_role.mod_ec2_instance_role.name}"
   policy_arn = "${aws_iam_policy.create_instance_role_policy.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "attach_additonal_policies" {
-  count      = "${var.instance_role_managed_policy_arn_count}"
+  count      = "${var.instance_profile_override ? 0 : var.instance_role_managed_policy_arn_count}"
   role       = "${aws_iam_role.mod_ec2_instance_role.name}"
   policy_arn = "${element(var.instance_role_managed_policy_arns, count.index)}"
 }
 
 resource "aws_iam_instance_profile" "instance_role_instance_profile" {
-  name = "InstanceRoleInstanceProfile-${var.resource_name}"
-  role = "${aws_iam_role.mod_ec2_instance_role.name}"
-  path = "/"
+  count = "${var.instance_profile_override ? 0 : 1}"
+  name  = "InstanceRoleInstanceProfile-${var.resource_name}"
+  role  = "${aws_iam_role.mod_ec2_instance_role.name}"
+  path  = "/"
 }
 
 #
@@ -432,7 +437,7 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
   security_groups      = ["${var.security_group_list}"]
   placement_tenancy    = "${var.tenancy}"
   ebs_optimized        = "${var.enable_ebs_optimization}"
-  iam_instance_profile = "${aws_iam_instance_profile.instance_role_instance_profile.name}"
+  iam_instance_profile = "${element(coalescelist(aws_iam_instance_profile.instance_role_instance_profile.*.name, list(var.instance_profile_override_name)), 0)}"
   instance_type        = "${var.instance_type}"
 
   root_block_device {
@@ -464,7 +469,7 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
   security_groups      = ["${var.security_group_list}"]
   placement_tenancy    = "${var.tenancy}"
   ebs_optimized        = "${var.enable_ebs_optimization}"
-  iam_instance_profile = "${aws_iam_instance_profile.instance_role_instance_profile.name}"
+  iam_instance_profile = "${element(coalescelist(aws_iam_instance_profile.instance_role_instance_profile.*.name, list(var.instance_profile_override_name)), 0)}"
   instance_type        = "${var.instance_type}"
 
   root_block_device {

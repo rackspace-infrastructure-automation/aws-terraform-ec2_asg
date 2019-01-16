@@ -5,7 +5,7 @@ output "asg_name_list" {
 
 output "iam_role" {
   description = "Name of the created IAM Instance role."
-  value       = "${aws_iam_role.mod_ec2_instance_role.id}"
+  value       = "${element(coalescelist(aws_iam_role.mod_ec2_instance_role.*.id, list("none")), 0)}"
 }
 
 output "asg_image_id" {
