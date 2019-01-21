@@ -6,7 +6,7 @@ This module creates one or more autoscaling groups.
 
 ```
 module "asg" {
- source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.2"
+ source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.11"
 
  ec2_os              = "amazon"
  subnets             = ["${module.vpc.private_subnets}"]
@@ -29,9 +29,7 @@ Full working references are available at [examples](examples)
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | string | `"10m"` | no |
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | string | `"False"` | no |
 | cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | string | `"30"` | no |
-| custom\_alarm\_sns\_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. | string | `""` | no |
 | custom\_cw\_agent\_config\_ssm\_param | SSM Parameter Store name that contains a custom CloudWatch agent configuration that you would like to use as an alternative to the default provided. | string | `""` | no |
-| custom\_ok\_sns\_topic | If not Rackspace managed, you can use custom SNS topics to send the OK actions to. | string | `""` | no |
 | cw\_high\_evaluations | The number of periods over which data is compared to the specified threshold. | string | `"3"` | no |
 | cw\_high\_operator | Math operator used by CloudWatch for alarms and triggers. | string | `"GreaterThanThreshold"` | no |
 | cw\_high\_period | Time the specified statistic is applied. Must be in seconds that is also a multiple of 60. | string | `"60"` | no |
@@ -47,7 +45,6 @@ Full working references are available at [examples](examples)
 | ec2\_scale\_down\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | string | `"60"` | no |
 | ec2\_scale\_up\_adjustment | Number of EC2 instances to scale up by at a time. | string | `"1"` | no |
 | ec2\_scale\_up\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | string | `"60"` | no |
-| enable\_custom\_alarm\_sns\_topic | If not Rackspace managed, you can use custom SNS topics to send the Alarm actions to. If you will be providing a custom SNS topic, please set this to true. If not, set to false. | string | `"false"` | no |
 | enable\_ebs\_optimization | Use EBS Optimized? true or false | string | `"false"` | no |
 | enable\_rolling\_updates | Should this autoscaling group be targeted by the ASG Instance Replacement tool to ensure all instances are using thelatest launch configuration. | string | `"true"` | no |
 | enable\_scaling\_notification | true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | string | `"false"` | no |
@@ -66,11 +63,13 @@ Full working references are available at [examples](examples)
 | instance\_type | EC2 Instance Type e.g. 't2.micro' | string | `"t2.micro"` | no |
 | key\_pair | Name of an existing EC2 KeyPair to enable SSH access to the instances. | string | `""` | no |
 | load\_balancer\_names | A list of Classic load balancers associated with this Auto Scaling group. | list | `<list>` | no |
+| notification\_topic | List of SNS Topic ARNs to use for customer notifications. | list | `<list>` | no |
 | perform\_ssm\_inventory\_tag | Determines whether Instance is tracked via System Manager Inventory. | string | `"True"` | no |
 | primary\_ebs\_volume\_iops | Iops value required for use with io1 EBS volumes. This value should be 3 times the EBS volume size | string | `"0"` | no |
 | primary\_ebs\_volume\_size | EBS Volume Size in GB | string | `"60"` | no |
 | primary\_ebs\_volume\_type | EBS Volume Type. e.g. gp2, io1, st1, sc1 | string | `"gp2"` | no |
 | provide\_custom\_cw\_agent\_config | Set to true if a custom cloudwatch agent configuration has been provided in variable custom_cw_agent_config_ssm_param. | string | `"false"` | no |
+| rackspace\_alarms\_enabled | Specifies whether alarms will create a Rackspace ticket.  Ignored if rackspace_managed is set to false. | string | `"false"` | no |
 | rackspace\_managed | Boolean parameter controlling if instance will be fully managed by Rackspace support teams, created CloudWatch alarms that generate tickets, and utilize Rackspace managed SSM documents. | string | `"true"` | no |
 | resource\_name | Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module | string | n/a | yes |
 | scaling\_max | The maximum size of the Auto Scaling group. | string | `"2"` | no |
