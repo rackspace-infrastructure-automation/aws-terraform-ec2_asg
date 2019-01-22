@@ -7,7 +7,7 @@
  *
  *```
  *module "asg" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.2"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.11"
  *
  *  ec2_os              = "amazon"
  *  subnets             = ["${module.vpc.private_subnets}"]
@@ -229,27 +229,6 @@ EOF
     windows2012R2 = "windows_userdata.ps1"
     windows2016   = "windows_userdata.ps1"
   }
-
-  sns_topic = "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency"
-
-  alarm_action_config = "${var.rackspace_managed ? "managed":"unmanaged"}"
-
-  alarm_actions = {
-    managed = "${local.sns_topic}"
-
-    unmanaged = "${var.custom_alarm_sns_topic}"
-  }
-
-  ok_action_config = "${var.rackspace_managed ? "managed":"unmanaged"}"
-
-  ok_actions = {
-    managed = "${local.sns_topic}"
-
-    unmanaged = "${var.custom_ok_sns_topic}"
-  }
-
-  alarm_setting = "${local.alarm_actions[local.alarm_action_config]}"
-  ok_setting    = "${local.ok_actions[local.ok_action_config]}"
 
   ami_owner_mapping = {
     amazon        = "137112412989"
@@ -547,7 +526,7 @@ resource "aws_autoscaling_notification" "scaling_notifications" {
 }
 
 resource "aws_autoscaling_notification" "rs_support_emergency" {
-  count = "${local.alarm_action_config == "managed" || var.enable_custom_alarm_sns_topic ? var.asg_count : 0}"
+  count = "${var.rackspace_managed ? var.asg_count : 0}"
 
   group_names = [
     "${element(aws_autoscaling_group.autoscalegrp.*.name, count.index)}",
@@ -558,31 +537,39 @@ resource "aws_autoscaling_notification" "rs_support_emergency" {
     "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
   ]
 
-  topic_arn = "${local.alarm_setting}"
+  topic_arn = "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency"
 }
 
 #
 # Provisioning of CloudWatch related resources
 #
+data "null_data_source" "alarm_dimensions" {
+  count = "${var.asg_count}"
 
-resource "aws_cloudwatch_metric_alarm" "group_terminating_instances" {
-  alarm_name          = "${join("-",compact(list("GroupTerminatingInstances", var.resource_name, format("%03d",count.index+1))))}"
-  alarm_description   = "Over ${var.terminated_instances} instances terminated in last 6 hours, generating ticket to investigate."
-  count               = "${var.asg_count}"
-  namespace           = "AWS/AutoScaling"
-  period              = "21600"
-  comparison_operator = "GreaterThanThreshold"
-  statistic           = "Sum"
-  threshold           = "${var.terminated_instances}"
-  evaluation_periods  = "1"
-  unit                = "Count"
-  metric_name         = "GroupTerminatingInstances"
-  alarm_actions       = ["${compact(list(local.alarm_setting))}"]
-  ok_actions          = ["${compact(list(local.ok_setting))}"]
-
-  dimensions {
+  inputs = {
     AutoScalingGroupName = "${element(aws_autoscaling_group.autoscalegrp.*.name, count.index)}"
   }
+}
+
+module "group_terminating_instances" {
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.0.1"
+
+  alarm_count              = "${var.asg_count}"
+  alarm_description        = "Over ${var.terminated_instances} instances terminated in last 6 hours, generating ticket to investigate."
+  alarm_name               = "${var.resource_name}-GroupTerminatingInstances}"
+  comparison_operator      = "GreaterThanThreshold"
+  dimensions               = "${data.null_data_source.alarm_dimensions.*.outputs}"
+  evaluation_periods       = 1
+  metric_name              = "GroupTerminatingInstances"
+  namespace                = "AWS/AutoScaling"
+  notification_topic       = "${var.notification_topic}"
+  period                   = 21600
+  rackspace_alarms_enabled = "${var.rackspace_alarms_enabled}"
+  rackspace_managed        = "${var.rackspace_managed}"
+  severity                 = "emergency"
+  statistic                = "Sum"
+  threshold                = "${var.terminated_instances}"
+  unit                     = "Count"
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
