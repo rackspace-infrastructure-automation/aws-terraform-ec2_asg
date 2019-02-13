@@ -48,6 +48,7 @@ Full working references are available at [examples](examples)
 | enable\_ebs\_optimization | Use EBS Optimized? true or false | string | `"false"` | no |
 | enable\_rolling\_updates | Should this autoscaling group be targeted by the ASG Instance Replacement tool to ensure all instances are using thelatest launch configuration. | string | `"true"` | no |
 | enable\_scaling\_notification | true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | string | `"false"` | no |
+| encrypt\_primary\_ebs\_volume | Encrypt primary EBS Volume? true or false | string | `"false"` | no |
 | encrypt\_secondary\_ebs\_volume | Encrypt secondary EBS Volume? true or false | string | `"false"` | no |
 | environment | Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test | string | `"Development"` | no |
 | final\_userdata\_commands | Commands to be given at the end of userdata for an instance. This should generally not include bootstrapping or ssm install. | string | `""` | no |

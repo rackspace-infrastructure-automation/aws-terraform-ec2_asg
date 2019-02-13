@@ -423,6 +423,7 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
     volume_type = "${var.primary_ebs_volume_type}"
     volume_size = "${var.primary_ebs_volume_size}"
     iops        = "${var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0}"
+    encrypted   = "${var.encrypt_primary_ebs_volume}"
   }
 
   ebs_block_device {
