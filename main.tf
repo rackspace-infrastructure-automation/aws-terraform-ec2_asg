@@ -30,6 +30,19 @@ locals {
       {
         "action": "aws:runDocument",
         "inputs": {
+        "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-BusyWait",
+        "documentType": "SSMDocument"
+        },
+        "name": "BusyWait",
+        "timeoutSeconds": 300
+      }
+EOF
+    },
+    {
+      ssm_add_step = <<EOF
+      {
+        "action": "aws:runDocument",
+        "inputs": {
           "documentPath": "AWS-ConfigureAWSPackage",
           "documentParameters": {
             "action": "Install",
