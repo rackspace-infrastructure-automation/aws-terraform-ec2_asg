@@ -6,7 +6,7 @@ This module creates one or more autoscaling groups.
 
 ```
 module "asg" {
- source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.11"
+ source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.15"
 
  ec2_os              = "amazon"
  subnets             = ["${module.vpc.private_subnets}"]

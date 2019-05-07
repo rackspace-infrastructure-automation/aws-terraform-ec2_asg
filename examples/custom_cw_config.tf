@@ -49,7 +49,7 @@ module "sns_sqs" {
 }
 
 module "ec2_asg" {
-  source    = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.0.9"
+  source    = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.0.15"
   ec2_os    = "centos7"
   asg_count = "2"
 
