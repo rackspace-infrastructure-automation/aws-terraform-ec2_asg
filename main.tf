@@ -7,7 +7,7 @@
  *
  *```
  *module "asg" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.11"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.15"
  *
  *  ec2_os              = "amazon"
  *  subnets             = ["${module.vpc.private_subnets}"]
@@ -276,27 +276,60 @@ EOF
     windows2012R2 = "Windows_Server-2012-R2_RTM-English-64Bit-Base*"
     windows2016   = "Windows_Server-2016-English-Full-Base*"
   }
+
+  # Any custom AMI filters for a given OS can be added in this mapping
+  image_filter = {
+    amazon        = []
+    amazon2       = []
+    amazonecs     = []
+    amazoneks     = []
+    rhel6         = []
+    rhel7         = []
+    ubuntu14      = []
+    ubuntu16      = []
+    ubuntu18      = []
+    windows2008   = []
+    windows2012R2 = []
+    windows2016   = []
+
+    # Added to ensure only AMIS under the official CentOS 6 product code are retrieved
+    centos6 = [
+      {
+        name   = "product-code"
+        values = ["6x5jmcajty9edm3f211pqjfn2"]
+      },
+    ]
+
+    # Added to ensure only AMIS under the official CentOS 7 product code are retrieved
+    centos7 = [
+      {
+        name   = "product-code"
+        values = ["aw0evgkw8e5c1q413zgy5pjce"]
+      },
+    ]
+  }
+
+  standard_filters = [
+    {
+      name   = "virtualization-type"
+      values = ["hvm"]
+    },
+    {
+      name   = "root-device-type"
+      values = ["ebs"]
+    },
+    {
+      name   = "name"
+      values = ["${local.ami_name_mapping[var.ec2_os]}"]
+    },
+  ]
 }
 
 # Lookup the correct AMI based on the region specified
 data "aws_ami" "asg_ami" {
   most_recent = true
   owners      = ["${local.ami_owner_mapping[var.ec2_os]}"]
-
-  filter {
-    name   = "name"
-    values = ["${local.ami_name_mapping[var.ec2_os]}"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
+  filter      = "${concat(local.standard_filters, local.image_filter[var.ec2_os])}"
 }
 
 data "template_file" "user_data" {
