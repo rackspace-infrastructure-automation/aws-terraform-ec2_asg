@@ -108,7 +108,7 @@ module "ec2_asg_centos7_with_codedeploy_test" {
   cw_high_operator           = "GreaterThanThreshold"
   install_codedeploy_agent   = "False"
 
-  addtional_ssm_bootstrap_list = [
+  additional_ssm_bootstrap_list = [
     {
       ssm_add_step = <<EOF
       {
@@ -143,7 +143,7 @@ EOF
     },
   ]
 
-  addtional_ssm_bootstrap_step_count = "2"
+  additional_ssm_bootstrap_step_count = "2"
 
   additional_tags = [
     {
@@ -228,7 +228,7 @@ module "ec2_asg_centos7_no_codedeploy_test" {
   cw_high_operator           = "GreaterThanThreshold"
   install_codedeploy_agent   = "False"
 
-  addtional_ssm_bootstrap_list = [
+  additional_ssm_bootstrap_list = [
     {
       ssm_add_step = <<EOF
       {
@@ -263,7 +263,7 @@ EOF
     },
   ]
 
-  addtional_ssm_bootstrap_step_count = "2"
+  additional_ssm_bootstrap_step_count = "2"
 
   additional_tags = [
     {
@@ -348,7 +348,7 @@ module "ec2_asg_windows_with_codedeploy_test" {
   cw_high_operator           = "GreaterThanThreshold"
   install_codedeploy_agent   = "False"
 
-  addtional_ssm_bootstrap_list = [
+  additional_ssm_bootstrap_list = [
     {
       ssm_add_step = <<EOF
       {
@@ -380,7 +380,7 @@ EOF
     },
   ]
 
-  addtional_ssm_bootstrap_step_count = "2"
+  additional_ssm_bootstrap_step_count = "2"
 
   additional_tags = [
     {
@@ -465,7 +465,7 @@ module "ec2_asg_windows_no_codedeploy_test" {
   cw_high_operator           = "GreaterThanThreshold"
   install_codedeploy_agent   = "False"
 
-  addtional_ssm_bootstrap_list = [
+  additional_ssm_bootstrap_list = [
     {
       ssm_add_step = <<EOF
       {
@@ -497,7 +497,7 @@ EOF
     },
   ]
 
-  addtional_ssm_bootstrap_step_count = "2"
+  additional_ssm_bootstrap_step_count = "2"
 
   additional_tags = [
     {

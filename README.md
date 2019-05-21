@@ -22,9 +22,9 @@ Full working references are available at [examples](examples)
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| additional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples. | list | `<list>` | no |
+| additional\_ssm\_bootstrap\_step\_count | Count of steps added for input 'additional_ssm_bootstrap_list'. This is required since 'additional_ssm_bootstrap_list' is a list of maps | string | `"0"` | no |
 | additional\_tags | Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples. | list | `<list>` | no |
-| addtional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples. | list | `<list>` | no |
-| addtional\_ssm\_bootstrap\_step\_count | Count of steps added for input 'addtional_ssm_bootstrap_list'. This is required since 'addtional_ssm_bootstrap_list' is a list of maps | string | `"0"` | no |
 | asg\_count | Number of identical ASG's to deploy | string | `"1"` | no |
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | string | `"10m"` | no |
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | string | `"False"` | no |

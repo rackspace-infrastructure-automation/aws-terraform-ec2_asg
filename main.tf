@@ -679,11 +679,11 @@ data "template_file" "ssm_command_docs" {
 }
 
 data "template_file" "additional_ssm_docs" {
-  template = "$${addtional_ssm_cmd_json}"
-  count    = "${var.addtional_ssm_bootstrap_step_count}"
+  template = "$${additional_ssm_cmd_json}"
+  count    = "${var.additional_ssm_bootstrap_step_count}"
 
   vars {
-    addtional_ssm_cmd_json = "${lookup(var.addtional_ssm_bootstrap_list[count.index], "ssm_add_step")}"
+    additional_ssm_cmd_json = "${lookup(var.additional_ssm_bootstrap_list[count.index], "ssm_add_step")}"
   }
 }
 
