@@ -104,7 +104,7 @@ module "ec2_asg" {
   cw_high_operator           = "GreaterThanThreshold"
   install_codedeploy_agent   = "False"
 
-  addtional_ssm_bootstrap_list = [
+  additional_ssm_bootstrap_list = [
     {
       ssm_add_step = <<EOF
       {
@@ -139,7 +139,7 @@ EOF
     },
   ]
 
-  addtional_ssm_bootstrap_step_count = "2"
+  additional_ssm_bootstrap_step_count = "2"
 
   additional_tags = [
     {
