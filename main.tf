@@ -7,7 +7,7 @@
  *
  *```
  *module "asg" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.15"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.18"
  *
  *  ec2_os              = "amazon"
  *  subnets             = ["${module.vpc.private_subnets}"]
@@ -176,6 +176,7 @@ EOF
     windows2008   = "xvdf"
     windows2012R2 = "xvdf"
     windows2016   = "xvdf"
+    windows2019   = "xvdf"
     ubuntu14      = "/dev/sdf"
     ubuntu16      = "/dev/sdf"
     ubuntu18      = "/dev/sdf"
@@ -241,6 +242,7 @@ EOF
     windows2008   = "windows_userdata.ps1"
     windows2012R2 = "windows_userdata.ps1"
     windows2016   = "windows_userdata.ps1"
+    windows2019   = "windows_userdata.ps1"
   }
 
   ami_owner_mapping = {
@@ -258,6 +260,7 @@ EOF
     windows2008   = "801119661308"
     windows2012R2 = "801119661308"
     windows2016   = "801119661308"
+    windows2019   = "801119661308"
   }
 
   ami_name_mapping = {
@@ -275,6 +278,7 @@ EOF
     windows2008   = "Windows_Server-2008-R2_SP1-English-64Bit-Base*"
     windows2012R2 = "Windows_Server-2012-R2_RTM-English-64Bit-Base*"
     windows2016   = "Windows_Server-2016-English-Full-Base*"
+    windows2019   = "Windows_Server-2019-English-Full-Base*"
   }
 
   # Any custom AMI filters for a given OS can be added in this mapping
@@ -291,6 +295,7 @@ EOF
     windows2008   = []
     windows2012R2 = []
     windows2016   = []
+    windows2019   = []
 
     # Added to ensure only AMIS under the official CentOS 6 product code are retrieved
     centos6 = [
