@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.0.6"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.0.10"
 
   vpc_name = "EC2-ASG-BaseNetwork-Test1"
 }
@@ -49,7 +49,7 @@ module "sns_sqs" {
 }
 
 module "ec2_asg" {
-  source    = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.0.18"
+  source    = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.0.20"
   ec2_os    = "centos7"
   asg_count = "2"
 
@@ -78,10 +78,12 @@ module "ec2_asg" {
   ec2_scale_down_cool_down               = "60"
   instance_type                          = "t2.micro"
 
+  # using an existing ebs snapshot id instead of creating a new ebs volume
+  #  secondary_ebs_volume_existing_id = "snap-12393923"
+
   # If ALB target groups are being used, one can specify ARNs like the commented line below.
   #target_group_arns                      = ["${aws_lb_target_group.my_tg.arn}"]
   secondary_ebs_volume_type = "gp2"
-
   ec2_scale_up_adjustment    = "1"
   cw_high_threshold          = "60"
   scaling_notification_topic = "${aws_sns_topic.my_test_sns.arn}"
@@ -103,7 +105,6 @@ module "ec2_asg" {
   scaling_max                = "2"
   cw_high_operator           = "GreaterThanThreshold"
   install_codedeploy_agent   = "False"
-
   additional_ssm_bootstrap_list = [
     {
       ssm_add_step = <<EOF
@@ -138,9 +139,7 @@ EOF
 EOF
     },
   ]
-
   additional_ssm_bootstrap_step_count = "2"
-
   additional_tags = [
     {
       key                 = "MyTag1"
@@ -158,7 +157,6 @@ EOF
       propagate_at_launch = true
     },
   ]
-
   encrypt_secondary_ebs_volume     = "False"
   asg_wait_for_capacity_timeout    = "10m"
   provide_custom_cw_agent_config   = true

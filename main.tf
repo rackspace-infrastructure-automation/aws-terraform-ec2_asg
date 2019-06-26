@@ -486,7 +486,8 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
     volume_type = "${var.secondary_ebs_volume_type}"
     volume_size = "${var.secondary_ebs_volume_size}"
     iops        = "${var.secondary_ebs_volume_iops}"
-    encrypted   = "${var.encrypt_secondary_ebs_volume}"
+    encrypted   = "${var.secondary_ebs_volume_existing_id == "" ? var.encrypt_secondary_ebs_volume: false}"
+    snapshot_id = "${var.secondary_ebs_volume_existing_id}"
   }
 
   lifecycle {

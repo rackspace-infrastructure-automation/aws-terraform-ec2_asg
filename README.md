@@ -80,6 +80,7 @@ Using [aws-terraform-cloudwatch_alarm](https://github.com/rackspace-infrastructu
 | scaling\_max | The maximum size of the Auto Scaling group. | string | `"2"` | no |
 | scaling\_min | The minimum count of EC2 instances in the Auto Scaling group. | string | `"1"` | no |
 | scaling\_notification\_topic | SNS Topic ARN to notify if there are any scaling operations. OPTIONAL | string | `""` | no |
+| secondary\_ebs\_volume\_existing\_id | The Snapshot ID of an existing EBS volume you want to use for the secondary volume. i.e. snap-0ad8580e3ac34a9f1 | string | `""` | no |
 | secondary\_ebs\_volume\_iops | Iops value required for use with io1 EBS volumes. This value should be 3 times the EBS volume size | string | `"0"` | no |
 | secondary\_ebs\_volume\_size | EBS Volume Size in GB | string | `""` | no |
 | secondary\_ebs\_volume\_type | EBS Volume Type. e.g. gp2, io1, st1, sc1 | string | `"gp2"` | no |
