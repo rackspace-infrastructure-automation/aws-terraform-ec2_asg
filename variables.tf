@@ -213,6 +213,12 @@ variable "secondary_ebs_volume_type" {
   default     = "gp2"
 }
 
+variable "secondary_ebs_volume_existing_id" {
+  description = "The Snapshot ID of an existing EBS volume you want to use for the secondary volume. i.e. snap-0ad8580e3ac34a9f1"
+  type        = "string"
+  default     = ""
+}
+
 #
 # Load Balancing and Target groups
 #
