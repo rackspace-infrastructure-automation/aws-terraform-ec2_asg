@@ -39,16 +39,17 @@ resource "aws_sqs_queue" "ec2-asg-test_sqs" {
 }
 
 module "sns_sqs" {
-  source     = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=master"
-  topic_name = "${random_string.sqs_rstring.result}-ec2-asg-test-topic"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=master"
 
   create_subscription_1 = true
-  protocol_1            = "sqs"
   endpoint_1            = "${aws_sqs_queue.ec2-asg-test_sqs.arn}"
+  protocol_1            = "sqs"
+  topic_name            = "${random_string.sqs_rstring.result}-ec2-asg-test-topic"
 }
 
 module "ec2_asg_centos7_with_codedeploy_test" {
-  source    = "../../module"
+  source = "../../module"
+
   ec2_os    = "centos7"
   asg_count = "2"
 
@@ -168,7 +169,8 @@ EOF
 }
 
 module "ec2_asg_centos7_no_codedeploy_test" {
-  source    = "../../module"
+  source = "../../module"
+
   ec2_os    = "centos7"
   asg_count = "2"
 
@@ -288,7 +290,8 @@ EOF
 }
 
 module "ec2_asg_windows_with_codedeploy_test" {
-  source    = "../../module"
+  source = "../../module"
+
   ec2_os    = "windows2016"
   asg_count = "2"
 
@@ -405,7 +408,8 @@ EOF
 }
 
 module "ec2_asg_windows_no_codedeploy_test" {
-  source    = "../../module"
+  source = "../../module"
+
   ec2_os    = "windows2016"
   asg_count = "2"
 
