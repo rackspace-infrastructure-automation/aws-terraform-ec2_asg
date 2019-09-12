@@ -276,7 +276,7 @@ EOF
   ami_name_mapping = {
     amazon        = "amzn-ami-hvm-2018.03.0.*gp2"
     amazon2       = "amzn2-ami-hvm-2.0.*-ebs"
-    amazonecs     = "amzn-ami-2017.09.*-amazon-ecs-optimized"
+    amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
     centos6       = "CentOS Linux 6 x86_64 HVM EBS*"
     centos7       = "CentOS Linux 7 x86_64 HVM EBS*"
