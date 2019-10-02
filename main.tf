@@ -181,6 +181,7 @@ EOF
     amazonecs     = "/dev/xvdcz"
     rhel6         = "/dev/sdf"
     rhel7         = "/dev/sdf"
+    rhel8         = "/dev/sdf"
     centos6       = "/dev/sdf"
     centos7       = "/dev/sdf"
     ubuntu14      = "/dev/sdf"
@@ -244,6 +245,7 @@ EOF
     amazoneks     = "amazon_linux_userdata.sh"
     rhel6         = "rhel_centos_6_userdata.sh"
     rhel7         = "rhel_centos_7_userdata.sh"
+    rhel8         = "rhel_centos_8_userdata.sh"
     centos6       = "rhel_centos_6_userdata.sh"
     centos7       = "rhel_centos_7_userdata.sh"
     ubuntu14      = "ubuntu_userdata.sh"
@@ -264,6 +266,7 @@ EOF
     centos7       = "679593333241"
     rhel6         = "309956199498"
     rhel7         = "309956199498"
+    rhel8         = "309956199498"
     ubuntu14      = "099720109477"
     ubuntu16      = "099720109477"
     ubuntu18      = "099720109477"
@@ -282,6 +285,7 @@ EOF
     centos7       = "CentOS Linux 7 x86_64 HVM EBS*"
     rhel6         = "RHEL-6.*_HVM_GA-*x86_64*"
     rhel7         = "RHEL-7.*_HVM_GA-*x86_64*"
+    rhel8         = "RHEL-8.*_HVM-*x86_64*"
     ubuntu14      = "*ubuntu-trusty-14.04-amd64-server*"
     ubuntu16      = "*ubuntu-xenial-16.04-amd64-server*"
     ubuntu18      = "ubuntu/images/hvm-ssd/*ubuntu-bionic-18.04-amd64-server*"
@@ -299,6 +303,7 @@ EOF
     amazoneks     = []
     rhel6         = []
     rhel7         = []
+    rhel8         = []
     ubuntu14      = []
     ubuntu16      = []
     ubuntu18      = []

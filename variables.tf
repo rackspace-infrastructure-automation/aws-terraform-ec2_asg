@@ -27,7 +27,7 @@ variable "detailed_monitoring" {
 }
 
 variable "ec2_os" {
-  description = "Intended Operating System/Distribution of Instance. Valid inputs are: `amazon`, `amazon2`, `amazoneks`, `amazonecs`, `rhel6`, `rhel7`, `centos6`, `centos7`, `ubuntu14`, `ubuntu16`, `ubuntu18`, `windows2008`, `windows2012r2`, `windows2016`, `windows2019`"
+  description = "Intended Operating System/Distribution of Instance. Valid inputs are: `amazon`, `amazon2`, `amazoneks`, `amazonecs`, `rhel6`, `rhel7`, `rhel8`, `centos6`, `centos7`, `ubuntu14`, `ubuntu16`, `ubuntu18`, `windows2008`, `windows2012r2`, `windows2016`, `windows2019`"
   type        = "string"
 }
 
