@@ -45,7 +45,7 @@ Using [aws-terraform-cloudwatch_alarm](https://github.com/rackspace-infrastructu
 | cw\_low\_threshold | The value against which the specified statistic is compared. | string | `"30"` | no |
 | cw\_scaling\_metric | The metric to be used for scaling. | string | `"CPUUtilization"` | no |
 | detailed\_monitoring | Enable Detailed Monitoring? true or false | string | `"true"` | no |
-| ec2\_os | Intended Operating System/Distribution of Instance. Valid inputs are: `amazon`, `amazon2`, `amazoneks`, `amazonecs`, `rhel6`, `rhel7`, `centos6`, `centos7`, `ubuntu14`, `ubuntu16`, `ubuntu18`, `windows2008`, `windows2012r2`, `windows2016`, `windows2019` | string | n/a | yes |
+| ec2\_os | Intended Operating System/Distribution of Instance. Valid inputs are: `amazon`, `amazon2`, `amazoneks`, `amazonecs`, `rhel6`, `rhel7`, `rhel8`, `centos6`, `centos7`, `ubuntu14`, `ubuntu16`, `ubuntu18`, `windows2008`, `windows2012r2`, `windows2016`, `windows2019` | string | n/a | yes |
 | ec2\_scale\_down\_adjustment | Number of EC2 instances to scale down by at a time. Positive numbers will be converted to negative. | string | `"-1"` | no |
 | ec2\_scale\_down\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | string | `"60"` | no |
 | ec2\_scale\_up\_adjustment | Number of EC2 instances to scale up by at a time. | string | `"1"` | no |
