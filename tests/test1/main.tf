@@ -58,7 +58,7 @@ module "ec2_asg_centos7_with_codedeploy_test" {
 
   instance_role_managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
-    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole",
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole",
     "arn:aws:iam::aws:policy/CloudWatchActionsEC2Access",
   ]
 
@@ -179,7 +179,7 @@ module "ec2_asg_centos7_no_codedeploy_test" {
 
   instance_role_managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
-    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole",
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole",
     "arn:aws:iam::aws:policy/CloudWatchActionsEC2Access",
   ]
 
@@ -300,7 +300,7 @@ module "ec2_asg_windows_with_codedeploy_test" {
 
   instance_role_managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
-    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole",
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole",
     "arn:aws:iam::aws:policy/CloudWatchActionsEC2Access",
   ]
 
@@ -418,7 +418,7 @@ module "ec2_asg_windows_no_codedeploy_test" {
 
   instance_role_managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
-    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole",
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole",
     "arn:aws:iam::aws:policy/CloudWatchActionsEC2Access",
   ]
 
