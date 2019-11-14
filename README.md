@@ -61,6 +61,7 @@ Using [aws-terraform-cloudwatch_alarm](https://github.com/rackspace-infrastructu
 | image\_id | The AMI ID to be used to build the EC2 Instance. If not provided, an AMI ID will be queried with an OS specified in variable ec2_os. | string | `""` | no |
 | initial\_userdata\_commands | Commands to be given at the start of userdata for an instance. This should generally not include bootstrapping or ssm install. | string | `""` | no |
 | install\_codedeploy\_agent | Install codedeploy agent on instance(s)? true or false | string | `"false"` | no |
+| install\_scaleft\_agent | Install scaleft agent on instance(s)? true or false | string | `"true"` | no |
 | instance\_profile\_override | Optionally provide an instance profile. Any override profile should contain the permissions required for Rackspace support tooling to continue to function if required. | string | `"false"` | no |
 | instance\_profile\_override\_name | Provide an instance profile name. Any override profile should contain the permissions required for Rackspace support tooling to continue to function if required. To use this set `instance_profile_override` to `true`. | string | `""` | no |
 | instance\_role\_managed\_policy\_arn\_count | The number of policy ARNs provided/set in variable 'instance_role_managed_policy_arns' | string | `"0"` | no |
