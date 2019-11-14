@@ -103,19 +103,6 @@ EOF
       {
         "action": "aws:runDocument",
         "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_ScaleFT",
-          "documentType": "SSMDocument"
-        },
-        "name": "SetupPassport",
-        "timeoutSeconds": 300
-      }
-EOF
-    },
-    {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
           "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package",
           "documentParameters": {
             "Packages": "sysstat ltrace strace iptraf tcpdump"
@@ -170,7 +157,24 @@ EOF
     disabled = ""
   }
 
+  ssm_scaleft_include = {
+    enabled = <<EOF
+    {
+      "action": "aws:runDocument",
+      "inputs": {
+        "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_ScaleFT",
+        "documentType": "SSMDocument"
+      },
+      "name": "SetupPassport",
+      "timeoutSeconds": 300
+    }
+EOF
+
+    disabled = ""
+  }
+
   codedeploy_install = "${var.install_codedeploy_agent ? "enabled" : "disabled"}"
+  scaleft_install    = "${var.install_scaleft_agent ? "enabled" : "disabled"}"
 
   ssm_command_count = 6
 
@@ -767,7 +771,7 @@ data "template_file" "ssm_bootstrap_template" {
   template = "${file("${path.module}/text/ssm_bootstrap_template.json")}"
 
   vars {
-    run_command_list = "${join(",",compact(concat(data.template_file.ssm_command_docs.*.rendered, list(local.ssm_codedeploy_include[local.codedeploy_install]), data.template_file.additional_ssm_docs.*.rendered)))}"
+    run_command_list = "${join(",",compact(concat(data.template_file.ssm_command_docs.*.rendered, list(local.ssm_codedeploy_include[local.codedeploy_install]), list(local.ssm_scaleft_include[local.scaleft_install]), data.template_file.additional_ssm_docs.*.rendered)))}"
   }
 }
 
