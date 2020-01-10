@@ -436,6 +436,7 @@ module "ec2_asg_windows_with_codedeploy_test" {
   secondary_ebs_volume_size              = "60"
   rackspace_managed                      = true
   cw_high_period                         = "60"
+  enable_scaling_actions                 = false
   enable_scaling_notification            = true
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
   secondary_ebs_volume_iops              = "0"
@@ -554,6 +555,7 @@ module "ec2_asg_windows_no_codedeploy_test" {
   secondary_ebs_volume_size              = "60"
   rackspace_managed                      = true
   cw_high_period                         = "60"
+  enable_scaling_actions                 = false
   enable_scaling_notification            = true
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
   secondary_ebs_volume_iops              = "0"
@@ -672,6 +674,7 @@ module "ec2_asg_windows_no_scaleft_test" {
   secondary_ebs_volume_size              = "60"
   rackspace_managed                      = true
   cw_high_period                         = "60"
+  enable_scaling_actions                 = false
   enable_scaling_notification            = true
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
   secondary_ebs_volume_iops              = "0"

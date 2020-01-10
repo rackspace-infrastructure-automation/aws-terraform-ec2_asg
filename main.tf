@@ -7,7 +7,7 @@
  *
  * ```HCL
  * module "asg" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.21"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.25"
  *
  *   ec2_os              = "amazon"
  *   subnets             = ["${module.vpc.private_subnets}"]
@@ -581,7 +581,7 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
-  count = "${var.asg_count}"
+  count = "${var.enable_scaling_actions ? var.asg_count : 0}"
 
   name                   = "${join("-",compact(list("ec2_scale_up_policy", var.resource_name, format("%03d",count.index+1))))}"
   scaling_adjustment     = "${var.ec2_scale_up_adjustment}"
@@ -591,7 +591,7 @@ resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
-  count = "${var.asg_count}"
+  count = "${var.enable_scaling_actions ? var.asg_count : 0}"
 
   name                   = "${join("-",compact(list("ec2_scale_down_policy", var.resource_name, format("%03d",count.index+1))))}"
   scaling_adjustment     = "${var.ec2_scale_down_adjustment > 0 ? 0 - var.ec2_scale_down_adjustment : var.ec2_scale_down_adjustment}"
@@ -696,7 +696,7 @@ module "group_terminating_instances" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
-  count = "${var.asg_count}"
+  count = "${var.enable_scaling_actions ? var.asg_count : 0}"
 
   alarm_name          = "${join("-",compact(list("ScaleAlarmHigh", var.resource_name, format("%03d",count.index+1))))}"
   alarm_description   = "Scale-up if ${var.cw_scaling_metric} ${var.cw_high_operator} ${var.cw_high_threshold}% for ${var.cw_high_period} seconds ${var.cw_high_evaluations} times."
@@ -715,7 +715,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_low" {
-  count = "${var.asg_count}"
+  count = "${var.enable_scaling_actions ? var.asg_count : 0}"
 
   alarm_name          = "${join("-",compact(list("ScaleAlarmLow", var.resource_name, format("%03d",count.index+1))))}"
   alarm_description   = "Scale-down if ${var.cw_scaling_metric} ${var.cw_low_operator} ${var.cw_low_threshold}% for ${var.cw_low_period} seconds ${var.cw_low_evaluations} times."
