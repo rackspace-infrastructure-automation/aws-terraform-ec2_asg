@@ -37,6 +37,12 @@ variable "enable_rolling_updates" {
   default     = true
 }
 
+variable "enable_scaling_actions" {
+  description = "Should this autoscaling group be configured with scaling alarms to manage the desired count.  Set this variable to false if another process will manage the desired count, such as EKS Cluster Autoscaler."
+  type        = "string"
+  default     = true
+}
+
 variable "environment" {
   description = "Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test"
   type        = "string"
