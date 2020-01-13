@@ -1,13 +1,18 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 provider "aws" {
-  version = "~> 1.2"
+  version = "~> 2.2"
   region  = "us-west-2"
 }
 
 provider "random" {
-  version = "~> 1.0"
+  version = "~> 2.0"
 }
 
-data "aws_region" "current_region" {}
+data "aws_region" "current_region" {
+}
 
 resource "random_string" "password" {
   length      = 16
@@ -42,7 +47,7 @@ module "sns_sqs" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=master"
 
   create_subscription_1 = true
-  endpoint_1            = "${aws_sqs_queue.ec2-asg-test_sqs.arn}"
+  endpoint_1            = aws_sqs_queue.ec2-asg-test_sqs.arn
   protocol_1            = "sqs"
   topic_name            = "${random_string.sqs_rstring.result}-ec2-asg-test-topic"
 }
@@ -73,7 +78,7 @@ module "ec2_asg_centos7_with_codedeploy_test" {
   rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
   cw_low_period                          = "300"
@@ -89,13 +94,13 @@ module "ec2_asg_centos7_with_codedeploy_test" {
 
   ec2_scale_up_adjustment    = "1"
   cw_high_threshold          = "60"
-  scaling_notification_topic = "${module.sns_sqs.topic_arn}"
+  scaling_notification_topic = module.sns_sqs.topic_arn
   cw_low_threshold           = "30"
   resource_name              = "${random_string.name_rstring.result}-ec2_asg_centos7_with_codedeploy"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
-  security_group_list        = ["${module.vpc.default_sg}"]
+  security_group_list        = [module.vpc.default_sg]
   perform_ssm_inventory_tag  = "True"
   terminated_instances       = "30"
   health_check_type          = "EC2"
@@ -125,6 +130,7 @@ module "ec2_asg_centos7_with_codedeploy_test" {
         "timeoutSeconds": 300
       }
 EOF
+
     },
     {
       ssm_add_step = <<EOF
@@ -141,6 +147,7 @@ EOF
         "timeoutSeconds": 300
       }
 EOF
+
     },
   ]
 
@@ -194,7 +201,7 @@ module "ec2_asg_centos7_no_codedeploy_test" {
   rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
   cw_low_period                          = "300"
@@ -210,13 +217,13 @@ module "ec2_asg_centos7_no_codedeploy_test" {
 
   ec2_scale_up_adjustment    = "1"
   cw_high_threshold          = "60"
-  scaling_notification_topic = "${module.sns_sqs.topic_arn}"
+  scaling_notification_topic = module.sns_sqs.topic_arn
   cw_low_threshold           = "30"
   resource_name              = "${random_string.name_rstring.result}-ec2_asg_centos7_no_codedeploy"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
-  security_group_list        = ["${module.vpc.default_sg}"]
+  security_group_list        = [module.vpc.default_sg]
   perform_ssm_inventory_tag  = "True"
   terminated_instances       = "30"
   health_check_type          = "EC2"
@@ -246,6 +253,7 @@ module "ec2_asg_centos7_no_codedeploy_test" {
         "timeoutSeconds": 300
       }
 EOF
+
     },
     {
       ssm_add_step = <<EOF
@@ -262,6 +270,7 @@ EOF
         "timeoutSeconds": 300
       }
 EOF
+
     },
   ]
 
@@ -315,7 +324,7 @@ module "ec2_asg_centos7_no_scaleft_test" {
   rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
   cw_low_period                          = "300"
@@ -331,13 +340,13 @@ module "ec2_asg_centos7_no_scaleft_test" {
 
   ec2_scale_up_adjustment    = "1"
   cw_high_threshold          = "60"
-  scaling_notification_topic = "${module.sns_sqs.topic_arn}"
+  scaling_notification_topic = module.sns_sqs.topic_arn
   cw_low_threshold           = "30"
   resource_name              = "${random_string.name_rstring.result}-ec2_asg_centos7_no_scaleft"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
-  security_group_list        = ["${module.vpc.default_sg}"]
+  security_group_list        = [module.vpc.default_sg]
   perform_ssm_inventory_tag  = "True"
   terminated_instances       = "30"
   health_check_type          = "EC2"
@@ -368,6 +377,7 @@ module "ec2_asg_centos7_no_scaleft_test" {
         "timeoutSeconds": 300
       }
 EOF
+
     },
     {
       ssm_add_step = <<EOF
@@ -384,6 +394,7 @@ EOF
         "timeoutSeconds": 300
       }
 EOF
+
     },
   ]
 
@@ -438,7 +449,7 @@ module "ec2_asg_windows_with_codedeploy_test" {
   cw_high_period                         = "60"
   enable_scaling_actions                 = false
   enable_scaling_notification            = true
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
   cw_low_period                          = "300"
@@ -454,13 +465,13 @@ module "ec2_asg_windows_with_codedeploy_test" {
 
   ec2_scale_up_adjustment    = "1"
   cw_high_threshold          = "60"
-  scaling_notification_topic = "${module.sns_sqs.topic_arn}"
+  scaling_notification_topic = module.sns_sqs.topic_arn
   cw_low_threshold           = "30"
   resource_name              = "${random_string.name_rstring.result}-ec2_asg_windows_with_codedeploy"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
-  security_group_list        = ["${module.vpc.default_sg}"]
+  security_group_list        = [module.vpc.default_sg]
   perform_ssm_inventory_tag  = "True"
   terminated_instances       = "30"
   health_check_type          = "EC2"
@@ -487,6 +498,7 @@ module "ec2_asg_windows_with_codedeploy_test" {
         "timeoutSeconds": 300
       }
 EOF
+
     },
     {
       ssm_add_step = <<EOF
@@ -503,6 +515,7 @@ EOF
         "timeoutSeconds": 300
       }
 EOF
+
     },
   ]
 
@@ -557,7 +570,7 @@ module "ec2_asg_windows_no_codedeploy_test" {
   cw_high_period                         = "60"
   enable_scaling_actions                 = false
   enable_scaling_notification            = true
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
   cw_low_period                          = "300"
@@ -573,13 +586,13 @@ module "ec2_asg_windows_no_codedeploy_test" {
 
   ec2_scale_up_adjustment    = "1"
   cw_high_threshold          = "60"
-  scaling_notification_topic = "${module.sns_sqs.topic_arn}"
+  scaling_notification_topic = module.sns_sqs.topic_arn
   cw_low_threshold           = "30"
   resource_name              = "${random_string.name_rstring.result}-ec2_asg_windows_no_codedeploy"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
-  security_group_list        = ["${module.vpc.default_sg}"]
+  security_group_list        = [module.vpc.default_sg]
   perform_ssm_inventory_tag  = "True"
   terminated_instances       = "30"
   health_check_type          = "EC2"
@@ -606,6 +619,7 @@ module "ec2_asg_windows_no_codedeploy_test" {
         "timeoutSeconds": 300
       }
 EOF
+
     },
     {
       ssm_add_step = <<EOF
@@ -622,6 +636,7 @@ EOF
         "timeoutSeconds": 300
       }
 EOF
+
     },
   ]
 
@@ -676,7 +691,7 @@ module "ec2_asg_windows_no_scaleft_test" {
   cw_high_period                         = "60"
   enable_scaling_actions                 = false
   enable_scaling_notification            = true
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
   cw_low_period                          = "300"
@@ -692,13 +707,13 @@ module "ec2_asg_windows_no_scaleft_test" {
 
   ec2_scale_up_adjustment    = "1"
   cw_high_threshold          = "60"
-  scaling_notification_topic = "${module.sns_sqs.topic_arn}"
+  scaling_notification_topic = module.sns_sqs.topic_arn
   cw_low_threshold           = "30"
   resource_name              = "${random_string.name_rstring.result}-ec2_asg_windows_no_scaleft"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "Group1Patching"
   health_check_grace_period  = "300"
-  security_group_list        = ["${module.vpc.default_sg}"]
+  security_group_list        = [module.vpc.default_sg]
   perform_ssm_inventory_tag  = "True"
   terminated_instances       = "30"
   health_check_type          = "EC2"
@@ -726,6 +741,7 @@ module "ec2_asg_windows_no_scaleft_test" {
         "timeoutSeconds": 300
       }
 EOF
+
     },
     {
       ssm_add_step = <<EOF
@@ -742,6 +758,7 @@ EOF
         "timeoutSeconds": 300
       }
 EOF
+
     },
   ]
 

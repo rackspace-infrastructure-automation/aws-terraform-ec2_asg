@@ -1,5 +1,9 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 provider "aws" {
-  version = "~> 1.2"
+  version = "~> 2.2"
   region  = "us-west-2"
 }
 
@@ -46,7 +50,7 @@ module "sns_sqs" {
 
   create_subscription_1 = true
   protocol_1            = "sqs"
-  endpoint_1            = "${aws_sqs_queue.ec2-asg-test_sqs.arn}"
+  endpoint_1            = aws_sqs_queue.ec2-asg-test_sqs.arn
 }
 
 module "ec2_asg" {
@@ -55,9 +59,9 @@ module "ec2_asg" {
   ec2_os    = "centos7"
   asg_count = "2"
 
-  load_balancer_names                    = ["${aws_elb.my_elb.name}"]
+  load_balancer_names                    = [aws_elb.my_elb.name]
   cw_low_operator                        = "LessThanThreshold"
-  instance_role_managed_policy_arns      = ["${aws_iam_policy.test_policy_1.arn}", "${aws_iam_policy.test_policy_2.arn}"]
+  instance_role_managed_policy_arns      = [aws_iam_policy.test_policy_1.arn, aws_iam_policy.test_policy_2.arn]
   instance_role_managed_policy_arn_count = "2"
   environment                            = "Development"
   ssm_association_refresh_rate           = "rate(1 day)"
@@ -69,10 +73,10 @@ module "ec2_asg" {
   rackspace_managed                      = true
   cw_high_period                         = "60"
   enable_scaling_notification            = true
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   secondary_ebs_volume_iops              = "0"
   ec2_scale_down_adjustment              = "1"
-  image_id                               = "${data.aws_ami.amazon_centos_7.image_id}"
+  image_id                               = data.aws_ami.amazon_centos_7.image_id
   cw_low_period                          = "300"
   key_pair                               = "my_ec2_key_name"
   tenancy                                = "default"
@@ -86,13 +90,13 @@ module "ec2_asg" {
 
   ec2_scale_up_adjustment    = "1"
   cw_high_threshold          = "60"
-  scaling_notification_topic = "${aws_sns_topic.my_test_sns.arn}"
+  scaling_notification_topic = aws_sns_topic.my_test_sns.arn
   cw_low_threshold           = "30"
   resource_name              = "my_test_instance"
   ec2_scale_up_cool_down     = "60"
   ssm_patching_group         = "MyPatchGroup1"
   health_check_grace_period  = "300"
-  security_group_list        = ["${module.vpc.default_sg}"]
+  security_group_list        = [module.vpc.default_sg]
   perform_ssm_inventory_tag  = "True"
   terminated_instances       = "30"
   health_check_type          = "EC2"
@@ -122,6 +126,7 @@ module "ec2_asg" {
         "timeoutSeconds": 300
       }
 EOF
+
     },
     {
       ssm_add_step = <<EOF
@@ -138,6 +143,7 @@ EOF
         "timeoutSeconds": 300
       }
 EOF
+
     },
   ]
 
