@@ -380,8 +380,8 @@ data "template_file" "user_data" {
   template = file("${path.module}/text/${local.user_data_map[local.ec2_os]}")
 
   vars = {
-    initial_commands = var.initial_userdata_commands != "" ? var.initial_userdata_commands : ""
-    final_commands   = var.final_userdata_commands != "" ? var.final_userdata_commands : ""
+    initial_commands = var.initial_userdata_commands
+    final_commands   = var.final_userdata_commands
   }
 }
 
@@ -395,36 +395,36 @@ data "aws_caller_identity" "current_account" {}
 
 data "aws_iam_policy_document" "mod_ec2_assume_role_policy_doc" {
   statement {
-    effect  = "Allow"
     actions = ["sts:AssumeRole"]
+    effect  = "Allow"
 
     principals {
-      type        = "Service"
       identifiers = ["ec2.amazonaws.com"]
+      type        = "Service"
     }
   }
 }
 
 data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
   statement {
-    effect    = "Allow"
     actions   = ["cloudformation:Describe"]
+    effect    = "Allow"
     resources = ["*"]
   }
 
   statement {
-    effect = "Allow"
+    effect    = "Allow"
+    resources = ["*"]
 
     actions = [
       "ssm:CreateAssociation",
       "ssm:DescribeInstanceInformation",
     ]
-
-    resources = ["*"]
   }
 
   statement {
-    effect = "Allow"
+    effect    = "Allow"
+    resources = ["*"]
 
     actions = [
       "cloudwatch:GetMetricStatistics",
@@ -437,12 +437,11 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
       "logs:PutLogEvents",
       "ssm:GetParameter",
     ]
-
-    resources = ["*"]
   }
 
   statement {
-    effect = "Allow"
+    effect    = "Allow"
+    resources = ["*"]
 
     actions = [
       "s3:PutObject",
@@ -453,23 +452,17 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
       "s3:ListBucket",
       "s3:ListBucketMultipartUploads",
     ]
-
-    resources = ["*"]
   }
 
   statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:GetBucketLocation",
-    ]
-
-    resources = ["*"]
-  }
-
-  statement {
+    actions   = ["s3:GetBucketLocation"]
     effect    = "Allow"
+    resources = ["*"]
+  }
+
+  statement {
     actions   = ["ec2:DescribeTags"]
+    effect    = "Allow"
     resources = ["*"]
   }
 }
@@ -477,67 +470,67 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
 resource "aws_iam_policy" "create_instance_role_policy" {
   count = var.instance_profile_override ? 0 : 1
 
-  name        = "InstanceRolePolicy-${var.resource_name}"
   description = "Rackspace Instance Role Policies for EC2"
+  name        = "InstanceRolePolicy-${var.resource_name}"
   policy      = data.aws_iam_policy_document.mod_ec2_instance_role_policies.json
 }
 
 resource "aws_iam_role" "mod_ec2_instance_role" {
   count = var.instance_profile_override ? 0 : 1
 
+  assume_role_policy = data.aws_iam_policy_document.mod_ec2_assume_role_policy_doc.json
   name               = "InstanceRole-${var.resource_name}"
   path               = "/"
-  assume_role_policy = data.aws_iam_policy_document.mod_ec2_assume_role_policy_doc.json
 }
 
 resource "aws_iam_role_policy_attachment" "attach_core_ssm_policy" {
   count = var.instance_profile_override ? 0 : 1
 
-  role       = aws_iam_role.mod_ec2_instance_role[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = aws_iam_role.mod_ec2_instance_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "attach_cw_ssm_policy" {
   count = var.instance_profile_override ? 0 : 1
 
-  role       = aws_iam_role.mod_ec2_instance_role[0].name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role       = aws_iam_role.mod_ec2_instance_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "attach_ad_ssm_policy" {
   count = var.instance_profile_override ? 0 : 1
 
-  role       = aws_iam_role.mod_ec2_instance_role[0].name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMDirectoryServiceAccess"
+  role       = aws_iam_role.mod_ec2_instance_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "attach_codedeploy_policy" {
   count = var.install_codedeploy_agent && var.instance_profile_override != true ? 1 : 0
 
-  role       = aws_iam_role.mod_ec2_instance_role[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy"
+  role       = aws_iam_role.mod_ec2_instance_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "attach_instance_role_policy" {
   count = var.instance_profile_override ? 0 : 1
 
-  role       = aws_iam_role.mod_ec2_instance_role[0].name
   policy_arn = aws_iam_policy.create_instance_role_policy[0].arn
+  role       = aws_iam_role.mod_ec2_instance_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "attach_additonal_policies" {
   count = var.instance_profile_override ? 0 : var.instance_role_managed_policy_arn_count
 
-  role       = aws_iam_role.mod_ec2_instance_role[0].name
   policy_arn = element(var.instance_role_managed_policy_arns, count.index)
+  role       = aws_iam_role.mod_ec2_instance_role[0].name
 }
 
 resource "aws_iam_instance_profile" "instance_role_instance_profile" {
   count = var.instance_profile_override ? 0 : 1
 
   name = "InstanceRoleInstanceProfile-${var.resource_name}"
-  role = aws_iam_role.mod_ec2_instance_role[0].name
   path = "/"
+  role = aws_iam_role.mod_ec2_instance_role[0].name
 }
 
 #
@@ -545,24 +538,27 @@ resource "aws_iam_instance_profile" "instance_role_instance_profile" {
 #
 
 resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
-  name_prefix = join(
-    "-",
-    compact(
-      [
-        "LaunchConfigWith2ndEbs",
-        var.resource_name,
-        format("%03d-", count.index + 1),
-      ],
-    ),
-  )
-  count             = var.secondary_ebs_volume_size != "" ? 1 : 0
-  user_data_base64  = base64encode(data.template_file.user_data.rendered)
+  count = var.secondary_ebs_volume_size != "" ? 1 : 0
+
+  ebs_optimized     = var.enable_ebs_optimization
   enable_monitoring = var.detailed_monitoring
   image_id          = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
+  instance_type     = var.instance_type
   key_name          = var.key_pair
-  security_groups   = var.security_group_list
+  name_prefix       = join("-", compact(["LaunchConfigWith2ndEbs", var.resource_name, format("%03d-", count.index + 1)]))
   placement_tenancy = var.tenancy
-  ebs_optimized     = var.enable_ebs_optimization
+  security_groups   = var.security_group_list
+  user_data_base64  = base64encode(data.template_file.user_data.rendered)
+
+  ebs_block_device {
+    device_name = local.ebs_device_map[local.ec2_os]
+    encrypted   = var.secondary_ebs_volume_existing_id == "" ? var.encrypt_secondary_ebs_volume : false
+    iops        = var.secondary_ebs_volume_iops
+    snapshot_id = var.secondary_ebs_volume_existing_id
+    volume_size = var.secondary_ebs_volume_size
+    volume_type = var.secondary_ebs_volume_type
+  }
+
   iam_instance_profile = element(
     coalescelist(
       aws_iam_instance_profile.instance_role_instance_profile.*.name,
@@ -570,21 +566,11 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
     ),
     0,
   )
-  instance_type = var.instance_type
 
   root_block_device {
-    volume_type = var.primary_ebs_volume_type
-    volume_size = var.primary_ebs_volume_size
     iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
-  }
-
-  ebs_block_device {
-    device_name = local.ebs_device_map[local.ec2_os]
-    volume_type = var.secondary_ebs_volume_type
-    volume_size = var.secondary_ebs_volume_size
-    iops        = var.secondary_ebs_volume_iops
-    encrypted   = var.secondary_ebs_volume_existing_id == "" ? var.encrypt_secondary_ebs_volume : false
-    snapshot_id = var.secondary_ebs_volume_existing_id
+    volume_size = var.primary_ebs_volume_size
+    volume_type = var.primary_ebs_volume_type
   }
 
   lifecycle {
@@ -593,24 +579,18 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
 }
 
 resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
-  name_prefix = join(
-    "-",
-    compact(
-      [
-        "LaunchConfigNo2ndEbs",
-        var.resource_name,
-        format("%03d-", count.index + 1),
-      ],
-    ),
-  )
-  count             = var.secondary_ebs_volume_size != "" ? 0 : 1
-  user_data_base64  = base64encode(data.template_file.user_data.rendered)
+  count = var.secondary_ebs_volume_size != "" ? 0 : 1
+
+  ebs_optimized     = var.enable_ebs_optimization
   enable_monitoring = var.detailed_monitoring
   image_id          = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
+  instance_type     = var.instance_type
   key_name          = var.key_pair
-  security_groups   = var.security_group_list
+  name_prefix       = join("-", compact(["LaunchConfigNo2ndEbs", var.resource_name, format("%03d-", count.index + 1)]))
   placement_tenancy = var.tenancy
-  ebs_optimized     = var.enable_ebs_optimization
+  security_groups   = var.security_group_list
+  user_data_base64  = base64encode(data.template_file.user_data.rendered)
+
   iam_instance_profile = element(
     coalescelist(
       aws_iam_instance_profile.instance_role_instance_profile.*.name,
@@ -618,7 +598,6 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
     ),
     0,
   )
-  instance_type = var.instance_type
 
   root_block_device {
     volume_type = var.primary_ebs_volume_type
@@ -634,94 +613,56 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
 resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
   count = var.enable_scaling_actions ? var.asg_count : 0
 
-  name = join(
-    "-",
-    compact(
-      [
-        "ec2_scale_up_policy",
-        var.resource_name,
-        format("%03d", count.index + 1),
-      ],
-    ),
-  )
-  scaling_adjustment     = var.ec2_scale_up_adjustment
   adjustment_type        = "ChangeInCapacity"
-  cooldown               = var.ec2_scale_up_cool_down
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
+  cooldown               = var.ec2_scale_up_cool_down
+  name                   = join("-", compact(["ec2_scale_up_policy", var.resource_name, format("%03d", count.index + 1)]))
+  scaling_adjustment     = var.ec2_scale_up_adjustment
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
   count = var.enable_scaling_actions ? var.asg_count : 0
 
-  name = join(
-    "-",
-    compact(
-      [
-        "ec2_scale_down_policy",
-        var.resource_name,
-        format("%03d", count.index + 1),
-      ],
-    ),
-  )
-  scaling_adjustment     = var.ec2_scale_down_adjustment > 0 ? -var.ec2_scale_down_adjustment : var.ec2_scale_down_adjustment
   adjustment_type        = "ChangeInCapacity"
-  cooldown               = var.ec2_scale_down_cool_down
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
+  cooldown               = var.ec2_scale_down_cool_down
+  name                   = join("-", compact(["ec2_scale_down_policy", var.resource_name, format("%03d", count.index + 1)]))
+  scaling_adjustment     = var.ec2_scale_down_adjustment > 0 ? -var.ec2_scale_down_adjustment : var.ec2_scale_down_adjustment
 }
 
 resource "aws_autoscaling_group" "autoscalegrp" {
   count = var.asg_count
 
-  name_prefix = join(
-    "-",
-    compact(
-      [
-        "AutoScaleGrp",
-        var.resource_name,
-        format("%03d-", count.index + 1),
-      ],
-    ),
-  )
-  max_size                  = var.scaling_max
-  min_size                  = var.scaling_min
   health_check_grace_period = var.health_check_grace_period
   health_check_type         = var.health_check_type
-
-  # coalescelist and list("novalue") were used here due to element not being able to handle empty lists, even if conditional will not allow portion to execute
-  launch_configuration = var.secondary_ebs_volume_size != "" ? element(
-    coalescelist(
-      aws_launch_configuration.launch_config_with_secondary_ebs.*.name,
-      ["novalue"],
-    ),
-    count.index,
-    ) : element(
-    coalescelist(
-      aws_launch_configuration.launch_config_no_secondary_ebs.*.name,
-      ["novalue"],
-    ),
-    count.index,
-  )
-  vpc_zone_identifier       = var.subnets
   load_balancers            = var.load_balancer_names
+  max_size                  = var.scaling_max
   metrics_granularity       = "1Minute"
+  min_size                  = var.scaling_min
+  name_prefix               = join("-", compact(["AutoScaleGrp", var.resource_name, format("%03d-", count.index + 1)]))
+  tags                      = concat(local.tags, var.additional_tags)
   target_group_arns         = var.target_group_arns
+  vpc_zone_identifier       = var.subnets
   wait_for_capacity_timeout = var.asg_wait_for_capacity_timeout
 
-  tags = concat(local.tags, var.additional_tags)
+  # coalescelist and list("novalue") were used here due to element not being able to handle empty lists, even if conditional will not allow portion to execute
+  launch_configuration = element(coalescelist(
+    aws_launch_configuration.launch_config_with_secondary_ebs.*.name,
+    aws_launch_configuration.launch_config_no_secondary_ebs.*.name),
+  count.index)
+
+  depends_on = [aws_ssm_association.ssm_bootstrap_assoc]
 
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = [aws_ssm_association.ssm_bootstrap_assoc]
 }
 
 resource "aws_autoscaling_notification" "scaling_notifications" {
   count = var.enable_scaling_notification ? var.asg_count : 0
 
-  group_names = [
-    element(aws_autoscaling_group.autoscalegrp.*.name, count.index),
-  ]
+  group_names = [element(aws_autoscaling_group.autoscalegrp.*.name, count.index)]
+  topic_arn = var.scaling_notification_topic
 
   notifications = [
     "autoscaling:EC2_INSTANCE_LAUNCH",
@@ -729,23 +670,18 @@ resource "aws_autoscaling_notification" "scaling_notifications" {
     "autoscaling:EC2_INSTANCE_TERMINATE",
     "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
   ]
-
-  topic_arn = var.scaling_notification_topic
 }
 
 resource "aws_autoscaling_notification" "rs_support_emergency" {
   count = var.rackspace_managed ? var.asg_count : 0
 
-  group_names = [
-    element(aws_autoscaling_group.autoscalegrp.*.name, count.index),
-  ]
+  group_names = [element(aws_autoscaling_group.autoscalegrp.*.name, count.index)]
+  topic_arn = "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency"
 
   notifications = [
     "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
     "autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
   ]
-
-  topic_arn = "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency"
 }
 
 #
@@ -783,28 +719,16 @@ module "group_terminating_instances" {
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
   count = var.enable_scaling_actions ? var.asg_count : 0
 
-  alarm_name = join(
-    "-",
-    compact(
-      [
-        "ScaleAlarmHigh",
-        var.resource_name,
-        format("%03d", count.index + 1),
-      ],
-    ),
-  )
+  alarm_actions = [element(aws_autoscaling_policy.ec2_scale_up_policy.*.arn, count.index)]
   alarm_description   = "Scale-up if ${var.cw_scaling_metric} ${var.cw_high_operator} ${var.cw_high_threshold}% for ${var.cw_high_period} seconds ${var.cw_high_evaluations} times."
+  alarm_name = join("-", compact(["ScaleAlarmHigh", var.resource_name, format("%03d", count.index + 1)]))
+  comparison_operator = var.cw_high_operator
+  evaluation_periods  = var.cw_high_evaluations
+  metric_name         = var.cw_scaling_metric
   namespace           = "AWS/EC2"
   period              = var.cw_high_period
-  comparison_operator = var.cw_high_operator
   statistic           = "Average"
   threshold           = var.cw_high_threshold
-  metric_name         = var.cw_scaling_metric
-  evaluation_periods  = var.cw_high_evaluations
-  alarm_actions = [element(
-    aws_autoscaling_policy.ec2_scale_up_policy.*.arn,
-    count.index,
-  )]
 
   dimensions = {
     AutoScalingGroupName = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
@@ -814,28 +738,16 @@ resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_low" {
   count = var.enable_scaling_actions ? var.asg_count : 0
 
-  alarm_name = join(
-    "-",
-    compact(
-      [
-        "ScaleAlarmLow",
-        var.resource_name,
-        format("%03d", count.index + 1),
-      ],
-    ),
-  )
+  alarm_actions = [element(aws_autoscaling_policy.ec2_scale_down_policy.*.arn, count.index)]
   alarm_description   = "Scale-down if ${var.cw_scaling_metric} ${var.cw_low_operator} ${var.cw_low_threshold}% for ${var.cw_low_period} seconds ${var.cw_low_evaluations} times."
+  alarm_name = join("-", compact(["ScaleAlarmLow", var.resource_name, format("%03d", count.index + 1)]))
+  comparison_operator = var.cw_low_operator
+  evaluation_periods  = var.cw_low_evaluations
+  metric_name         = var.cw_scaling_metric
   namespace           = "AWS/EC2"
   period              = var.cw_low_period
-  comparison_operator = var.cw_low_operator
   statistic           = "Average"
   threshold           = var.cw_low_threshold
-  metric_name         = var.cw_scaling_metric
-  evaluation_periods  = var.cw_low_evaluations
-  alarm_actions = [element(
-    aws_autoscaling_policy.ec2_scale_down_policy.*.arn,
-    count.index,
-  )]
 
   dimensions = {
     AutoScalingGroupName = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
@@ -876,46 +788,40 @@ data "template_file" "additional_ssm_docs" {
   }
 }
 
-data "template_file" "ssm_bootstrap_template" {
-  template = file("${path.module}/text/ssm_bootstrap_template.json")
+locals {
+  command_list = concat(
+    data.template_file.ssm_command_docs.*.rendered,
+    [local.ssm_codedeploy_include[local.codedeploy_install]],
+    [local.ssm_scaleft_include[local.scaleft_install]],
+    data.template_file.additional_ssm_docs.*.rendered,
+  )
 
-  vars = {
-    run_command_list = join(
-      ",",
-      compact(
-        concat(
-          data.template_file.ssm_command_docs.*.rendered,
-          [local.ssm_codedeploy_include[local.codedeploy_install]],
-          [local.ssm_scaleft_include[local.scaleft_install]],
-          data.template_file.additional_ssm_docs.*.rendered,
-        ),
-      ),
-    )
-  }
+  ssm_template_vars = {run_command_list = join(",", compact(local.command_list))}
 }
 
 resource "aws_ssm_document" "ssm_bootstrap_doc" {
-  name            = "SSMDocument-${var.resource_name}"
-  document_type   = "Command"
+  content         = templatefile("${path.module}/text/ssm_bootstrap_template.json", local.ssm_template_vars)
   document_format = "JSON"
-  content         = data.template_file.ssm_bootstrap_template.rendered
+  document_type   = "Command"
+  name            = "SSMDocument-${var.resource_name}"
+}
+
+locals {
+  cwagentparam_vars = {
+    application_log = aws_cloudwatch_log_group.application_logs.name
+    system_log      = aws_cloudwatch_log_group.system_logs.name
+  }
+
+  cwagentparam_object = jsondecode(templatefile("${path.module}/text/${local.cwagent_config}", local.cwagentparam_vars))
 }
 
 resource "aws_ssm_parameter" "cwagentparam" {
   count = var.provide_custom_cw_agent_config ? 0 : 1
 
-  name        = local.cw_config_parameter_name
   description = "${var.resource_name} Cloudwatch Agent configuration"
+  name        = local.cw_config_parameter_name
   type        = "String"
-  value = replace(
-    replace(
-      file("${path.module}/text/${local.cwagent_config}"),
-      "((SYSTEM_LOG_GROUP_NAME))",
-      aws_cloudwatch_log_group.system_logs.name,
-    ),
-    "((APPLICATION_LOG_GROUP_NAME))",
-    aws_cloudwatch_log_group.application_logs.name,
-  )
+  value       = jsonencode(local.cwagentparam_object)
 }
 
 resource "aws_ssm_association" "ssm_bootstrap_assoc" {
