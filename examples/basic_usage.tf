@@ -47,7 +47,6 @@ module "sns_sqs" {
 module "ec2_asg" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.12.0"
 
-  additional_ssm_bootstrap_step_count    = "2"
   asg_count                              = "2"
   asg_wait_for_capacity_timeout          = "10m"
   backup_tag_value                       = "False"
@@ -99,40 +98,30 @@ module "ec2_asg" {
   tenancy                                = "default"
   terminated_instances                   = "30"
 
-  additional_ssm_bootstrap_list = [
+  ssm_bootstrap_list = [
     {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package",
-          "documentParameters": {
-            "Packages": "bind bindutils"
-          },
-          "documentType": "SSMDocument"
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package",
+        documentParameters = {
+          Packages = "bind bindutils"
         },
-        "name": "InstallBindAndTools",
-        "timeoutSeconds": 300
-      }
-EOF
-
+        documentType = "SSMDocument"
+      },
+      name           = "InstallBindAndTools",
+      timeoutSeconds = 300
     },
     {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AWS-RunShellScript",
-          "documentParameters": {
-            "commands": ["touch /tmp/myfile"]
-          },
-          "documentType": "SSMDocument"
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "AWS-RunShellScript",
+        documentParameters = {
+          commands = ["touch /tmp/myfile"]
         },
-        "name": "CreateFile",
-        "timeoutSeconds": 300
-      }
-EOF
-
+        documentType = "SSMDocument"
+      },
+      name           = "CreateFile",
+      timeoutSeconds = 300
     },
   ]
 

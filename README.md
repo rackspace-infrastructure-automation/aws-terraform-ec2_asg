@@ -14,9 +14,7 @@ module "asg" {
   security_groups = ["${module.sg.private_web_security_group_id}"]
   subnets         = ["${module.vpc.private_subnets}"]
 }
-```
-
-Full working references are available at [examples](examples)
+```Full working references are available at [examples](examples)
 
 ## Other TF Modules Used
 
@@ -35,7 +33,15 @@ The following module variables were updated to better meet current Rackspace sty
 - `security_group_list` -> `security_groups`  
 - `resource_name` -> `name`
 
-Additionally, new variables `tags` and `tags_asg` were added to replace the functionality of the `additional_tags` variable.  `tags` allows setting tags on all resources, while `tags_asg` sets tags only on the ASG itself.  `additional_tags` will continue to work as expected, but will be removed in a future release.
+The following variables are no longer neccessary and were removed
+
+- `additional_ssm_bootstrap_step_count`
+
+Several new variables were introduced to provide existing functionality, with a simplified format.  The original formmating was also retained to allow easier transition.
+
+New variables `tags` and `tags_asg` were added to replace the functionality of the `additional_tags` variable.  `tags` allows setting tags on all resources, while `tags_asg` sets tags only on the ASG itself.  `additional_tags` will continue to work as expected, but will be removed in a future release.
+
+New variable `ssm_bootstrap_list` was added to allow setting the SSM association steps using objects instead of strings, allowing easier linting and formatting of these lines.  The `additional_ssm_bootstrap_list` variable will continue to work, but will be deprecated in a future release.
 
 ## Providers
 
@@ -49,8 +55,7 @@ Additionally, new variables `tags` and `tags_asg` were added to replace the func
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:-----:|
-| additional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples. | `list(map(string))` | `[]` | no |
-| additional\_ssm\_bootstrap\_step\_count | Count of steps added for input 'additional\_ssm\_bootstrap\_list'. This is required since 'additional\_ssm\_bootstrap\_list' is a list of maps | `string` | `"0"` | no |
+| additional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `ssm_bootstrap_list` variable. | `list(map(string))` | `[]` | no |
 | additional\_tags | Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `tags` and `tags_asg` variables. | `list(map(string))` | `[]` | no |
 | asg\_count | Number of identical ASG's to deploy | `string` | `"1"` | no |
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | `string` | `"10m"` | no |
@@ -110,6 +115,7 @@ Additionally, new variables `tags` and `tags_asg` were added to replace the func
 | secondary\_ebs\_volume\_type | EBS Volume Type. e.g. gp2, io1, st1, sc1 | `string` | `"gp2"` | no |
 | security\_groups | A list of EC2 security IDs to assign to this resource. | `list(string)` | n/a | yes |
 | ssm\_association\_refresh\_rate | A cron or rate pattern to define the SSM Association refresh schedule, defaulting to once per day. See https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-cron.html for more details. Schedule can be disabled by providing an empty string. | `string` | `"rate(1 day)"` | no |
+| ssm\_bootstrap\_list | A list of objects consisting of actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples. | `any` | `[]` | no |
 | ssm\_patching\_group | Group ID to be used by System Manager for Patching | `string` | `""` | no |
 | subnets | List of subnets for Application. e.g. ['subnet-8da92df7', 'subnet-9e5dc5f6', 'subnet-497eaf33'] | `list(string)` | n/a | yes |
 | tags | A map of tags to apply to all resources.  These tags will all be propagated to ASG instances and set on all other resources. | `map(string)` | `{}` | no |

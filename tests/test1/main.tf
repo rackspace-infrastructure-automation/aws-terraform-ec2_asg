@@ -47,7 +47,6 @@ module "sns" {
 module "ec2_asg_centos7_with_codedeploy_test" {
   source = "../../module"
 
-  additional_ssm_bootstrap_step_count    = 2
   asg_count                              = 2
   ec2_os                                 = "centos7"
   enable_scaling_notification            = true
@@ -61,45 +60,37 @@ module "ec2_asg_centos7_with_codedeploy_test" {
   ssm_patching_group                     = "Group1Patching"
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
 
-  additional_ssm_bootstrap_list = [
-    {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package",
-          "documentParameters": {
-            "Packages": "bind bindutils"
-          },
-          "documentType": "SSMDocument"
-        },
-        "name": "InstallBindAndTools",
-        "timeoutSeconds": 300
-      }
-EOF
-    },
-    {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AWS-RunShellScript",
-          "documentParameters": {
-            "commands": ["touch /tmp/myfile"]
-          },
-          "documentType": "SSMDocument"
-        },
-        "name": "CreateFile",
-        "timeoutSeconds": 300
-      }
-EOF
-    },
-  ]
-
   instance_role_managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
     "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole",
     "arn:aws:iam::aws:policy/CloudWatchActionsEC2Access",
+  ]
+
+  ssm_bootstrap_list = [
+    {
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package",
+        documentParameters = {
+          Packages = "bind bindutils"
+        },
+        documentType = "SSMDocument"
+      },
+      name           = "InstallBindAndTools",
+      timeoutSeconds = 300
+    },
+    {
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "AWS-RunShellScript",
+        documentParameters = {
+          commands = ["touch /tmp/myfile"]
+        },
+        documentType = "SSMDocument"
+      },
+      name           = "CreateFile",
+      timeoutSeconds = 300
+    },
   ]
 
   tags = {
@@ -166,7 +157,6 @@ module "ec2_asg_centos7_no_scaleft_test" {
 module "ec2_asg_windows_with_codedeploy_test" {
   source = "../../module"
 
-  additional_ssm_bootstrap_step_count    = "2"
   ec2_os                                 = "windows2016"
   enable_scaling_actions                 = false
   enable_scaling_notification            = true
@@ -180,42 +170,34 @@ module "ec2_asg_windows_with_codedeploy_test" {
   ssm_patching_group                     = "Group1Patching"
   subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
 
-  additional_ssm_bootstrap_list = [
-    {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Datadog",
-          "documentType": "SSMDocument"
-        },
-        "name": "InstallDataDog",
-        "timeoutSeconds": 300
-      }
-EOF
-    },
-    {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AWS-RunPowerShellScript",
-          "documentParameters": {
-            "commands": ["echo $null >> C:\testfile"]
-          },
-          "documentType": "SSMDocument"
-        },
-        "name": "CreateFile",
-        "timeoutSeconds": 300
-      }
-EOF
-    },
-  ]
-
   instance_role_managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
     "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole",
     "arn:aws:iam::aws:policy/CloudWatchActionsEC2Access",
+  ]
+
+  ssm_bootstrap_list = [
+    {
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Datadog",
+        documentType = "SSMDocument"
+      },
+      name           = "InstallDataDog",
+      timeoutSeconds = 300
+    },
+    {
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "AWS-RunPowerShellScript",
+        documentParameters = {
+          commands = ["echo $null >> C:\testfile"]
+        },
+        documentType = "SSMDocument"
+      },
+      name           = "CreateFile",
+      timeoutSeconds = 300
+    },
   ]
 
   tags = {

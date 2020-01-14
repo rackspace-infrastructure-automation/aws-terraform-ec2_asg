@@ -36,7 +36,15 @@
  * - `security_group_list` -> `security_groups`
  * - `resource_name` -> `name`
  *
- * Additionally, new variables `tags` and `tags_asg` were added to replace the functionality of the `additional_tags` variable.  `tags` allows setting tags on all resources, while `tags_asg` sets tags only on the ASG itself.  `additional_tags` will continue to work as expected, but will be removed in a future release.
+ * The following variables are no longer neccessary and were removed
+ *
+ * - `additional_ssm_bootstrap_step_count`
+ *
+ * Several new variables were introduced to provide existing functionality, with a simplified format.  The original formmating was also retained to allow easier transition.
+ *
+ * New variables `tags` and `tags_asg` were added to replace the functionality of the `additional_tags` variable.  `tags` allows setting tags on all resources, while `tags_asg` sets tags only on the ASG itself.  `additional_tags` will continue to work as expected, but will be removed in a future release.
+ *
+ * New variable `ssm_bootstrap_list` was added to allow setting the SSM association steps using objects instead of strings, allowing easier linting and formatting of these lines.  The `additional_ssm_bootstrap_list` variable will continue to work, but will be deprecated in a future release.
  */
 
 terraform {
@@ -55,157 +63,136 @@ locals {
 
   cw_config_parameter_name = "CWAgent-${var.name}"
 
+  ssm_doc_content = {
+    schemaVersion = "2.2"
+    description   = "SSM Document for instance configuration."
+    parameters    = {}
+    mainSteps     = local.ssm_command_list
+  }
+
+  ssm_command_list = concat(
+    local.default_ssm_cmd_list,
+    local.ssm_codedeploy_include[var.install_codedeploy_agent],
+    local.ssm_scaleft_include[var.install_scaleft_agent],
+    [for s in var.additional_ssm_bootstrap_list : jsondecode(s.ssm_add_step)],
+    var.ssm_bootstrap_list,
+    local.ssm_update_agent
+  )
+
   # This is a list of ssm main steps
   default_ssm_cmd_list = [
     {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-        "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-BusyWait",
-        "documentType": "SSMDocument"
-        },
-        "name": "BusyWait",
-        "timeoutSeconds": 300
-      }
-EOF
-
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-BusyWait",
+        documentType = "SSMDocument"
+      },
+      name           = "BusyWait",
+      timeoutSeconds = 300
     },
     {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AWS-ConfigureAWSPackage",
-          "documentParameters": {
-            "action": "Install",
-            "name": "AmazonCloudWatchAgent"
-          },
-          "documentType": "SSMDocument"
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "AWS-ConfigureAWSPackage",
+        documentParameters = {
+          action = "Install",
+          name   = "AmazonCloudWatchAgent"
         },
-        "name": "InstallCWAgent",
-        "timeoutSeconds": 300
-      }
-EOF
-
+        documentType = "SSMDocument"
+      },
+      name           = "InstallCWAgent",
+      timeoutSeconds = 300
     },
     {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AmazonCloudWatch-ManageAgent",
-          "documentParameters": {
-            "action": "configure",
-            "optionalConfigurationSource": "ssm",
-            "optionalConfigurationLocation": "${var.provide_custom_cw_agent_config ? var.custom_cw_agent_config_ssm_param : local.cw_config_parameter_name}",
-            "optionalRestart": "yes",
-            "name": "AmazonCloudWatchAgent"
-          },
-          "documentType": "SSMDocument"
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "AmazonCloudWatch-ManageAgent",
+        documentParameters = {
+          action                        = "configure",
+          optionalConfigurationSource   = "ssm",
+          optionalConfigurationLocation = "${var.provide_custom_cw_agent_config ? var.custom_cw_agent_config_ssm_param : local.cw_config_parameter_name}",
+          optionalRestart               = "yes",
+          name                          = "AmazonCloudWatchAgent"
         },
-        "name": "ConfigureCWAgent",
-        "timeoutSeconds": 300
-      }
-EOF
-
+        documentType = "SSMDocument"
+      },
+      name           = "ConfigureCWAgent",
+      timeoutSeconds = 300
     },
     {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-ConfigureAWSTimeSync",
-          "documentType": "SSMDocument"
-        },
-        "name": "SetupTimeSync",
-        "timeoutSeconds": 300
-      }
-EOF
-
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-ConfigureAWSTimeSync",
+        documentType = "SSMDocument"
+      },
+      name           = "SetupTimeSync",
+      timeoutSeconds = 300
     },
     {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package",
-          "documentParameters": {
-            "Packages": "sysstat ltrace strace iptraf tcpdump"
-          },
-          "documentType": "SSMDocument"
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_Package",
+        documentParameters = {
+          Packages = "sysstat ltrace strace iptraf tcpdump"
         },
-        "name": "DiagnosticTools",
-        "timeoutSeconds": 300
-      }
-EOF
-
+        documentType = "SSMDocument"
+      },
+      name           = "DiagnosticTools",
+      timeoutSeconds = 300
     },
     {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-SetMotd",
-          "documentType": "SSMDocument"
-        },
-        "name": "SetMotd",
-        "timeoutSeconds": 300
-      }
-EOF
-
-    },
-    {
-      ssm_add_step = <<EOF
-      {
-        "action": "aws:runDocument",
-        "inputs": {
-          "documentPath": "AWS-UpdateSSMAgent",
-          "documentType": "SSMDocument"
-        },
-        "name": "UpdateSSMAgent",
-        "timeoutSeconds": 300
-      }
-EOF
-
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-SetMotd",
+        documentType = "SSMDocument"
+      },
+      name           = "SetMotd",
+      timeoutSeconds = 300
     },
   ]
 
   ssm_codedeploy_include = {
-    enabled = <<EOF
-    {
-      "action": "aws:runDocument",
-      "inputs": {
-        "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_CodeDeploy",
-        "documentType": "SSMDocument"
-      },
-      "name": "InstallCodeDeployAgent"
-    }
-EOF
+    true = [
+      {
+        action = "aws:runDocument",
+        inputs = {
+          documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_CodeDeploy",
+          documentType = "SSMDocument"
+        },
+        name = "InstallCodeDeployAgent"
+      }
+    ]
 
-    disabled = ""
+    false = []
   }
 
   ssm_scaleft_include = {
-    enabled = <<EOF
-    {
-      "action": "aws:runDocument",
-      "inputs": {
-        "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_ScaleFT",
-        "documentType": "SSMDocument"
-      },
-      "name": "SetupPassport",
-      "timeoutSeconds": 300
-    }
-EOF
+    true = [
+      {
+        action = "aws:runDocument",
+        inputs = {
+          documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_ScaleFT",
+          documentType = "SSMDocument"
+        },
+        name           = "SetupPassport",
+        timeoutSeconds = 300
+      }
+    ]
 
-    disabled = ""
+    false = []
   }
 
-  codedeploy_install = var.install_codedeploy_agent ? "enabled" : "disabled"
-  scaleft_install    = var.install_scaleft_agent ? "enabled" : "disabled"
-
-  ssm_command_count = 6
+  ssm_update_agent = [
+    {
+      action = "aws:runDocument",
+      inputs = {
+        documentPath = "AWS-UpdateSSMAgent",
+        documentType = "SSMDocument"
+      },
+      name           = "UpdateSSMAgent",
+      timeoutSeconds = 300
+    },
+  ]
 
   ebs_device_map = {
     amazon        = "/dev/sdf"
@@ -676,7 +663,6 @@ resource "aws_autoscaling_group" "autoscalegrp" {
     }
   }
 
-
   depends_on = [aws_ssm_association.ssm_bootstrap_assoc]
 
   lifecycle {
@@ -794,39 +780,8 @@ resource "aws_cloudwatch_log_group" "application_logs" {
 # Provisioning of SSM related resources
 #
 
-data "template_file" "ssm_command_docs" {
-  count = local.ssm_command_count
-
-  template = "$${ssm_cmd_json}"
-
-  vars = {
-    ssm_cmd_json = local.default_ssm_cmd_list[count.index]["ssm_add_step"]
-  }
-}
-
-data "template_file" "additional_ssm_docs" {
-  count = var.additional_ssm_bootstrap_step_count
-
-  template = "$${additional_ssm_cmd_json}"
-
-  vars = {
-    additional_ssm_cmd_json = var.additional_ssm_bootstrap_list[count.index]["ssm_add_step"]
-  }
-}
-
-locals {
-  command_list = concat(
-    data.template_file.ssm_command_docs.*.rendered,
-    [local.ssm_codedeploy_include[local.codedeploy_install]],
-    [local.ssm_scaleft_include[local.scaleft_install]],
-    data.template_file.additional_ssm_docs.*.rendered,
-  )
-
-  ssm_template_vars = { run_command_list = join(",", compact(local.command_list)) }
-}
-
 resource "aws_ssm_document" "ssm_bootstrap_doc" {
-  content         = templatefile("${path.module}/text/ssm_bootstrap_template.json", local.ssm_template_vars)
+  content         = jsonencode(local.ssm_doc_content)
   document_format = "JSON"
   document_type   = "Command"
   name            = "SSMDocument-${var.name}"

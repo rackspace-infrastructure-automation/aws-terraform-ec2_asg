@@ -1,13 +1,7 @@
 variable "additional_ssm_bootstrap_list" {
-  description = "A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples."
+  description = "A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `ssm_bootstrap_list` variable."
   type        = list(map(string))
   default     = []
-}
-
-variable "additional_ssm_bootstrap_step_count" {
-  description = "Count of steps added for input 'additional_ssm_bootstrap_list'. This is required since 'additional_ssm_bootstrap_list' is a list of maps"
-  type        = string
-  default     = "0"
 }
 
 variable "additional_tags" {
@@ -359,6 +353,12 @@ variable "ssm_association_refresh_rate" {
   description = "A cron or rate pattern to define the SSM Association refresh schedule, defaulting to once per day. See https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-cron.html for more details. Schedule can be disabled by providing an empty string."
   type        = string
   default     = "rate(1 day)"
+}
+
+variable "ssm_bootstrap_list" {
+  description = "A list of objects consisting of actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples."
+  type        = any
+  default     = []
 }
 
 variable "ssm_patching_group" {
