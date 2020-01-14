@@ -7,7 +7,7 @@
  *
  * ```HCL
  * module "asg" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.25"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.0"
  *
  *   ec2_os          = "amazon"
  *   image_id        = "${var.image_id}"
