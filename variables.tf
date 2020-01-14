@@ -11,7 +11,7 @@ variable "additional_ssm_bootstrap_step_count" {
 }
 
 variable "additional_tags" {
-  description = "Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples."
+  description = "Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `tags` and `tags_asg` variables."
   type        = list(map(string))
   default     = []
 }
@@ -255,6 +255,11 @@ variable "load_balancer_names" {
   default     = []
 }
 
+variable "name" {
+  description = "Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module"
+  type        = string
+}
+
 variable "notification_topic" {
   description = "List of SNS Topic ARNs to use for customer notifications."
   type        = list(string)
@@ -303,11 +308,6 @@ variable "rackspace_managed" {
   default     = true
 }
 
-variable "resource_name" {
-  description = "Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module"
-  type        = string
-}
-
 variable "scaling_max" {
   description = "The maximum size of the Auto Scaling group."
   type        = string
@@ -350,8 +350,8 @@ variable "secondary_ebs_volume_type" {
   default     = "gp2"
 }
 
-variable "security_group_list" {
-  description = "A list (type list, not string) of EC2 security IDs to assign to this resource."
+variable "security_groups" {
+  description = "A list of EC2 security IDs to assign to this resource."
   type        = list(string)
 }
 
@@ -370,6 +370,18 @@ variable "ssm_patching_group" {
 variable "subnets" {
   description = "List of subnets for Application. e.g. ['subnet-8da92df7', 'subnet-9e5dc5f6', 'subnet-497eaf33']"
   type        = list(string)
+}
+
+variable "tags" {
+  description = "A map of tags to apply to all resources.  These tags will all be propagated to ASG instances and set on all other resources."
+  type        = map(string)
+  default     = {}
+}
+
+variable "tags_asg" {
+  description = "A map of tags to apply to the ASG itself.  These tags will not be propagated to ASG instances or set on any other resources."
+  type        = map(string)
+  default     = {}
 }
 
 variable "target_group_arns" {

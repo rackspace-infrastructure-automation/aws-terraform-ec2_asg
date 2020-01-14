@@ -9,11 +9,11 @@
  * module "asg" {
  *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.25"
  *
- *   ec2_os              = "amazon"
- *   subnets             = ["${module.vpc.private_subnets}"]
- *   image_id            = "${var.image_id}"
- *   resource_name       = "my_asg"
- *   security_group_list = ["${module.sg.private_web_security_group_id}"]
+ *   ec2_os          = "amazon"
+ *   image_id        = "${var.image_id}"
+ *   name            = "my_asg"
+ *   security_groups = ["${module.sg.private_web_security_group_id}"]
+ *   subnets         = ["${module.vpc.private_subnets}"]
  * }
  * ```
  *
@@ -23,6 +23,20 @@
  *
  * Using [aws-terraform-cloudwatch_alarm](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm) to create the following CloudWatch Alarms:
  * - group_terminating_instances
+ *
+ * ## Terraform 0.12 upgrade
+ *
+ * Several changes were required while adding terraform 0.12 compatibility.  The following changes should
+ * made when upgrading from a previous release to version 0.12.0 or higher.
+ *
+ * ### Module variables
+ *
+ * The following module variables were updated to better meet current Rackspace style guides:
+ *
+ * - `security_group_list` -> `security_groups`
+ * - `resource_name` -> `name`
+ *
+ * Additionally, new variables `tags` and `tags_asg` were added to replace the functionality of the `additional_tags` variable.  `tags` allows setting tags on all resources, while `tags_asg` sets tags only on the ASG itself.  `additional_tags` will continue to work as expected, but will be removed in a future release.
  */
 
 terraform {
@@ -39,7 +53,7 @@ locals {
   ec2_os_windows_length_test = length(local.ec2_os) >= 7 ? 7 : length(local.ec2_os)
   ec2_os_windows             = substr(local.ec2_os, 0, local.ec2_os_windows_length_test) == "windows" ? true : false
 
-  cw_config_parameter_name = "CWAgent-${var.resource_name}"
+  cw_config_parameter_name = "CWAgent-${var.name}"
 
   # This is a list of ssm main steps
   default_ssm_cmd_list = [
@@ -214,48 +228,28 @@ EOF
 
   cwagent_config = local.ec2_os_windows ? "windows_cw_agent_param.json" : "linux_cw_agent_param.json"
 
-  tags = [
-    {
-      key                 = "Backup"
-      value               = var.backup_tag_value
-      propagate_at_launch = true
-    },
-    {
-      key                 = "Environment"
-      value               = var.environment
-      propagate_at_launch = true
-    },
-    {
-      key                 = "Name"
-      value               = var.resource_name
-      propagate_at_launch = true
-    },
-    {
-      key                 = "Patch Group"
-      value               = var.ssm_patching_group
-      propagate_at_launch = true
-    },
-    {
-      key                 = "SSMInventory"
-      value               = var.perform_ssm_inventory_tag
-      propagate_at_launch = true
-    },
-    {
-      key                 = "ServiceProvider"
-      value               = "Rackspace"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "SSM Target Tag"
-      value               = "Target-${var.resource_name}"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "InstanceReplacement"
-      value               = var.enable_rolling_updates ? "True" : "False"
-      propagate_at_launch = false
-    },
-  ]
+  # local.tags can and should be applied to all taggable resources
+
+  tags = {
+    Environment     = var.environment
+    ServiceProvider = "Rackspace"
+  }
+
+  # local.tags_ec2 is applied to the ASG and propagated to all instances
+
+  tags_ec2 = {
+    Backup           = var.backup_tag_value
+    Name             = var.name
+    "Patch Group"    = var.ssm_patching_group
+    SSMInventory     = var.perform_ssm_inventory_tag
+    "SSM Target Tag" = "Target-${var.name}"
+  }
+
+  # local.tags_asg is applied to the ASG but not propagated to the EC2 instances
+
+  tags_asg = {
+    InstanceReplacement = var.enable_rolling_updates ? "True" : "False"
+  }
 
   user_data_map = {
     amazon        = "amazon_linux_userdata.sh"
@@ -471,7 +465,7 @@ resource "aws_iam_policy" "create_instance_role_policy" {
   count = var.instance_profile_override ? 0 : 1
 
   description = "Rackspace Instance Role Policies for EC2"
-  name        = "InstanceRolePolicy-${var.resource_name}"
+  name        = "InstanceRolePolicy-${var.name}"
   policy      = data.aws_iam_policy_document.mod_ec2_instance_role_policies.json
 }
 
@@ -479,7 +473,7 @@ resource "aws_iam_role" "mod_ec2_instance_role" {
   count = var.instance_profile_override ? 0 : 1
 
   assume_role_policy = data.aws_iam_policy_document.mod_ec2_assume_role_policy_doc.json
-  name               = "InstanceRole-${var.resource_name}"
+  name               = "InstanceRole-${var.name}"
   path               = "/"
 }
 
@@ -528,7 +522,7 @@ resource "aws_iam_role_policy_attachment" "attach_additonal_policies" {
 resource "aws_iam_instance_profile" "instance_role_instance_profile" {
   count = var.instance_profile_override ? 0 : 1
 
-  name = "InstanceRoleInstanceProfile-${var.resource_name}"
+  name = "InstanceRoleInstanceProfile-${var.name}"
   path = "/"
   role = aws_iam_role.mod_ec2_instance_role[0].name
 }
@@ -545,9 +539,9 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
   image_id          = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
   instance_type     = var.instance_type
   key_name          = var.key_pair
-  name_prefix       = join("-", compact(["LaunchConfigWith2ndEbs", var.resource_name, format("%03d-", count.index + 1)]))
+  name_prefix       = join("-", compact(["LaunchConfigWith2ndEbs", var.name, format("%03d-", count.index + 1)]))
   placement_tenancy = var.tenancy
-  security_groups   = var.security_group_list
+  security_groups   = var.security_groups
   user_data_base64  = base64encode(data.template_file.user_data.rendered)
 
   ebs_block_device {
@@ -586,9 +580,9 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
   image_id          = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
   instance_type     = var.instance_type
   key_name          = var.key_pair
-  name_prefix       = join("-", compact(["LaunchConfigNo2ndEbs", var.resource_name, format("%03d-", count.index + 1)]))
+  name_prefix       = join("-", compact(["LaunchConfigNo2ndEbs", var.name, format("%03d-", count.index + 1)]))
   placement_tenancy = var.tenancy
-  security_groups   = var.security_group_list
+  security_groups   = var.security_groups
   user_data_base64  = base64encode(data.template_file.user_data.rendered)
 
   iam_instance_profile = element(
@@ -616,7 +610,7 @@ resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
   adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
   cooldown               = var.ec2_scale_up_cool_down
-  name                   = join("-", compact(["ec2_scale_up_policy", var.resource_name, format("%03d", count.index + 1)]))
+  name                   = join("-", compact(["ec2_scale_up_policy", var.name, format("%03d", count.index + 1)]))
   scaling_adjustment     = var.ec2_scale_up_adjustment
 }
 
@@ -626,7 +620,7 @@ resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
   adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
   cooldown               = var.ec2_scale_down_cool_down
-  name                   = join("-", compact(["ec2_scale_down_policy", var.resource_name, format("%03d", count.index + 1)]))
+  name                   = join("-", compact(["ec2_scale_down_policy", var.name, format("%03d", count.index + 1)]))
   scaling_adjustment     = var.ec2_scale_down_adjustment > 0 ? -var.ec2_scale_down_adjustment : var.ec2_scale_down_adjustment
 }
 
@@ -639,17 +633,49 @@ resource "aws_autoscaling_group" "autoscalegrp" {
   max_size                  = var.scaling_max
   metrics_granularity       = "1Minute"
   min_size                  = var.scaling_min
-  name_prefix               = join("-", compact(["AutoScaleGrp", var.resource_name, format("%03d-", count.index + 1)]))
-  tags                      = concat(local.tags, var.additional_tags)
+  name_prefix               = join("-", compact(["AutoScaleGrp", var.name, format("%03d-", count.index + 1)]))
   target_group_arns         = var.target_group_arns
   vpc_zone_identifier       = var.subnets
   wait_for_capacity_timeout = var.asg_wait_for_capacity_timeout
 
-  # coalescelist and list("novalue") were used here due to element not being able to handle empty lists, even if conditional will not allow portion to execute
   launch_configuration = element(coalescelist(
     aws_launch_configuration.launch_config_with_secondary_ebs.*.name,
     aws_launch_configuration.launch_config_no_secondary_ebs.*.name),
   count.index)
+
+  # This block sets tags provided as objects, allowing the propagate at launch field to be set to False
+  dynamic "tag" {
+    for_each = var.additional_tags
+
+    content {
+      key                 = tag.value.key
+      value               = tag.value.value
+      propagate_at_launch = lookup(tag.value, "propagate_at_launch", true)
+    }
+  }
+
+  # This block sets tags provided as a map in the tags variable (propagated to ASG instances).
+  dynamic "tag" {
+    for_each = merge(var.tags, local.tags_ec2, local.tags)
+
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
+  }
+
+  # This block sets tags provided as a map in the tags_asg variable (not propagated to ASG instances).
+  dynamic "tag" {
+    for_each = merge(var.tags_asg, local.tags_asg)
+
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = false
+    }
+  }
+
 
   depends_on = [aws_ssm_association.ssm_bootstrap_assoc]
 
@@ -662,7 +688,7 @@ resource "aws_autoscaling_notification" "scaling_notifications" {
   count = var.enable_scaling_notification ? var.asg_count : 0
 
   group_names = [element(aws_autoscaling_group.autoscalegrp.*.name, count.index)]
-  topic_arn = var.scaling_notification_topic
+  topic_arn   = var.scaling_notification_topic
 
   notifications = [
     "autoscaling:EC2_INSTANCE_LAUNCH",
@@ -676,7 +702,7 @@ resource "aws_autoscaling_notification" "rs_support_emergency" {
   count = var.rackspace_managed ? var.asg_count : 0
 
   group_names = [element(aws_autoscaling_group.autoscalegrp.*.name, count.index)]
-  topic_arn = "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency"
+  topic_arn   = "arn:aws:sns:${data.aws_region.current_region.name}:${data.aws_caller_identity.current_account.account_id}:rackspace-support-emergency"
 
   notifications = [
     "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
@@ -700,7 +726,7 @@ module "group_terminating_instances" {
 
   alarm_count              = var.asg_count
   alarm_description        = "Over ${var.terminated_instances} instances terminated in last 6 hours, generating ticket to investigate."
-  alarm_name               = "${var.resource_name}-GroupTerminatingInstances}"
+  alarm_name               = "${var.name}-GroupTerminatingInstances}"
   comparison_operator      = "GreaterThanThreshold"
   dimensions               = data.null_data_source.alarm_dimensions.*.outputs
   evaluation_periods       = 1
@@ -719,9 +745,9 @@ module "group_terminating_instances" {
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
   count = var.enable_scaling_actions ? var.asg_count : 0
 
-  alarm_actions = [element(aws_autoscaling_policy.ec2_scale_up_policy.*.arn, count.index)]
+  alarm_actions       = [element(aws_autoscaling_policy.ec2_scale_up_policy.*.arn, count.index)]
   alarm_description   = "Scale-up if ${var.cw_scaling_metric} ${var.cw_high_operator} ${var.cw_high_threshold}% for ${var.cw_high_period} seconds ${var.cw_high_evaluations} times."
-  alarm_name = join("-", compact(["ScaleAlarmHigh", var.resource_name, format("%03d", count.index + 1)]))
+  alarm_name          = join("-", compact(["ScaleAlarmHigh", var.name, format("%03d", count.index + 1)]))
   comparison_operator = var.cw_high_operator
   evaluation_periods  = var.cw_high_evaluations
   metric_name         = var.cw_scaling_metric
@@ -738,9 +764,9 @@ resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_low" {
   count = var.enable_scaling_actions ? var.asg_count : 0
 
-  alarm_actions = [element(aws_autoscaling_policy.ec2_scale_down_policy.*.arn, count.index)]
+  alarm_actions       = [element(aws_autoscaling_policy.ec2_scale_down_policy.*.arn, count.index)]
   alarm_description   = "Scale-down if ${var.cw_scaling_metric} ${var.cw_low_operator} ${var.cw_low_threshold}% for ${var.cw_low_period} seconds ${var.cw_low_evaluations} times."
-  alarm_name = join("-", compact(["ScaleAlarmLow", var.resource_name, format("%03d", count.index + 1)]))
+  alarm_name          = join("-", compact(["ScaleAlarmLow", var.name, format("%03d", count.index + 1)]))
   comparison_operator = var.cw_low_operator
   evaluation_periods  = var.cw_low_evaluations
   metric_name         = var.cw_scaling_metric
@@ -755,12 +781,12 @@ resource "aws_cloudwatch_metric_alarm" "scale_alarm_low" {
 }
 
 resource "aws_cloudwatch_log_group" "system_logs" {
-  name              = "${var.resource_name}-SystemsLogs"
+  name              = "${var.name}-SystemsLogs"
   retention_in_days = var.cloudwatch_log_retention
 }
 
 resource "aws_cloudwatch_log_group" "application_logs" {
-  name              = "${var.resource_name}-ApplicationLogs"
+  name              = "${var.name}-ApplicationLogs"
   retention_in_days = var.cloudwatch_log_retention
 }
 
@@ -796,14 +822,14 @@ locals {
     data.template_file.additional_ssm_docs.*.rendered,
   )
 
-  ssm_template_vars = {run_command_list = join(",", compact(local.command_list))}
+  ssm_template_vars = { run_command_list = join(",", compact(local.command_list)) }
 }
 
 resource "aws_ssm_document" "ssm_bootstrap_doc" {
   content         = templatefile("${path.module}/text/ssm_bootstrap_template.json", local.ssm_template_vars)
   document_format = "JSON"
   document_type   = "Command"
-  name            = "SSMDocument-${var.resource_name}"
+  name            = "SSMDocument-${var.name}"
 }
 
 locals {
@@ -818,7 +844,7 @@ locals {
 resource "aws_ssm_parameter" "cwagentparam" {
   count = var.provide_custom_cw_agent_config ? 0 : 1
 
-  description = "${var.resource_name} Cloudwatch Agent configuration"
+  description = "${var.name} Cloudwatch Agent configuration"
   name        = local.cw_config_parameter_name
   type        = "String"
   value       = jsonencode(local.cwagentparam_object)
@@ -830,7 +856,7 @@ resource "aws_ssm_association" "ssm_bootstrap_assoc" {
 
   targets {
     key    = "tag:SSM Target Tag"
-    values = ["Target-${var.resource_name}"]
+    values = ["Target-${var.name}"]
   }
 
   depends_on = [aws_ssm_document.ssm_bootstrap_doc]
