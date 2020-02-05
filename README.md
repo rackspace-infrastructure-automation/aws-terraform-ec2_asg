@@ -6,7 +6,7 @@ This module creates one or more autoscaling groups.
 
 ```HCL
 module "asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.0"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.1"
 
   ec2_os          = "amazon"
   image_id        = "${var.image_id}"
@@ -20,7 +20,7 @@ Full working references are available at [examples](examples)
 
 ## Other TF Modules Used
 
-Using [aws-terraform-cloudwatch\_alarm](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm) to create the following CloudWatch Alarms:  
+Using [aws-terraform-cloudwatch\_alarm](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm) to create the following CloudWatch Alarms:
 - group\_terminating\_instances
 
 ## Terraform 0.12 upgrade
@@ -32,7 +32,7 @@ made when upgrading from a previous release to version 0.12.0 or higher.
 
 The following module variables were updated to better meet current Rackspace style guides:
 
-- `security_group_list` -> `security_groups`  
+- `security_group_list` -> `security_groups`
 - `resource_name` -> `name`
 
 The following variables are no longer neccessary and were removed
