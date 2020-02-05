@@ -7,7 +7,7 @@
  *
  * ```HCL
  * module "asg" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.0"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.1"
  *
  *   ec2_os          = "amazon"
  *   image_id        = "${var.image_id}"
@@ -382,11 +382,6 @@ data "aws_iam_policy_document" "mod_ec2_assume_role_policy_doc" {
 }
 
 data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
-  statement {
-    actions   = ["cloudformation:Describe"]
-    effect    = "Allow"
-    resources = ["*"]
-  }
 
   statement {
     effect    = "Allow"
