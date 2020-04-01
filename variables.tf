@@ -401,3 +401,9 @@ variable "terminated_instances" {
   type        = string
   default     = "30"
 }
+
+variable "launch_template_version" {
+  description = "The version of the launch template you want to use can be number or latest or Default"
+  type        = "string"
+  default     = "$Latest"
+}
