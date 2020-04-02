@@ -509,48 +509,48 @@ resource "aws_iam_instance_profile" "instance_role_instance_profile" {
 #
 
 resource "aws_launch_template" "launch_template_with_secondary_ebs" {
-  name_prefix            = "${join("-",compact(list("LaunchTemplateWith2ndEbs", var.resource_name, format("%03d-",count.index+1))))}"
-  count                  = "${var.secondary_ebs_volume_size != "" ? 1 : 0}"
-  user_data              = "${base64encode(data.template_file.user_data.rendered)}"
-  image_id               = "${var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id}"
-  key_name               = "${var.key_pair}"
-  vpc_security_group_ids = ["${var.security_group_list}"]
-  ebs_optimized          = "${var.enable_ebs_optimization}"
-  instance_type          = "${var.instance_type}"
+  name_prefix            = join("-",compact(list("LaunchTemplateWith2ndEbs", var.resource_name, format("%03d-",count.index+1))))
+  count                  = var.secondary_ebs_volume_size != "" ? 1 : 0
+  user_data_base64       = base64encode(data.template_file.user_data.rendered)
+  image_id               = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
+  key_name               = var.key_pair
+  vpc_security_group_ids = var.security_groups
+  ebs_optimized          = var.enable_ebs_optimization
+  instance_type          = var.instance_type
 
   block_device_mappings {
-    device_name = "${var.primary_ebs_volume_mount_path}"
+    device_name = var.primary_ebs_volume_mount_path
 
     ebs {
-      volume_size = "${var.primary_ebs_volume_size}"
-      iops        = "${var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0}"
-      volume_type = "${var.primary_ebs_volume_type}"
+      volume_size = var.primary_ebs_volume_size}
+      iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
+      volume_type = var.primary_ebs_volume_type
     }
   }
 
   ebs_block_device {
-    device_name = "${lookup(local.ebs_device_map, local.ec2_os)}"
-    volume_type = "${var.secondary_ebs_volume_type}"
-    volume_size = "${var.secondary_ebs_volume_size}"
-    iops        = "${var.secondary_ebs_volume_iops}"
-    encrypted   = "${var.secondary_ebs_volume_existing_id == "" ? var.encrypt_secondary_ebs_volume: false}"
-    snapshot_id = "${var.secondary_ebs_volume_existing_id}"
+    device_name = local.ebs_device_map[local.ec2_os]
+    volume_type = var.secondary_ebs_volume_type
+    volume_size = var.secondary_ebs_volume_size
+    iops        = var.secondary_ebs_volume_iops
+    encrypted   = var.secondary_ebs_volume_existing_id == "" ? var.encrypt_secondary_ebs_volume: false
+    snapshot_id = var.secondary_ebs_volume_existing_id
   }
 
   placement {
-    tenancy = "${var.tenancy}"
+    tenancy = var.tenancy
   }
 
   instance_market_options {
-    market_type = "${var.market_type}"
+    market_type = var.market_type
   }
 
   iam_instance_profile {
-    name = "${element(coalescelist(aws_iam_instance_profile.instance_role_instance_profile.*.name, list(var.instance_profile_override_name)), 0)}"
+    name = element(coalescelist(aws_iam_instance_profile.instance_role_instance_profile.*.name, list(var.instance_profile_override_name)), 0)
   }
 
   monitoring {
-    monitoring = "${var.detailed_monitoring}"
+    monitoring = var.detailed_monitoring
   }
 
   lifecycle {
@@ -559,39 +559,39 @@ resource "aws_launch_template" "launch_template_with_secondary_ebs" {
 }
 
 resource "aws_launch_template" "launch_template_no_secondary_ebs" {
-  name_prefix            = "${join("-",compact(list("LaunchTemplateNo2ndEbs", var.resource_name, format("%03d-",count.index+1))))}"
-  count                  = "${var.secondary_ebs_volume_size != "" ? 0 : 1}"
-  user_data              = "${base64encode(data.template_file.user_data.rendered)}"
-  image_id               = "${var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id}"
-  key_name               = "${var.key_pair}"
-  vpc_security_group_ids = ["${var.security_group_list}"]
-  ebs_optimized          = "${var.enable_ebs_optimization}"
-  instance_type          = "${var.instance_type}"
+  name_prefix            = join("-", compact(["LaunchConfigNo2ndEbs", var.name, format("%03d-", count.index + 1)]))
+  count                  = var.secondary_ebs_volume_size != "" ? 1 : 0
+  user_data_base64       = base64encode(data.template_file.user_data.rendered)
+  image_id               = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
+  key_name               = var.key_pair
+  vpc_security_group_ids = var.security_groups
+  ebs_optimized          = var.enable_ebs_optimization
+  instance_type          = var.instance_type
 
   block_device_mappings {
-    device_name = "${var.primary_ebs_volume_mount_path}"
+    device_name = var.primary_ebs_volume_mount_path
 
     ebs {
-      volume_size = "${var.primary_ebs_volume_size}"
-      iops        = "${var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0}"
-      volume_type = "${var.primary_ebs_volume_type}"
+      volume_size = var.primary_ebs_volume_size
+      iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
+      volume_type = var.primary_ebs_volume_type
     }
   }
 
   placement {
-    tenancy = "${var.tenancy}"
+    tenancy = var.tenancy
   }
 
   instance_market_options {
-    market_type = "${var.market_type}"
+    market_type = var.market_type
   }
 
   iam_instance_profile {
-    name = "${element(coalescelist(aws_iam_instance_profile.instance_role_instance_profile.*.name, list(var.instance_profile_override_name)), 0)}"
+    name = element(coalescelist(aws_iam_instance_profile.instance_role_instance_profile.*.name, list(var.instance_profile_override_name)), 0)
   }
 
   monitoring {
-    enabled = "${var.detailed_monitoring}"
+    enabled = var.detailed_monitoring
   }
 
   lifecycle {
