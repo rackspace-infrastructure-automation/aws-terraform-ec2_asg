@@ -522,7 +522,7 @@ resource "aws_launch_template" "launch_template_with_secondary_ebs" {
     device_name = var.primary_ebs_volume_mount_path
 
     ebs {
-      volume_size = var.primary_ebs_volume_size}
+      volume_size = var.primary_ebs_volume_size
       iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
       volume_type = var.primary_ebs_volume_type
     }
