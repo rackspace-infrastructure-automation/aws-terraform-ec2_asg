@@ -519,7 +519,7 @@ resource "aws_launch_template" "launch_template_with_secondary_ebs" {
   instance_type          = "${var.instance_type}"
 
   block_device_mappings {
-    device_name = "/dev/sda1"
+    device_name = "${var.primary_ebs_volume_mount_path}"
 
     ebs {
       volume_size = "${var.primary_ebs_volume_size}"
@@ -569,7 +569,7 @@ resource "aws_launch_template" "launch_template_no_secondary_ebs" {
   instance_type          = "${var.instance_type}"
 
   block_device_mappings {
-    device_name = "/dev/sda1"
+    device_name = "${var.primary_ebs_volume_mount_path}"
 
     ebs {
       volume_size = "${var.primary_ebs_volume_size}"

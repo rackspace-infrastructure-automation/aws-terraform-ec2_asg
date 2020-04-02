@@ -278,6 +278,12 @@ variable "primary_ebs_volume_size" {
   default     = "60"
 }
 
+variable "primary_ebs_volume_mount_path" {
+  description = "Mount Path for root volume"
+  type        = string
+  default     = "/dev/sda1"
+}
+
 variable "primary_ebs_volume_type" {
   description = "EBS Volume Type. e.g. gp2, io1, st1, sc1"
   type        = string
