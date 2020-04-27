@@ -97,6 +97,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | instance\_role\_managed\_policy\_arn\_count | The number of policy ARNs provided/set in variable 'instance\_role\_managed\_policy\_arns' | `string` | `"0"` | no |
 | instance\_role\_managed\_policy\_arns | List of IAM policy ARNs for the InstanceRole IAM role. IAM ARNs can be found within the Policies section of the AWS IAM console. e.g. ['arn:aws:iam::aws:policy/AmazonEC2FullAccess', 'arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM', 'arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole'] | `list(string)` | `[]` | no |
 | instance\_type | EC2 Instance Type e.g. 't2.micro' | `string` | `"t2.micro"` | no |
+| launch\_template\_version | ASG Launch template version eg "$Default" | string | "$latest" | no |
 | key\_pair | Name of an existing EC2 KeyPair to enable SSH access to the instances. | `string` | `""` | no |
 | load\_balancer\_names | A list of Classic load balancers associated with this Auto Scaling group. | `list(string)` | `[]` | no |
 | name | Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module | `string` | n/a | yes |

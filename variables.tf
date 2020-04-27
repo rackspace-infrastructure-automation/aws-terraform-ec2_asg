@@ -278,6 +278,12 @@ variable "primary_ebs_volume_size" {
   default     = "60"
 }
 
+variable "primary_ebs_volume_mount_path" {
+  description = "Mount Path for root volume"
+  type        = string
+  default     = "/dev/sda1"
+}
+
 variable "primary_ebs_volume_type" {
   description = "EBS Volume Type. e.g. gp2, io1, st1, sc1"
   type        = string
@@ -400,4 +406,10 @@ variable "terminated_instances" {
   description = "Specifies the maximum number of instances that can be terminated in a six hour period without generating a Cloudwatch Alarm."
   type        = string
   default     = "30"
+}
+
+variable "launch_template_version" {
+  description = "The version of the launch template you want to use can be number or latest or Default"
+  type        = "string"
+  default     = "$Latest"
 }
