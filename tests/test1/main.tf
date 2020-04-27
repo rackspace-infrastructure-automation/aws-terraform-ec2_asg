@@ -31,15 +31,15 @@ module "vpc" {
   name = "${random_string.name_rstring.result}-ec2-asg-basenetwork-test1"
 }
 
-resource "aws_sqs_queue" "ec2-asg-test_sqs" {
-  name = "${random_string.sqs_rstring.result}-my-example-queue"
+resource "aws_sqs_queue" "ec2_asg_test_sqs" {
+  name = "${random_string.sqs_rstring.result}-example-queue"
 }
 
 module "sns" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=master"
 
   create_subscription_1 = true
-  endpoint_1            = aws_sqs_queue.ec2-asg-test_sqs.arn
+  endpoint_1            = aws_sqs_queue.ec2_asg_test_sqs.arn
   name                  = "${random_string.sqs_rstring.result}-test-topic"
   protocol_1            = "sqs"
 }

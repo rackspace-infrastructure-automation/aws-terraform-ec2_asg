@@ -7,7 +7,7 @@
  *
  * ```HCL
  * module "asg" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.1"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.2"
  *
  *   ec2_os          = "amazon"
  *   image_id        = "${var.image_id}"
@@ -390,6 +390,7 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
     actions = [
       "ssm:CreateAssociation",
       "ssm:DescribeInstanceInformation",
+      "ssm:GetParameter",
     ]
   }
 
@@ -406,35 +407,23 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
       "logs:CreateLogStream",
       "logs:DescribeLogStreams",
       "logs:PutLogEvents",
-      "ssm:GetParameter",
     ]
   }
 
   statement {
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:s3:::rackspace-*/*"]
 
     actions = [
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:GetEncryptionConfiguration",
       "s3:AbortMultipartUpload",
-      "s3:ListMultipartUploadParts",
+      "s3:GetBucketLocation",
+      "s3:GetEncryptionConfiguration",
+      "s3:GetObject",
       "s3:ListBucket",
       "s3:ListBucketMultipartUploads",
+      "s3:ListMultipartUploadParts",
+      "s3:PutObject",
     ]
-  }
-
-  statement {
-    actions   = ["s3:GetBucketLocation"]
-    effect    = "Allow"
-    resources = ["*"]
-  }
-
-  statement {
-    actions   = ["ec2:DescribeTags"]
-    effect    = "Allow"
-    resources = ["*"]
   }
 }
 
