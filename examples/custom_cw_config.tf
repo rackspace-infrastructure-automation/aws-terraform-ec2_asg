@@ -35,7 +35,7 @@ resource "random_string" "sqs_rstring" {
   special = false
 }
 
-resource "aws_sqs_queue" "ec2-asg-test_sqs" {
+resource "aws_sqs_queue" "ec2_asg_test_sqs" {
   name = "${random_string.sqs_rstring.result}-my-example-queue"
 }
 
@@ -46,7 +46,7 @@ module "sns_sqs" {
 
   create_subscription_1 = true
   protocol_1            = "sqs"
-  endpoint_1            = "${aws_sqs_queue.ec2-asg-test_sqs.arn}"
+  endpoint_1            = "${aws_sqs_queue.ec2_asg_test_sqs.arn}"
 }
 
 module "ec2_asg" {
