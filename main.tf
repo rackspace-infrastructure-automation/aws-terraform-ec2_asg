@@ -356,12 +356,16 @@ data "aws_ami" "asg_ami" {
   filter      = "${concat(local.standard_filters, local.image_filter[local.ec2_os])}"
 }
 
+locals {
+  user_data_template = "${path.module}/text/${lookup(local.user_data_map, local.ec2_os)}"
+}
+
 data "template_file" "user_data" {
-  template = "${file("${path.module}/text/${lookup(local.user_data_map, local.ec2_os)}")}"
+  template = "${file(local.user_data_template)}"
 
   vars {
-    initial_commands = "${var.initial_userdata_commands != "" ? "${var.initial_userdata_commands}" : "" }"
-    final_commands   = "${var.final_userdata_commands != "" ? "${var.final_userdata_commands}" : "" }"
+    initial_commands = "${var.initial_userdata_commands != "" ? var.initial_userdata_commands : "" }"
+    final_commands   = "${var.final_userdata_commands != "" ? var.final_userdata_commands : "" }"
   }
 }
 
@@ -397,6 +401,7 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
     actions = [
       "ssm:CreateAssociation",
       "ssm:DescribeInstanceInformation",
+      "ssm:GetParameter",
     ]
 
     resources = ["*"]
@@ -414,23 +419,6 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
       "logs:CreateLogStream",
       "logs:DescribeLogStreams",
       "logs:PutLogEvents",
-      "ssm:GetParameter",
-    ]
-
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:GetEncryptionConfiguration",
-      "s3:AbortMultipartUpload",
-      "s3:ListMultipartUploadParts",
-      "s3:ListBucket",
-      "s3:ListBucketMultipartUploads",
     ]
 
     resources = ["*"]
@@ -441,15 +429,15 @@ data "aws_iam_policy_document" "mod_ec2_instance_role_policies" {
 
     actions = [
       "s3:GetBucketLocation",
+      "s3:GetEncryptionConfiguration",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+      "s3:ListMultipartUploadParts",
+      "s3:PutObject",
     ]
 
-    resources = ["*"]
-  }
-
-  statement {
-    effect    = "Allow"
-    actions   = ["ec2:DescribeTags"]
-    resources = ["*"]
+    resources = ["arn:aws:s3:::rackspace-*/*"]
   }
 }
 
@@ -767,8 +755,13 @@ data "template_file" "additional_ssm_docs" {
   }
 }
 
+locals {
+  ssm_template      = "${path.module}/text/ssm_bootstrap_template.json"
+  cw_agent_template = "${path.module}/text/${local.cwagent_config}"
+}
+
 data "template_file" "ssm_bootstrap_template" {
-  template = "${file("${path.module}/text/ssm_bootstrap_template.json")}"
+  template = "${file(local.ssm_template)}"
 
   vars {
     run_command_list = "${join(",",compact(concat(data.template_file.ssm_command_docs.*.rendered, list(local.ssm_codedeploy_include[local.codedeploy_install]), list(local.ssm_scaleft_include[local.scaleft_install]), data.template_file.additional_ssm_docs.*.rendered)))}"
@@ -788,7 +781,7 @@ resource "aws_ssm_parameter" "cwagentparam" {
   name        = "${local.cw_config_parameter_name}"
   description = "${var.resource_name} Cloudwatch Agent configuration"
   type        = "String"
-  value       = "${replace(replace(file("${path.module}/text/${local.cwagent_config}"),"((SYSTEM_LOG_GROUP_NAME))",aws_cloudwatch_log_group.system_logs.name),"((APPLICATION_LOG_GROUP_NAME))",aws_cloudwatch_log_group.application_logs.name)}"
+  value       = "${replace(replace(file(local.cw_agent_template),"((SYSTEM_LOG_GROUP_NAME))",aws_cloudwatch_log_group.system_logs.name),"((APPLICATION_LOG_GROUP_NAME))",aws_cloudwatch_log_group.application_logs.name)}"
 }
 
 resource "aws_ssm_association" "ssm_bootstrap_assoc" {
