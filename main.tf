@@ -7,7 +7,7 @@
  *
  * ```HCL
  * module "asg" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.2"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.3"
  *
  *   ec2_os          = "amazon"
  *   image_id        = "${var.image_id}"
@@ -531,6 +531,7 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
     iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
     volume_size = var.primary_ebs_volume_size
     volume_type = var.primary_ebs_volume_type
+    encrypted   = var.encrypt_primary_ebs_volume
   }
 
   lifecycle {
@@ -563,6 +564,7 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
     volume_type = var.primary_ebs_volume_type
     volume_size = var.primary_ebs_volume_size
     iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
+    encrypted   = var.encrypt_primary_ebs_volume
   }
 
   lifecycle {
