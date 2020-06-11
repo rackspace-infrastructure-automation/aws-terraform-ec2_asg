@@ -50,7 +50,7 @@ resource "random_string" "name_rstring" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=master"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=tf_v0.11"
 
   vpc_name = "${random_string.name_rstring.result}-ec2-asg-basenetwork-test1"
 }
@@ -60,7 +60,7 @@ resource "aws_sqs_queue" "ec2_asg_test_sqs" {
 }
 
 module "sns_sqs" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=master"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=tf_v0.11"
 
   create_subscription_1 = true
   endpoint_1            = "${aws_sqs_queue.ec2_asg_test_sqs.arn}"
@@ -104,7 +104,7 @@ module "ec2_asg_centos7_with_encryption_test" {
   primary_ebs_volume_size       = 60
   primary_ebs_volume_type       = "gp2"
   rackspace_managed             = true
-  resource_name                 = "${random_string.name_rstring.result}-ec2_asg_centos7_with_codedeploy"
+  resource_name                 = "${random_string.name_rstring.result}-ec2_asg_centos7_with_encryption"
   scaling_max                   = 2
   scaling_min                   = 1
   scaling_notification_topic    = "${module.sns_sqs.topic_arn}"
