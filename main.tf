@@ -356,12 +356,16 @@ data "aws_ami" "asg_ami" {
   filter      = "${concat(local.standard_filters, local.image_filter[local.ec2_os])}"
 }
 
+locals {
+  user_data_file_path = "${path.module}/text/${lookup(local.user_data_map, local.ec2_os)}"
+}
+
 data "template_file" "user_data" {
-  template = "${file("${path.module}/text/${lookup(local.user_data_map, local.ec2_os)}")}"
+  template = "${file(local.user_data_file_path)}"
 
   vars {
-    initial_commands = "${var.initial_userdata_commands != "" ? "${var.initial_userdata_commands}" : "" }"
-    final_commands   = "${var.final_userdata_commands != "" ? "${var.final_userdata_commands}" : "" }"
+    initial_commands = "${var.initial_userdata_commands != "" ? var.initial_userdata_commands : "" }"
+    final_commands   = "${var.final_userdata_commands != "" ? var.final_userdata_commands : "" }"
   }
 }
 
@@ -769,8 +773,12 @@ data "template_file" "additional_ssm_docs" {
   }
 }
 
+locals {
+  ssm_bootstrap_template_file_path = "${path.module}/text/ssm_bootstrap_template.json"
+}
+
 data "template_file" "ssm_bootstrap_template" {
-  template = "${file("${path.module}/text/ssm_bootstrap_template.json")}"
+  template = "${file(local.ssm_bootstrap_template_file_path)}"
 
   vars {
     run_command_list = "${join(",",compact(concat(data.template_file.ssm_command_docs.*.rendered, list(local.ssm_codedeploy_include[local.codedeploy_install]), list(local.ssm_scaleft_include[local.scaleft_install]), data.template_file.additional_ssm_docs.*.rendered)))}"
@@ -784,13 +792,17 @@ resource "aws_ssm_document" "ssm_bootstrap_doc" {
   content         = "${data.template_file.ssm_bootstrap_template.rendered}"
 }
 
+locals {
+  cwagent_config_file_path = "${path.module}/text/${local.cwagent_config}"
+}
+
 resource "aws_ssm_parameter" "cwagentparam" {
   count = "${var.provide_custom_cw_agent_config ? 0 : 1}"
 
   name        = "${local.cw_config_parameter_name}"
   description = "${var.resource_name} Cloudwatch Agent configuration"
   type        = "String"
-  value       = "${replace(replace(file("${path.module}/text/${local.cwagent_config}"),"((SYSTEM_LOG_GROUP_NAME))",aws_cloudwatch_log_group.system_logs.name),"((APPLICATION_LOG_GROUP_NAME))",aws_cloudwatch_log_group.application_logs.name)}"
+  value       = "${replace(replace(file(local.cwagent_config_file_path),"((SYSTEM_LOG_GROUP_NAME))",aws_cloudwatch_log_group.system_logs.name),"((APPLICATION_LOG_GROUP_NAME))",aws_cloudwatch_log_group.application_logs.name)}"
 }
 
 resource "aws_ssm_association" "ssm_bootstrap_assoc" {
