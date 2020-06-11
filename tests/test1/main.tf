@@ -11,7 +11,19 @@ provider "random" {
   version = "~> 2.0"
 }
 
-data "aws_region" "current_region" {
+data "aws_region" "current_region" {}
+
+locals {
+  tags = {
+    Environment     = "Test"
+    Purpose         = "Testing aws-terraform-ec2_asg"
+    ServiceProvider = "Rackspace"
+    Terraform       = "true"
+  }
+
+  tags_asg = {
+    ASG = "true"
+  }
 }
 
 resource "random_string" "sqs_rstring" {
@@ -44,6 +56,27 @@ module "sns" {
   protocol_1            = "sqs"
 }
 
+module "ec2_asg_centos7_encrypted_test" {
+  source = "../../module"
+
+  asg_count                    = 1
+  ec2_os                       = "centos7"
+  enable_scaling_notification  = true
+  encrypt_primary_ebs_volume   = true
+  encrypt_secondary_ebs_volume = true
+  key_pair                     = "CircleCI"
+  name                         = "${random_string.name_rstring.result}-ec2_asg_centos7_encrypted"
+  scaling_notification_topic   = module.sns.topic_arn
+  secondary_ebs_volume_size    = 60
+  security_groups              = [module.vpc.default_sg]
+  ssm_patching_group           = "Group1Patching"
+  subnets                      = slice(module.vpc.public_subnets, 0, 2)
+
+  tags = local.tags
+
+  tags_asg = local.tags_asg
+}
+
 module "ec2_asg_centos7_with_codedeploy_test" {
   source = "../../module"
 
@@ -54,11 +87,11 @@ module "ec2_asg_centos7_with_codedeploy_test" {
   instance_role_managed_policy_arn_count = 3
   key_pair                               = "CircleCI"
   name                                   = "${random_string.name_rstring.result}-ec2_asg_centos7_with_codedeploy"
-  scaling_notification_topic             = "${module.sns.topic_arn}"
-  secondary_ebs_volume_size              = "60"
-  security_groups                        = ["${module.vpc.default_sg}"]
+  scaling_notification_topic             = module.sns.topic_arn
+  secondary_ebs_volume_size              = 60
+  security_groups                        = [module.vpc.default_sg]
   ssm_patching_group                     = "Group1Patching"
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = slice(module.vpc.public_subnets, 0, 2)
 
   instance_role_managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
@@ -93,15 +126,9 @@ module "ec2_asg_centos7_with_codedeploy_test" {
     },
   ]
 
-  tags = {
-    MyTag1 = "Myvalue1"
-    MyTag2 = "Myvalue2"
-    MyTag3 = "Myvalue3"
-  }
+  tags = local.tags
 
-  tags_asg = {
-    MyTag4 = "MyValue4"
-  }
+  tags_asg = local.tags_asg
 }
 
 module "ec2_asg_centos7_no_codedeploy_test" {
@@ -112,21 +139,15 @@ module "ec2_asg_centos7_no_codedeploy_test" {
   install_codedeploy_agent    = false
   key_pair                    = "CircleCI"
   name                        = "${random_string.name_rstring.result}-ec2_asg_centos7_no_codedeploy"
-  scaling_notification_topic  = "${module.sns.topic_arn}"
+  scaling_notification_topic  = module.sns.topic_arn
   secondary_ebs_volume_size   = "60"
-  security_groups             = ["${module.vpc.default_sg}"]
+  security_groups             = [module.vpc.default_sg]
   ssm_patching_group          = "Group1Patching"
-  subnets                     = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                     = slice(module.vpc.public_subnets, 0, 2)
 
-  tags = {
-    MyTag1 = "Myvalue1"
-    MyTag2 = "Myvalue2"
-    MyTag3 = "Myvalue3"
-  }
+  tags = local.tags
 
-  tags_asg = {
-    MyTag4 = "MyValue4"
-  }
+  tags_asg = local.tags_asg
 }
 
 module "ec2_asg_centos7_no_scaleft_test" {
@@ -137,21 +158,15 @@ module "ec2_asg_centos7_no_scaleft_test" {
   install_scaleft_agent       = false
   key_pair                    = "CircleCI"
   name                        = "${random_string.name_rstring.result}-ec2_asg_centos7_no_scaleft"
-  scaling_notification_topic  = "${module.sns.topic_arn}"
-  secondary_ebs_volume_size   = "60"
-  security_groups             = ["${module.vpc.default_sg}"]
+  scaling_notification_topic  = module.sns.topic_arn
+  secondary_ebs_volume_size   = 60
+  security_groups             = [module.vpc.default_sg]
   ssm_patching_group          = "Group1Patching"
-  subnets                     = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                     = slice(module.vpc.public_subnets, 0, 2)
 
-  tags = {
-    MyTag1 = "Myvalue1"
-    MyTag2 = "Myvalue2"
-    MyTag3 = "Myvalue3"
-  }
+  tags = local.tags
 
-  tags_asg = {
-    MyTag4 = "MyValue4"
-  }
+  tags_asg = local.tags_asg
 }
 
 module "ec2_asg_windows_with_codedeploy_test" {
@@ -161,14 +176,14 @@ module "ec2_asg_windows_with_codedeploy_test" {
   enable_scaling_actions                 = false
   enable_scaling_notification            = true
   install_codedeploy_agent               = true
-  instance_role_managed_policy_arn_count = "3"
+  instance_role_managed_policy_arn_count = 3
   key_pair                               = "CircleCI"
   name                                   = "${random_string.name_rstring.result}-ec2_asg_windows_with_codedeploy"
-  scaling_notification_topic             = "${module.sns.topic_arn}"
-  secondary_ebs_volume_size              = "60"
-  security_groups                        = ["${module.vpc.default_sg}"]
+  scaling_notification_topic             = module.sns.topic_arn
+  secondary_ebs_volume_size              = 60
+  security_groups                        = [module.vpc.default_sg]
   ssm_patching_group                     = "Group1Patching"
-  subnets                                = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                                = slice(module.vpc.public_subnets, 0, 2)
 
   instance_role_managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
@@ -200,15 +215,9 @@ module "ec2_asg_windows_with_codedeploy_test" {
     },
   ]
 
-  tags = {
-    MyTag1 = "Myvalue1"
-    MyTag2 = "Myvalue2"
-    MyTag3 = "Myvalue3"
-  }
+  tags = local.tags
 
-  tags_asg = {
-    MyTag4 = "MyValue4"
-  }
+  tags_asg = local.tags_asg
 }
 
 module "ec2_asg_windows_no_codedeploy_test" {
@@ -220,21 +229,15 @@ module "ec2_asg_windows_no_codedeploy_test" {
   install_codedeploy_agent    = false
   key_pair                    = "CircleCI"
   name                        = "${random_string.name_rstring.result}-ec2_asg_windows_no_codedeploy"
-  scaling_notification_topic  = "${module.sns.topic_arn}"
-  secondary_ebs_volume_size   = "60"
-  security_groups             = ["${module.vpc.default_sg}"]
+  scaling_notification_topic  = module.sns.topic_arn
+  secondary_ebs_volume_size   = 60
+  security_groups             = [module.vpc.default_sg]
   ssm_patching_group          = "Group1Patching"
-  subnets                     = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                     = slice(module.vpc.public_subnets, 0, 2)
 
-  tags = {
-    MyTag1 = "Myvalue1"
-    MyTag2 = "Myvalue2"
-    MyTag3 = "Myvalue3"
-  }
+  tags = local.tags
 
-  tags_asg = {
-    MyTag4 = "MyValue4"
-  }
+  tags_asg = local.tags_asg
 }
 
 module "ec2_asg_windows_no_scaleft_test" {
@@ -246,19 +249,13 @@ module "ec2_asg_windows_no_scaleft_test" {
   install_scaleft_agent       = false
   key_pair                    = "CircleCI"
   name                        = "${random_string.name_rstring.result}-ec2_asg_windows_no_scaleft"
-  scaling_notification_topic  = "${module.sns.topic_arn}"
-  secondary_ebs_volume_size   = "60"
-  security_groups             = ["${module.vpc.default_sg}"]
+  scaling_notification_topic  = module.sns.topic_arn
+  secondary_ebs_volume_size   = 60
+  security_groups             = [module.vpc.default_sg]
   ssm_patching_group          = "Group1Patching"
-  subnets                     = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  subnets                     = slice(module.vpc.public_subnets, 0, 2)
 
-  tags = {
-    MyTag1 = "Myvalue1"
-    MyTag2 = "Myvalue2"
-    MyTag3 = "Myvalue3"
-  }
+  tags = local.tags
 
-  tags_asg = {
-    MyTag4 = "MyValue4"
-  }
+  tags_asg = local.tags_asg
 }
