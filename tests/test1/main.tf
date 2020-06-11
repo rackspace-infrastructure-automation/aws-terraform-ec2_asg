@@ -47,6 +47,75 @@ module "sns_sqs" {
   topic_name            = "${random_string.sqs_rstring.result}-ec2-asg-test-topic"
 }
 
+module "ec2_asg_centos7_with_encryption_test" {
+  source = "../../module"
+
+  asg_count                     = 1
+  asg_wait_for_capacity_timeout = "10m"
+  backup_tag_value              = "False"
+  cloudwatch_log_retention      = 30
+  cw_high_evaluations           = 3
+  cw_high_operator              = "GreaterThanThreshold"
+  cw_high_period                = 60
+  cw_high_threshold             = 60
+  cw_low_evaluations            = 3
+  cw_low_operator               = "LessThanThreshold"
+  cw_low_period                 = 300
+  cw_low_threshold              = 30
+  cw_scaling_metric             = "CPUUtilization"
+  detailed_monitoring           = true
+  ec2_os                        = "centos7"
+  ec2_scale_down_adjustment     = 1
+  ec2_scale_down_cool_down      = 60
+  ec2_scale_up_adjustment       = 1
+  ec2_scale_up_cool_down        = 60
+  enable_ebs_optimization       = false
+  enable_scaling_notification   = true
+  encrypt_secondary_ebs_volume  = false
+  environment                   = "Development"
+  health_check_grace_period     = 300
+  health_check_type             = "EC2"
+  install_codedeploy_agent      = false
+  instance_type                 = "t2.micro"
+  key_pair                      = "CircleCI"
+  perform_ssm_inventory_tag     = true
+  primary_ebs_volume_iops       = 0
+  primary_ebs_volume_size       = 60
+  primary_ebs_volume_type       = "gp2"
+  rackspace_managed             = true
+  resource_name                 = "${random_string.name_rstring.result}-ec2_asg_centos7_with_codedeploy"
+  scaling_max                   = 2
+  scaling_min                   = 1
+  scaling_notification_topic    = "${module.sns_sqs.topic_arn}"
+  secondary_ebs_volume_iops     = 0
+  secondary_ebs_volume_size     = 60
+  secondary_ebs_volume_type     = "gp2"
+  security_group_list           = ["${module.vpc.default_sg}"]
+  ssm_association_refresh_rate  = "rate(1 day)"
+  ssm_patching_group            = "Group1Patching"
+  subnets                       = "${slice(module.vpc.public_subnets, 0, 2)}"
+  tenancy                       = "default"
+  terminated_instances          = 30
+
+  additional_tags = [
+    {
+      key                 = "MyTag1"
+      value               = "Myvalue1"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "MyTag2"
+      value               = "Myvalue2"
+      propagate_at_launch = true
+    },
+    {
+      key                 = "MyTag3"
+      value               = "Myvalue3"
+      propagate_at_launch = true
+    },
+  ]
+}
+
 module "ec2_asg_centos7_with_codedeploy_test" {
   source = "../../module"
 
