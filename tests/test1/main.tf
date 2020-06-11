@@ -9,6 +9,27 @@ provider "random" {
 
 data "aws_region" "current_region" {}
 
+locals {
+  tags = {
+    Environment     = "Test"
+    Purpose         = "Testing aws-terraform-ec2_autorecovery"
+    ServiceProvider = "Rackspace"
+    Terraform       = "true"
+  }
+
+  tags_length = "${length(keys(local.tags))}"
+}
+
+data "null_data_source" "asg_tags" {
+  count = "${local.tags_length}"
+
+  inputs = {
+    key                 = "${element(keys(local.tags), count.index)}"
+    value               = "${element(values(local.tags), count.index)}"
+    propagate_at_launch = true
+  }
+}
+
 resource "random_string" "password" {
   length      = 16
   special     = false
@@ -97,23 +118,7 @@ module "ec2_asg_centos7_with_encryption_test" {
   tenancy                       = "default"
   terminated_instances          = 30
 
-  additional_tags = [
-    {
-      key                 = "MyTag1"
-      value               = "Myvalue1"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag2"
-      value               = "Myvalue2"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag3"
-      value               = "Myvalue3"
-      propagate_at_launch = true
-    },
-  ]
+  additional_tags = "${data.null_data_source.asg_tags.*.outputs}"
 }
 
 module "ec2_asg_centos7_with_codedeploy_test" {
@@ -215,23 +220,7 @@ EOF
 
   additional_ssm_bootstrap_step_count = "2"
 
-  additional_tags = [
-    {
-      key                 = "MyTag1"
-      value               = "Myvalue1"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag2"
-      value               = "Myvalue2"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag3"
-      value               = "Myvalue3"
-      propagate_at_launch = true
-    },
-  ]
+  additional_tags = "${data.null_data_source.asg_tags.*.outputs}"
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
@@ -336,23 +325,7 @@ EOF
 
   additional_ssm_bootstrap_step_count = "2"
 
-  additional_tags = [
-    {
-      key                 = "MyTag1"
-      value               = "Myvalue1"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag2"
-      value               = "Myvalue2"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag3"
-      value               = "Myvalue3"
-      propagate_at_launch = true
-    },
-  ]
+  additional_tags = "${data.null_data_source.asg_tags.*.outputs}"
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
@@ -458,23 +431,7 @@ EOF
 
   additional_ssm_bootstrap_step_count = "2"
 
-  additional_tags = [
-    {
-      key                 = "MyTag1"
-      value               = "Myvalue1"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag2"
-      value               = "Myvalue2"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag3"
-      value               = "Myvalue3"
-      propagate_at_launch = true
-    },
-  ]
+  additional_tags = "${data.null_data_source.asg_tags.*.outputs}"
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
@@ -577,23 +534,7 @@ EOF
 
   additional_ssm_bootstrap_step_count = "2"
 
-  additional_tags = [
-    {
-      key                 = "MyTag1"
-      value               = "Myvalue1"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag2"
-      value               = "Myvalue2"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag3"
-      value               = "Myvalue3"
-      propagate_at_launch = true
-    },
-  ]
+  additional_tags = "${data.null_data_source.asg_tags.*.outputs}"
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
@@ -696,23 +637,7 @@ EOF
 
   additional_ssm_bootstrap_step_count = "2"
 
-  additional_tags = [
-    {
-      key                 = "MyTag1"
-      value               = "Myvalue1"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag2"
-      value               = "Myvalue2"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag3"
-      value               = "Myvalue3"
-      propagate_at_launch = true
-    },
-  ]
+  additional_tags = "${data.null_data_source.asg_tags.*.outputs}"
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
@@ -816,23 +741,7 @@ EOF
 
   additional_ssm_bootstrap_step_count = "2"
 
-  additional_tags = [
-    {
-      key                 = "MyTag1"
-      value               = "Myvalue1"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag2"
-      value               = "Myvalue2"
-      propagate_at_launch = true
-    },
-    {
-      key                 = "MyTag3"
-      value               = "Myvalue3"
-      propagate_at_launch = true
-    },
-  ]
+  additional_tags = "${data.null_data_source.asg_tags.*.outputs}"
 
   encrypt_secondary_ebs_volume  = "False"
   asg_wait_for_capacity_timeout = "10m"
