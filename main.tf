@@ -10,7 +10,6 @@
  *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.3"
  *
  *   ec2_os          = "amazon"
- *   image_id        = "${var.image_id}"
  *   name            = "my_asg"
  *   security_groups = ["${module.sg.private_web_security_group_id}"]
  *   subnets         = ["${module.vpc.private_subnets}"]

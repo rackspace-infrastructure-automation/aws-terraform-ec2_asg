@@ -15,16 +15,6 @@ module "vpc" {
 
 data "aws_region" "current_region" {}
 
-data "aws_ami" "amazon_centos_7" {
-  most_recent = true
-  owners      = ["679593333241"]
-
-  filter {
-    name   = "name"
-    values = ["CentOS Linux 7 x86_64 HVM EBS*"]
-  }
-}
-
 resource "random_string" "sqs_rstring" {
   length  = 18
   special = false
@@ -60,25 +50,24 @@ module "ec2_asg" {
   cw_low_period                          = "300"
   cw_low_threshold                       = "30"
   cw_scaling_metric                      = "CPUUtilization"
-  detailed_monitoring                    = "True"
+  detailed_monitoring                    = true
   ec2_os                                 = "centos7"
   ec2_scale_down_adjustment              = "1"
   ec2_scale_down_cool_down               = "60"
   ec2_scale_up_adjustment                = "1"
   ec2_scale_up_cool_down                 = "60"
-  enable_ebs_optimization                = "False"
-  enable_scaling_notification            = true
-  encrypt_secondary_ebs_volume           = "False"
+  enable_ebs_optimization                = false
+  enable_scaling_notification            = true # Requires non-example resources
+  encrypt_secondary_ebs_volume           = false
   environment                            = "Development"
   health_check_grace_period              = "300"
   health_check_type                      = "EC2"
-  image_id                               = data.aws_ami.amazon_centos_7.image_id
-  install_codedeploy_agent               = "False"
-  instance_role_managed_policy_arn_count = "2"
-  instance_role_managed_policy_arns      = [aws_iam_policy.test_policy_1.arn, aws_iam_policy.test_policy_2.arn]
+  install_codedeploy_agent               = false
+  instance_role_managed_policy_arn_count = "2"                                                                  # Requires non-example resources
+  instance_role_managed_policy_arns      = [aws_iam_policy.test_policy_1.arn, aws_iam_policy.test_policy_2.arn] # Requires non-example resources
   instance_type                          = "t2.micro"
-  key_pair                               = "my_ec2_key_name"
-  load_balancer_names                    = [aws_elb.my_elb.name]
+  key_pair                               = "my_ec2_key_name"     # Requires non-example resources
+  load_balancer_names                    = [aws_elb.my_elb.name] # Requires non-example resources
   name                                   = "my_test_instance"
   perform_ssm_inventory_tag              = "True"
   primary_ebs_volume_iops                = "0"
@@ -87,7 +76,7 @@ module "ec2_asg" {
   rackspace_managed                      = true
   scaling_max                            = "2"
   scaling_min                            = "1"
-  scaling_notification_topic             = aws_sns_topic.my_test_sns.arn
+  scaling_notification_topic             = aws_sns_topic.my_test_sns.arn # Requires non-example resources
   secondary_ebs_volume_iops              = "0"
   secondary_ebs_volume_size              = "60"
   secondary_ebs_volume_type              = "gp2"
