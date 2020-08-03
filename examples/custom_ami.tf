@@ -15,6 +15,27 @@ module "vpc" {
 
 data "aws_region" "current_region" {}
 
+data "aws_ami" "my_custom_ami" {
+  executable_users = ["self"]
+  most_recent      = true
+  owners           = ["self"]
+
+  filter {
+    name   = "name"
+    values = ["MyCustomAMI"]
+  }
+}
+
+data "aws_ami" "community_ami" {
+  most_recent = true
+  owners      = ["679593333241"]
+
+  filter {
+    name   = "name"
+    values = ["CentOS Linux 7 x86_64 HVM EBS*"]
+  }
+}
+
 resource "random_string" "sqs_rstring" {
   length  = 18
   special = false
@@ -41,7 +62,6 @@ module "ec2_asg" {
   asg_wait_for_capacity_timeout          = "10m"
   backup_tag_value                       = "False"
   cloudwatch_log_retention               = "30"
-  custom_cw_agent_config_ssm_param       = aws_ssm_parameter.custom_cwagentparam.name
   cw_high_evaluations                    = "3"
   cw_high_operator                       = "GreaterThanThreshold"
   cw_high_period                         = "60"
@@ -63,6 +83,7 @@ module "ec2_asg" {
   environment                            = "Development"
   health_check_grace_period              = "300"
   health_check_type                      = "EC2"
+  image_id                               = data.aws_ami.community_ami.ami_id
   install_codedeploy_agent               = false
   instance_role_managed_policy_arn_count = "2"
   instance_role_managed_policy_arns      = [aws_iam_policy.test_policy_1.arn, aws_iam_policy.test_policy_2.arn]
@@ -74,7 +95,6 @@ module "ec2_asg" {
   primary_ebs_volume_iops                = "0"
   primary_ebs_volume_size                = "60"
   primary_ebs_volume_type                = "gp2"
-  provide_custom_cw_agent_config         = true
   rackspace_managed                      = true
   scaling_max                            = "2"
   scaling_min                            = "1"
@@ -120,29 +140,5 @@ module "ec2_asg" {
     MyTag1 = "Myvalue1"
     MyTag2 = "Myvalue2"
     MyTag3 = "Myvalue3"
-  }
-}
-
-resource "random_string" "res_name" {
-  length  = 8
-  lower   = true
-  number  = false
-  special = false
-  upper   = false
-}
-
-resource "aws_ssm_parameter" "custom_cwagentparam" {
-  description = "Custom Cloudwatch Agent configuration"
-  name        = "custom_cw_param-${random_string.res_name.result}"
-  type        = "String"
-  value       = data.template_file.custom_cwagentparam.rendered
-}
-
-data "template_file" "custom_cwagentparam" {
-  template = file("./text/linux_cw_agent_param.json")
-
-  vars = {
-    application_log_group_name = "custom_app_log_group_name"
-    system_log_group_name      = "custom_system_log_group_name"
   }
 }
