@@ -50,7 +50,7 @@ module "sns_sqs" {
 }
 
 module "ec2_asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.0.25"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.0.26"
 
   additional_ssm_bootstrap_step_count    = 2
   asg_count                              = 2
