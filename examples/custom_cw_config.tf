@@ -8,7 +8,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.1"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.1"
 
   name = "EC2-ASG-BaseNetwork-Test1"
 }
@@ -35,7 +35,7 @@ module "sns_sqs" {
 }
 
 module "ec2_asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.12.3"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.4"
 
   asg_count                              = "2"
   asg_wait_for_capacity_timeout          = "10m"
