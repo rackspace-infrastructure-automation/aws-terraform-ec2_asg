@@ -1,3 +1,8 @@
+output "asg_arn_list" {
+  description = "List of ASG ARNs"
+  value       = aws_autoscaling_group.autoscalegrp.*.arn
+}
+
 output "asg_image_id" {
   description = "Image ID used for EC2 provisioning"
   value       = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
