@@ -107,6 +107,7 @@ Using [aws-terraform-cloudwatch\_alarm](https://github.com/rackspace-infrastruct
 
 | Name | Description |
 |------|-------------|
+| asg\_arn\_list | List of ASG ARNs |
 | asg\_image\_id | Image ID used for EC2 provisioning |
 | asg\_name\_list | List of ASG names |
 | iam\_role | Name of the created IAM Instance role. |
