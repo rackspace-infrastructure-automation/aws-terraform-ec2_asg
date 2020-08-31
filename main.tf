@@ -203,6 +203,7 @@ locals {
     rhel8         = "/dev/sdf"
     centos6       = "/dev/sdf"
     centos7       = "/dev/sdf"
+    centos8       = "/dev/sdf"
     ubuntu14      = "/dev/sdf"
     ubuntu16      = "/dev/sdf"
     ubuntu18      = "/dev/sdf"
@@ -246,6 +247,7 @@ locals {
     rhel8         = "rhel_centos_8_userdata.sh"
     centos6       = "rhel_centos_6_userdata.sh"
     centos7       = "rhel_centos_7_userdata.sh"
+    centos8       = "rhel_centos_8_userdata.sh"
     ubuntu14      = "ubuntu_userdata.sh"
     ubuntu16      = "ubuntu_userdata.sh"
     ubuntu18      = "ubuntu_userdata.sh"
@@ -260,7 +262,8 @@ locals {
     amazonecs     = "591542846629"
     amazoneks     = "602401143452"
     centos6       = "679593333241"
-    centos7       = "679593333241"
+    centos7       = "125523088429"
+    centos8       = "125523088429"
     rhel6         = "309956199498"
     rhel7         = "309956199498"
     rhel8         = "309956199498"
@@ -278,7 +281,8 @@ locals {
     amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
     centos6       = "CentOS Linux 6 x86_64 HVM EBS*"
-    centos7       = "CentOS Linux 7 x86_64 HVM EBS*"
+    centos7       = "CentOS 7.* x86_64*"
+    centos8       = "CentOS 8.* x86_64*"
     rhel6         = "RHEL-6.*_HVM_GA-*x86_64*"
     rhel7         = "RHEL-7.*_HVM_GA-*x86_64*"
     rhel8         = "RHEL-8.*_HVM-*x86_64*"
@@ -296,6 +300,8 @@ locals {
     amazon2       = []
     amazonecs     = []
     amazoneks     = []
+    centos7       = []
+    centos8       = []
     rhel6         = []
     rhel7         = []
     rhel8         = []
@@ -310,13 +316,6 @@ locals {
       {
         name   = "product-code"
         values = ["6x5jmcajty9edm3f211pqjfn2"]
-      },
-    ]
-    # Added to ensure only AMIS under the official CentOS 7 product code are retrieved
-    centos7 = [
-      {
-        name   = "product-code"
-        values = ["aw0evgkw8e5c1q413zgy5pjce"]
       },
     ]
   }
