@@ -38,6 +38,7 @@
  * The following variables are no longer neccessary and were removed
  *
  * - `additional_ssm_bootstrap_step_count`
+ * - `install_scaleft_agent`
  *
  * Several new variables were introduced to provide existing functionality, with a simplified format.  The original formmating was also retained to allow easier transition.
  *
@@ -72,7 +73,6 @@ locals {
   ssm_command_list = concat(
     local.default_ssm_cmd_list,
     local.ssm_codedeploy_include[var.install_codedeploy_agent],
-    local.ssm_scaleft_include[var.install_scaleft_agent],
     [for s in var.additional_ssm_bootstrap_list : jsondecode(s.ssm_add_step)],
     var.ssm_bootstrap_list,
     local.ssm_update_agent
@@ -159,22 +159,6 @@ locals {
           documentType = "SSMDocument"
         },
         name = "InstallCodeDeployAgent"
-      }
-    ]
-
-    false = []
-  }
-
-  ssm_scaleft_include = {
-    true = [
-      {
-        action = "aws:runDocument",
-        inputs = {
-          documentPath = "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_ScaleFT",
-          documentType = "SSMDocument"
-        },
-        name           = "SetupPassport",
-        timeoutSeconds = 300
       }
     ]
 

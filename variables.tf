@@ -207,12 +207,6 @@ variable "install_codedeploy_agent" {
   default     = false
 }
 
-variable "install_scaleft_agent" {
-  description = "Install scaleft agent on instance(s)? true or false"
-  type        = bool
-  default     = true
-}
-
 variable "instance_profile_override" {
   description = "Optionally provide an instance profile. Any override profile should contain the permissions required for Rackspace support tooling to continue to function if required."
   type        = bool
