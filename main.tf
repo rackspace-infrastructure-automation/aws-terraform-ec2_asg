@@ -580,7 +580,7 @@ resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
 resource "aws_autoscaling_group" "autoscalegrp" {
   count = var.asg_count
 
-  enable_metrics            = var.suppress_all_asg_metrics ? null : local.asg_metrics
+  enabled_metrics           = var.suppress_all_asg_metrics ? null : local.asg_metrics
   health_check_grace_period = var.health_check_grace_period
   health_check_type         = var.health_check_type
   load_balancers            = var.load_balancer_names
