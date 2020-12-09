@@ -61,6 +61,9 @@ locals {
   ec2_os_windows_length_test = length(local.ec2_os) >= 7 ? 7 : length(local.ec2_os)
   ec2_os_windows             = substr(local.ec2_os, 0, local.ec2_os_windows_length_test) == "windows" ? true : false
 
+  metrics_permitted = ["GroupDesiredCapacity", "GroupInServiceCapacity", "GroupPendingCapacity", "GroupMinSize", "GroupMaxSize", "GroupInServiceInstances", "GroupPendingInstances", "GroupStandbyInstances", "GroupStandbyCapacity", "GroupTerminatingCapacity", "GroupTerminatingInstances", "GroupTotalCapacity", "GroupTotalInstances"]
+  asg_metrics       = var.enable_all_asg_metrics ? local.metrics_permitted: ["GroupTerminatingInstances"]
+
   cw_config_parameter_name = "CWAgent-${var.name}"
 
   ssm_doc_content = {
@@ -577,6 +580,7 @@ resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
 resource "aws_autoscaling_group" "autoscalegrp" {
   count = var.asg_count
 
+  enable_metrics            = var.suppress_all_asg_metrics ? null: local.asg_metrics
   health_check_grace_period = var.health_check_grace_period
   health_check_type         = var.health_check_type
   load_balancers            = var.load_balancer_names
@@ -675,7 +679,7 @@ module "group_terminating_instances" {
 
   alarm_count              = var.asg_count
   alarm_description        = "Over ${var.terminated_instances} instances terminated in last 6 hours, generating ticket to investigate."
-  alarm_name               = "${var.name}-GroupTerminatingInstances}"
+  alarm_name               = "${var.name}-GroupTerminatingInstances"
   comparison_operator      = "GreaterThanThreshold"
   dimensions               = data.null_data_source.alarm_dimensions.*.outputs
   evaluation_periods       = 1
