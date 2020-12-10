@@ -61,8 +61,8 @@ locals {
   ec2_os_windows_length_test = length(local.ec2_os) >= 7 ? 7 : length(local.ec2_os)
   ec2_os_windows             = substr(local.ec2_os, 0, local.ec2_os_windows_length_test) == "windows" ? true : false
 
-  metrics_permitted = ["GroupDesiredCapacity", "GroupInServiceCapacity", "GroupPendingCapacity", "GroupMinSize", "GroupMaxSize", "GroupInServiceInstances", "GroupPendingInstances", "GroupStandbyInstances", "GroupStandbyCapacity", "GroupTerminatingCapacity", "GroupTerminatingInstances", "GroupTotalCapacity", "GroupTotalInstances"]
-  asg_metrics       = var.enable_all_asg_metrics ? local.metrics_permitted : ["GroupTerminatingInstances"]
+  # Enforce metrics needed for CW
+  asg_metrics = distinct(concat(var.enabled_asg_metrics, ["GroupTerminatingInstances"]))
 
   cw_config_parameter_name = "CWAgent-${var.name}"
 
@@ -580,7 +580,7 @@ resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
 resource "aws_autoscaling_group" "autoscalegrp" {
   count = var.asg_count
 
-  enabled_metrics           = var.suppress_all_asg_metrics ? null : local.asg_metrics
+  enabled_metrics           = local.asg_metrics
   health_check_grace_period = var.health_check_grace_period
   health_check_type         = var.health_check_type
   load_balancers            = var.load_balancer_names

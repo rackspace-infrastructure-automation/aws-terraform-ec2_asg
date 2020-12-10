@@ -79,11 +79,11 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | ec2\_scale\_down\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | `string` | `"60"` | no |
 | ec2\_scale\_up\_adjustment | Number of EC2 instances to scale up by at a time. | `string` | `"1"` | no |
 | ec2\_scale\_up\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | `string` | `"60"` | no |
-| enable\_all\_asg\_metrics | Should all ASG metrics be collected? If yes and not `suppress_all_asg_metrics` then all metrics are collected.  Otherwise collects Terminating metrics only, required for alarms unless `suppress_all_asg_metrics then no metrics are collected`. | `bool` | `false` | no |
 | enable\_ebs\_optimization | Use EBS Optimized? true or false | `bool` | `false` | no |
 | enable\_rolling\_updates | Should this autoscaling group be targeted by the ASG Instance Replacement tool to ensure all instances are using thelatest launch configuration. | `bool` | `true` | no |
 | enable\_scaling\_actions | Should this autoscaling group be configured with scaling alarms to manage the desired count.  Set this variable to false if another process will manage the desired count, such as EKS Cluster Autoscaler. | `bool` | `true` | no |
 | enable\_scaling\_notification | true or false. If 'scaling\_notification\_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | `bool` | `false` | no |
+| enabled\_asg\_metrics | List of ASG metrics desired.  This can only contain the following values: `GroupDesiredCapacity`, `GroupInServiceCapacity`, `GroupPendingCapacity`, `GroupMinSize`, `GroupMaxSize`, `GroupInServiceInstances`, `GroupPendingInstances`, `GroupStandbyInstances`, `GroupStandbyCapacity`, `GroupTerminatingCapacity`, `GroupTerminatingInstances`, `GroupTotalCapacity`, `GroupTotalInstances`. | `list(string)` | `[]` | no |
 | encrypt\_primary\_ebs\_volume | Encrypt root EBS Volume? true or false | `bool` | `false` | no |
 | encrypt\_secondary\_ebs\_volume | Encrypt secondary EBS Volume? true or false | `bool` | `false` | no |
 | environment | Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test | `string` | `"Development"` | no |
@@ -121,7 +121,6 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | ssm\_bootstrap\_list | A list of objects consisting of actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples. | `any` | `[]` | no |
 | ssm\_patching\_group | Group ID to be used by System Manager for Patching | `string` | `""` | no |
 | subnets | List of subnets for Application. e.g. ['subnet-8da92df7', 'subnet-9e5dc5f6', 'subnet-497eaf33'] | `list(string)` | n/a | yes |
-| suppress\_all\_asg\_metrics | Boolean parameter controlling if ASG group level metrics should be suppressed.  This is to ensure compatibility with previous deployments and if enabled overrides `enable_all_asg_metrics` so no metrics are collected. | `bool` | `true` | no |
 | tags | A map of tags to apply to all resources.  These tags will all be propagated to ASG instances and set on all other resources. | `map(string)` | `{}` | no |
 | tags\_asg | A map of tags to apply to the ASG itself.  These tags will not be propagated to ASG instances or set on any other resources. | `map(string)` | `{}` | no |
 | target\_group\_arns | A list of Amazon Resource Names (ARN) of target groups to associate with the Auto Scaling group. | `list(string)` | `[]` | no |

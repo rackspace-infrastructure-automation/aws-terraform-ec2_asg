@@ -129,12 +129,6 @@ variable "ec2_scale_up_cool_down" {
   default     = "60"
 }
 
-variable "enable_all_asg_metrics" {
-  description = "Should all ASG metrics be collected? If yes and not `suppress_all_asg_metrics` then all metrics are collected.  Otherwise collects Terminating metrics only, required for alarms unless `suppress_all_asg_metrics then no metrics are collected`."
-  type        = bool
-  default     = false
-}
-
 variable "enable_ebs_optimization" {
   description = "Use EBS Optimized? true or false"
   type        = bool
@@ -157,6 +151,12 @@ variable "enable_scaling_notification" {
   description = "true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals"
   type        = bool
   default     = false
+}
+
+variable "enabled_asg_metrics" {
+  description = "List of ASG metrics desired.  This can only contain the following values: `GroupDesiredCapacity`, `GroupInServiceCapacity`, `GroupPendingCapacity`, `GroupMinSize`, `GroupMaxSize`, `GroupInServiceInstances`, `GroupPendingInstances`, `GroupStandbyInstances`, `GroupStandbyCapacity`, `GroupTerminatingCapacity`, `GroupTerminatingInstances`, `GroupTotalCapacity`, `GroupTotalInstances`."
+  type        = list(string)
+  default     = []
 }
 
 variable "encrypt_primary_ebs_volume" {
@@ -376,12 +376,6 @@ variable "ssm_patching_group" {
 variable "subnets" {
   description = "List of subnets for Application. e.g. ['subnet-8da92df7', 'subnet-9e5dc5f6', 'subnet-497eaf33']"
   type        = list(string)
-}
-
-variable "suppress_all_asg_metrics" {
-  description = "Boolean parameter controlling if ASG group level metrics should be suppressed.  This is to ensure compatibility with previous deployments and if enabled overrides `enable_all_asg_metrics` so no metrics are collected."
-  type        = bool
-  default     = true
 }
 
 variable "tags" {
