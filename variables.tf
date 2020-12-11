@@ -153,6 +153,12 @@ variable "enable_scaling_notification" {
   default     = false
 }
 
+variable "enabled_asg_metrics" {
+  description = "List of ASG metrics desired.  This can only contain the following values: `GroupDesiredCapacity`, `GroupInServiceCapacity`, `GroupPendingCapacity`, `GroupMinSize`, `GroupMaxSize`, `GroupInServiceInstances`, `GroupPendingInstances`, `GroupStandbyInstances`, `GroupStandbyCapacity`, `GroupTerminatingCapacity`, `GroupTerminatingInstances`, `GroupTotalCapacity`, `GroupTotalInstances`."
+  type        = list(string)
+  default     = []
+}
+
 variable "encrypt_primary_ebs_volume" {
   description = "Encrypt root EBS Volume? true or false"
   type        = bool
