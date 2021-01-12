@@ -45,13 +45,6 @@ New variables `tags` and `tags_asg` were added to replace the functionality of t
 
 New variable `ssm_bootstrap_list` was added to allow setting the SSM association steps using objects instead of strings, allowing easier linting and formatting of these lines.  The `additional_ssm_bootstrap_list` variable will continue to work, but will be deprecated in a future release.
 
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.12 |
-| aws | >= 2.1.0 |
-
 ## Providers
 
 | Name | Version |
