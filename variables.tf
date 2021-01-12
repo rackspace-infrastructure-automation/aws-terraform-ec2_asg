@@ -10,6 +10,12 @@ variable "additional_tags" {
   default     = []
 }
 
+variable "alb_target_value" {
+  description = "Enter the target value for Application Load Balancer request count per target metric."
+  type        = string
+  default     = "50"
+}
+
 variable "asg_count" {
   description = "Number of identical ASG's to deploy"
   type        = string
@@ -32,6 +38,12 @@ variable "cloudwatch_log_retention" {
   description = "The number of days to retain Cloudwatch Logs for this instance."
   type        = string
   default     = "30"
+}
+
+variable "cpu_target_value" {
+  description = "Enter the target value for Average CPU Utilization metric."
+  type        = string
+  default     = "50"
 }
 
 variable "custom_cw_agent_config_ssm_param" {
@@ -98,6 +110,12 @@ variable "detailed_monitoring" {
   description = "Enable Detailed Monitoring? true or false"
   type        = bool
   default     = true
+}
+
+variable "disable_scale_in" {
+  description = "Disable scale in to create only a scale-out policy"
+  type        = bool
+  default     = false
 }
 
 variable "ec2_os" {
@@ -243,6 +261,12 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
+variable "instance_warm_up_time" {
+  description = "Specify the Instance Warm Up time for Target Tracking Policy"
+  type        = string
+  default     = "300"
+}
+
 variable "key_pair" {
   description = "Name of an existing EC2 KeyPair to enable SSH access to the instances."
   type        = string
@@ -258,6 +282,18 @@ variable "load_balancer_names" {
 variable "name" {
   description = "Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module"
   type        = string
+}
+
+variable "network_in_target_value" {
+  description = "Enter the target value for Network In Metric."
+  type        = string
+  default     = "50"
+}
+
+variable "network_out_target_value" {
+  description = "Enter the target value for Network Out Metric."
+  type        = string
+  default     = "50"
 }
 
 variable "notification_topic" {
@@ -306,6 +342,12 @@ variable "rackspace_managed" {
   description = "Boolean parameter controlling if instance will be fully managed by Rackspace support teams, created CloudWatch alarms that generate tickets, and utilize Rackspace managed SSM documents."
   type        = bool
   default     = true
+}
+
+variable "resource_label" {
+  description = "Enter the ALB and Target group in this format : app/<load-balancer-name>/<load-balancer-id>/targetgroup/<target-group-name>/<target-group-id>"
+  type        = string
+  default     = ""
 }
 
 variable "scaling_max" {
@@ -406,4 +448,28 @@ variable "terminated_instances" {
   description = "Specifies the maximum number of instances that can be terminated in a six hour period without generating a Cloudwatch Alarm."
   type        = string
   default     = "30"
+}
+
+variable "tracking_policy_alb" {
+  description = "Use target tracking policy with ALBRequestCountPerTarget"
+  type        = bool
+  default     = false
+}
+
+variable "tracking_policy_cpu" {
+  description = "Use target tracking policy with ASGAverageCPUUtilization"
+  type        = bool
+  default     = false
+}
+
+variable "tracking_policy_network_in" {
+  description = "Use target tracking policy with ASGAverageNetworkIn"
+  type        = bool
+  default     = false
+}
+
+variable "tracking_policy_network_out" {
+  description = "Use target tracking policy with ASGAverageNetworkOut"
+  type        = bool
+  default     = false
 }

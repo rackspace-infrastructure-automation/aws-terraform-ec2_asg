@@ -59,10 +59,12 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 |------|-------------|------|---------|:-----:|
 | additional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `ssm_bootstrap_list` variable. | `list(map(string))` | `[]` | no |
 | additional\_tags | Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `tags` and `tags_asg` variables. | `list(map(string))` | `[]` | no |
+| alb\_target\_value | Enter the target value for 'Application Load Balancer request count per target' metric for Target Tracking Policy. | `string` | `"50"` | no |
 | asg\_count | Number of identical ASG's to deploy | `string` | `"1"` | no |
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | `string` | `"10m"` | no |
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | `string` | `"False"` | no |
 | cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | `string` | `"30"` | no |
+| cpu\_target\_value | Enter the target value for 'Average CPU Utilization' metric for Target Tracking Policy. | `string` | `"50"` | no |
 | custom\_cw\_agent\_config\_ssm\_param | SSM Parameter Store name that contains a custom CloudWatch agent configuration that you would like to use as an alternative to the default provided. | `string` | `""` | no |
 | cw\_high\_evaluations | The number of periods over which data is compared to the specified threshold. | `string` | `"3"` | no |
 | cw\_high\_operator | Math operator used by CloudWatch for alarms and triggers. | `string` | `"GreaterThanThreshold"` | no |
@@ -74,6 +76,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | cw\_low\_threshold | The value against which the specified statistic is compared. | `string` | `"30"` | no |
 | cw\_scaling\_metric | The metric to be used for scaling. | `string` | `"CPUUtilization"` | no |
 | detailed\_monitoring | Enable Detailed Monitoring? true or false | `bool` | `true` | no |
+| disable\_scale\_in | Disable scale in to create only a scale-out policy in Target Tracking Policy. | `bool` | `"false"` | no |
 | ec2\_os | Intended Operating System/Distribution of Instance. Valid inputs are: `amazon`, `amazon2`, `amazoneks`, `amazonecs`, `rhel6`, `rhel7`, `rhel8`, `centos6`, `centos7`, `ubuntu14`, `ubuntu16`, `ubuntu18`, `windows2012r2`, `windows2016`, `windows2019` | `string` | n/a | yes |
 | ec2\_scale\_down\_adjustment | Number of EC2 instances to scale down by at a time. Positive numbers will be converted to negative. | `string` | `"-1"` | no |
 | ec2\_scale\_down\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | `string` | `"60"` | no |
@@ -98,9 +101,12 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | instance\_role\_managed\_policy\_arn\_count | The number of policy ARNs provided/set in variable 'instance\_role\_managed\_policy\_arns' | `string` | `"0"` | no |
 | instance\_role\_managed\_policy\_arns | List of IAM policy ARNs for the InstanceRole IAM role. IAM ARNs can be found within the Policies section of the AWS IAM console. e.g. ['arn:aws:iam::aws:policy/AmazonEC2FullAccess', 'arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore', 'arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole'] | `list(string)` | `[]` | no |
 | instance\_type | EC2 Instance Type e.g. 't2.micro' | `string` | `"t2.micro"` | no |
+| instance\_warm\_up\_time | Specify the Instance Warm Up time for Target Tracking Policy. | `string` | `"300"` | no |
 | key\_pair | Name of an existing EC2 KeyPair to enable SSH access to the instances. | `string` | `""` | no |
 | load\_balancer\_names | A list of Classic load balancers associated with this Auto Scaling group. | `list(string)` | `[]` | no |
 | name | Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module | `string` | n/a | yes |
+| network\_in\_target\_value | Enter the target value for 'Network In' metric for Target Tracking Policy. | `string` | `"50"` | no |
+| network\_out\_target\_value | Enter the target value for 'Network Out' metric for Target Tracking Policy. | `string` | `"50"` | no |
 | notification\_topic | List of SNS Topic ARNs to use for customer notifications. | `list(string)` | `[]` | no |
 | perform\_ssm\_inventory\_tag | Determines whether Instance is tracked via System Manager Inventory. | `string` | `"True"` | no |
 | primary\_ebs\_volume\_iops | Iops value required for use with io1 EBS volumes. This value should be 3 times the EBS volume size | `string` | `"0"` | no |
@@ -109,6 +115,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | provide\_custom\_cw\_agent\_config | Set to true if a custom cloudwatch agent configuration has been provided in variable custom\_cw\_agent\_config\_ssm\_param. | `bool` | `false` | no |
 | rackspace\_alarms\_enabled | Specifies whether alarms will create a Rackspace ticket.  Ignored if rackspace\_managed is set to false. | `bool` | `false` | no |
 | rackspace\_managed | Boolean parameter controlling if instance will be fully managed by Rackspace support teams, created CloudWatch alarms that generate tickets, and utilize Rackspace managed SSM documents. | `bool` | `true` | no |
+| resource\_label | Enter the ALB and Target group in this format : app/<load-balancer-name>/<load-balancer-id>/targetgroup/<target-group-name>/<target-group-id>. If Target Tracking Policy getting configure with 'Application Load Balancer request count per target' metric, then this option is must to use | `string` | `""` | no |
 | scaling\_max | The maximum size of the Auto Scaling group. | `string` | `"2"` | no |
 | scaling\_min | The minimum count of EC2 instances in the Auto Scaling group. | `string` | `"1"` | no |
 | scaling\_notification\_topic | SNS Topic ARN to notify if there are any scaling operations. OPTIONAL | `string` | `""` | no |
@@ -126,7 +133,10 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | target\_group\_arns | A list of Amazon Resource Names (ARN) of target groups to associate with the Auto Scaling group. | `list(string)` | `[]` | no |
 | tenancy | The placement tenancy for EC2 devices. e.g. host, default, dedicated | `string` | `"default"` | no |
 | terminated\_instances | Specifies the maximum number of instances that can be terminated in a six hour period without generating a Cloudwatch Alarm. | `string` | `"30"` | no |
-
+| tracking\_policy\_alb | Configure Target Tracking Policy with 'ALB Request Count Per Target' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'. Also you would need to pass 'resource_label' option to pass the Load Balancer information  | `bool` | `"false"` | no |
+| tracking\_policy\_cpu | Configure Target Tracking Policy with 'Average CPU Utilization' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'. | `bool` | `"false"` | no |
+| tracking\_policy\_network\_in | Configure Target Tracking Policy with 'Average Network In' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'. | `bool` | `"false"` | no |
+| tracking\_policy\_network\_out | Configure Target Tracking Policy with 'Average Network Out' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'. | `bool` | `"false"` | no |
 ## Outputs
 
 | Name | Description |

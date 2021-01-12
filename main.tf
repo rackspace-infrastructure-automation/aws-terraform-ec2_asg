@@ -577,6 +577,75 @@ resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
   scaling_adjustment     = var.ec2_scale_down_adjustment > 0 ? -var.ec2_scale_down_adjustment : var.ec2_scale_down_adjustment
 }
 
+# Target Tracking Policy with CPU
+
+resource "aws_autoscaling_policy" "ec2_scale_up_down_cpu_policy" {
+  count                     = var.tracking_policy_cpu == true && var.enable_scaling_actions == false ? var.asg_count : 0
+  name                      = join("-", compact(["ec2_scale_up_down_cpu_policy", var.name, format("%03d", count.index + 1)]))
+  autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
+  estimated_instance_warmup = var.instance_warm_up_time
+  policy_type               = "TargetTrackingScaling"
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+    target_value     = var.cpu_target_value
+    disable_scale_in = var.disable_scale_in
+  }
+}
+
+# Target Tracking Policy with ALB
+
+resource "aws_autoscaling_policy" "ec2_scale_up_down_alb_policy" {
+  count                     = var.tracking_policy_alb == true && var.enable_scaling_actions == false ? var.asg_count : 0
+  name                      = join("-", compact(["ec2_scale_up_down_alb_policy", var.name, format("%03d", count.index + 1)]))
+  autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
+  estimated_instance_warmup = var.instance_warm_up_time
+  policy_type               = "TargetTrackingScaling"
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ALBRequestCountPerTarget"
+      resource_label         = var.resource_label
+    }
+    target_value     = var.alb_target_value
+    disable_scale_in = var.disable_scale_in
+  }
+}
+
+# Target Tracking Policy with Network-In
+
+resource "aws_autoscaling_policy" "ec2_scale_up_down_network_in_policy" {
+  count                     = var.tracking_policy_network_in == true && var.enable_scaling_actions == false ? var.asg_count : 0
+  name                      = join("-", compact(["ec2_scale_up_down_network_in_policy", var.name, format("%03d", count.index + 1)]))
+  autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
+  estimated_instance_warmup = var.instance_warm_up_time
+  policy_type               = "TargetTrackingScaling"
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageNetworkIn"
+    }
+    target_value     = var.network_in_target_value
+    disable_scale_in = var.disable_scale_in
+  }
+}
+
+# Target Tracking Policy with Network-Out
+
+resource "aws_autoscaling_policy" "ec2_scale_up_down_network_out_policy" {
+  count                     = var.tracking_policy_network_out == true && var.enable_scaling_actions == false ? var.asg_count : 0
+  name                      = join("-", compact(["ec2_scale_up_down_network_out_policy", var.name, format("%03d", count.index + 1)]))
+  autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
+  estimated_instance_warmup = var.instance_warm_up_time
+  policy_type               = "TargetTrackingScaling"
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageNetworkOut"
+    }
+    target_value     = var.network_out_target_value
+    disable_scale_in = var.disable_scale_in
+  }
+}
+
 resource "aws_autoscaling_group" "autoscalegrp" {
   count = var.asg_count
 
