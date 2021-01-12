@@ -11,7 +11,7 @@ variable "additional_tags" {
 }
 
 variable "alb_target_value" {
-  description = "Enter the target value for Application Load Balancer request count per target metric."
+  description = "Enter the target value for 'Application Load Balancer request count per target' metric for Target Tracking Policy."
   type        = string
   default     = "50"
 }
@@ -41,7 +41,7 @@ variable "cloudwatch_log_retention" {
 }
 
 variable "cpu_target_value" {
-  description = "Enter the target value for Average CPU Utilization metric."
+  description = "nter the target value for 'Average CPU Utilization' metric for Target Tracking Policy."
   type        = string
   default     = "50"
 }
@@ -113,7 +113,7 @@ variable "detailed_monitoring" {
 }
 
 variable "disable_scale_in" {
-  description = "Disable scale in to create only a scale-out policy"
+  description = "Disable scale in to create only a scale-out policy in Target Tracking Policy."
   type        = bool
   default     = false
 }
@@ -262,7 +262,7 @@ variable "instance_type" {
 }
 
 variable "instance_warm_up_time" {
-  description = "Specify the Instance Warm Up time for Target Tracking Policy"
+  description = "Specify the Instance Warm Up time for Target Tracking Policy."
   type        = string
   default     = "300"
 }
@@ -285,13 +285,13 @@ variable "name" {
 }
 
 variable "network_in_target_value" {
-  description = "Enter the target value for Network In Metric."
+  description = "Enter the target value for 'Network In' metric for Target Tracking Policy."
   type        = string
   default     = "50"
 }
 
 variable "network_out_target_value" {
-  description = "Enter the target value for Network Out Metric."
+  description = "Enter the target value for 'Network Out' metric for Target Tracking Policy."
   type        = string
   default     = "50"
 }
@@ -345,7 +345,7 @@ variable "rackspace_managed" {
 }
 
 variable "resource_label" {
-  description = "Enter the ALB and Target group in this format : app/<load-balancer-name>/<load-balancer-id>/targetgroup/<target-group-name>/<target-group-id>"
+  description = "Enter the ALB and Target group in this format : app/<load-balancer-name>/<load-balancer-id>/targetgroup/<target-group-name>/<target-group-id>. If Target Tracking Policy getting configure with 'Application Load Balancer request count per target' metric, then this option is must to use."
   type        = string
   default     = ""
 }
@@ -451,25 +451,25 @@ variable "terminated_instances" {
 }
 
 variable "tracking_policy_alb" {
-  description = "Use target tracking policy with ALBRequestCountPerTarget"
+  description = "Configure Target Tracking Policy with 'ALB Request Count Per Target' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'. Also you would need to pass 'resource_label' option to pass the Load Balancer information."
   type        = bool
   default     = false
 }
 
 variable "tracking_policy_cpu" {
-  description = "Use target tracking policy with ASGAverageCPUUtilization"
+  description = "Configure Target Tracking Policy with 'Average CPU Utilization' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'."
   type        = bool
   default     = false
 }
 
 variable "tracking_policy_network_in" {
-  description = "Use target tracking policy with ASGAverageNetworkIn"
+  description = "Configure Target Tracking Policy with 'Average Network In' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'."
   type        = bool
   default     = false
 }
 
 variable "tracking_policy_network_out" {
-  description = "Use target tracking policy with ASGAverageNetworkOut"
+  description = "Configure Target Tracking Policy with 'Average Network Out' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'."
   type        = bool
   default     = false
 }
