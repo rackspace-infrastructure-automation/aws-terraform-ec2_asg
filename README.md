@@ -45,13 +45,6 @@ New variables `tags` and `tags_asg` were added to replace the functionality of t
 
 New variable `ssm_bootstrap_list` was added to allow setting the SSM association steps using objects instead of strings, allowing easier linting and formatting of these lines.  The `additional_ssm_bootstrap_list` variable will continue to work, but will be deprecated in a future release.
 
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.12 |
-| aws | >= 2.1.0 |
-
 ## Providers
 
 | Name | Version |
@@ -71,7 +64,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | `string` | `"10m"` | no |
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | `string` | `"False"` | no |
 | cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | `string` | `"30"` | no |
-| cpu\_target\_value | nter the target value for 'Average CPU Utilization' metric for Target Tracking Policy. | `string` | `"50"` | no |
+| cpu\_target\_value | Enter the target value for 'Average CPU Utilization' metric for Target Tracking Policy. | `string` | `"50"` | no |
 | custom\_cw\_agent\_config\_ssm\_param | SSM Parameter Store name that contains a custom CloudWatch agent configuration that you would like to use as an alternative to the default provided. | `string` | `""` | no |
 | cw\_high\_evaluations | The number of periods over which data is compared to the specified threshold. | `string` | `"3"` | no |
 | cw\_high\_operator | Math operator used by CloudWatch for alarms and triggers. | `string` | `"GreaterThanThreshold"` | no |

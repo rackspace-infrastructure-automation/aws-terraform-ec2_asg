@@ -41,7 +41,7 @@ variable "cloudwatch_log_retention" {
 }
 
 variable "cpu_target_value" {
-  description = "nter the target value for 'Average CPU Utilization' metric for Target Tracking Policy."
+  description = "Enter the target value for 'Average CPU Utilization' metric for Target Tracking Policy."
   type        = string
   default     = "50"
 }
