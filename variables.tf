@@ -153,6 +153,12 @@ variable "enable_rolling_updates" {
   default     = true
 }
 
+variable "enable_scaling_actions" {
+  description = "Should this autoscaling group be configured with scaling alarms to manage the desired count.  Set this variable to false if another process will manage the desired count, such as EKS Cluster Autoscaler."
+  type        = bool
+  default     = true
+}
+
 variable "enable_scaling_notification" {
   description = "true or false. If 'scaling_notification_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals"
   type        = bool
