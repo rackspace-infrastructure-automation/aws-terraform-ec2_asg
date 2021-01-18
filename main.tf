@@ -558,7 +558,7 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
-  count = var.enable_scaling_actions ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" ? var.asg_count : 0
 
   adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
@@ -568,7 +568,7 @@ resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
-  count = var.enable_scaling_actions ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" ? var.asg_count : 0
 
   adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
@@ -577,10 +577,9 @@ resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
   scaling_adjustment     = var.ec2_scale_down_adjustment > 0 ? -var.ec2_scale_down_adjustment : var.ec2_scale_down_adjustment
 }
 
-# Target Tracking Policy with CPU
-
 resource "aws_autoscaling_policy" "ec2_scale_up_down_cpu_policy" {
-  count                     = var.tracking_policy_cpu == true && var.enable_scaling_actions == false ? var.asg_count : 0
+  count = var.policy_type == "TargetTrackingScaling" && var.tracking_policy_metric == "AvgCPUUtilization" ? var.asg_count : 0
+
   name                      = join("-", compact(["ec2_scale_up_down_cpu_policy", var.name, format("%03d", count.index + 1)]))
   autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
   estimated_instance_warmup = var.instance_warm_up_time
@@ -589,15 +588,14 @@ resource "aws_autoscaling_policy" "ec2_scale_up_down_cpu_policy" {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
-    target_value     = var.cpu_target_value
+    target_value     = var.target_value
     disable_scale_in = var.disable_scale_in
   }
 }
 
-# Target Tracking Policy with ALB
-
 resource "aws_autoscaling_policy" "ec2_scale_up_down_alb_policy" {
-  count                     = var.tracking_policy_alb == true && var.enable_scaling_actions == false ? var.asg_count : 0
+  count = var.policy_type == "TargetTrackingScaling" && var.tracking_policy_metric == "ALBRequestCount" ? var.asg_count : 0
+
   name                      = join("-", compact(["ec2_scale_up_down_alb_policy", var.name, format("%03d", count.index + 1)]))
   autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
   estimated_instance_warmup = var.instance_warm_up_time
@@ -605,17 +603,16 @@ resource "aws_autoscaling_policy" "ec2_scale_up_down_alb_policy" {
   target_tracking_configuration {
     predefined_metric_specification {
       predefined_metric_type = "ALBRequestCountPerTarget"
-      resource_label         = var.resource_label
+      resource_label         = var.alb_resource_label
     }
-    target_value     = var.alb_target_value
+    target_value     = var.target_value
     disable_scale_in = var.disable_scale_in
   }
 }
 
-# Target Tracking Policy with Network-In
-
 resource "aws_autoscaling_policy" "ec2_scale_up_down_network_in_policy" {
-  count                     = var.tracking_policy_network_in == true && var.enable_scaling_actions == false ? var.asg_count : 0
+  count = var.policy_type == "TargetTrackingScaling" && var.tracking_policy_metric == "AvgNetworkIn" ? var.asg_count : 0
+
   name                      = join("-", compact(["ec2_scale_up_down_network_in_policy", var.name, format("%03d", count.index + 1)]))
   autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
   estimated_instance_warmup = var.instance_warm_up_time
@@ -624,15 +621,14 @@ resource "aws_autoscaling_policy" "ec2_scale_up_down_network_in_policy" {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageNetworkIn"
     }
-    target_value     = var.network_in_target_value
+    target_value     = var.target_value
     disable_scale_in = var.disable_scale_in
   }
 }
 
-# Target Tracking Policy with Network-Out
-
 resource "aws_autoscaling_policy" "ec2_scale_up_down_network_out_policy" {
-  count                     = var.tracking_policy_network_out == true && var.enable_scaling_actions == false ? var.asg_count : 0
+  count = var.policy_type == "TargetTrackingScaling" && var.tracking_policy_metric == "AvgNetworkOut" ? var.asg_count : 0
+
   name                      = join("-", compact(["ec2_scale_up_down_network_out_policy", var.name, format("%03d", count.index + 1)]))
   autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
   estimated_instance_warmup = var.instance_warm_up_time
@@ -641,7 +637,7 @@ resource "aws_autoscaling_policy" "ec2_scale_up_down_network_out_policy" {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageNetworkOut"
     }
-    target_value     = var.network_out_target_value
+    target_value     = var.target_value
     disable_scale_in = var.disable_scale_in
   }
 }
@@ -765,7 +761,7 @@ module "group_terminating_instances" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
-  count = var.enable_scaling_actions ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" ? var.asg_count : 0
 
   alarm_actions       = [element(aws_autoscaling_policy.ec2_scale_up_policy.*.arn, count.index)]
   alarm_description   = "Scale-up if ${var.cw_scaling_metric} ${var.cw_high_operator} ${var.cw_high_threshold}% for ${var.cw_high_period} seconds ${var.cw_high_evaluations} times."
@@ -784,7 +780,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_low" {
-  count = var.enable_scaling_actions ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" ? var.asg_count : 0
 
   alarm_actions       = [element(aws_autoscaling_policy.ec2_scale_down_policy.*.arn, count.index)]
   alarm_description   = "Scale-down if ${var.cw_scaling_metric} ${var.cw_low_operator} ${var.cw_low_threshold}% for ${var.cw_low_period} seconds ${var.cw_low_evaluations} times."

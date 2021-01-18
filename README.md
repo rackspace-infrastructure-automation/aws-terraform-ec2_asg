@@ -59,12 +59,11 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 |------|-------------|------|---------|:--------:|
 | additional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `ssm_bootstrap_list` variable. | `list(map(string))` | `[]` | no |
 | additional\_tags | Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `tags` and `tags_asg` variables. | `list(map(string))` | `[]` | no |
-| alb\_target\_value | Enter the target value for 'Application Load Balancer request count per target' metric for Target Tracking Policy. | `string` | `"50"` | no |
+| alb\_resource\_label | Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id | `string` | `""` | no |
 | asg\_count | Number of identical ASG's to deploy | `string` | `"1"` | no |
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | `string` | `"10m"` | no |
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | `string` | `"False"` | no |
 | cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | `string` | `"30"` | no |
-| cpu\_target\_value | Enter the target value for 'Average CPU Utilization' metric for Target Tracking Policy. | `string` | `"50"` | no |
 | custom\_cw\_agent\_config\_ssm\_param | SSM Parameter Store name that contains a custom CloudWatch agent configuration that you would like to use as an alternative to the default provided. | `string` | `""` | no |
 | cw\_high\_evaluations | The number of periods over which data is compared to the specified threshold. | `string` | `"3"` | no |
 | cw\_high\_operator | Math operator used by CloudWatch for alarms and triggers. | `string` | `"GreaterThanThreshold"` | no |
@@ -84,7 +83,6 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | ec2\_scale\_up\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | `string` | `"60"` | no |
 | enable\_ebs\_optimization | Use EBS Optimized? true or false | `bool` | `false` | no |
 | enable\_rolling\_updates | Should this autoscaling group be targeted by the ASG Instance Replacement tool to ensure all instances are using thelatest launch configuration. | `bool` | `true` | no |
-| enable\_scaling\_actions | Should this autoscaling group be configured with scaling alarms to manage the desired count.  Set this variable to false if another process will manage the desired count, such as EKS Cluster Autoscaler. | `bool` | `true` | no |
 | enable\_scaling\_notification | true or false. If 'scaling\_notification\_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | `bool` | `false` | no |
 | enabled\_asg\_metrics | List of ASG metrics desired.  This can only contain the following values: `GroupDesiredCapacity`, `GroupInServiceCapacity`, `GroupPendingCapacity`, `GroupMinSize`, `GroupMaxSize`, `GroupInServiceInstances`, `GroupPendingInstances`, `GroupStandbyInstances`, `GroupStandbyCapacity`, `GroupTerminatingCapacity`, `GroupTerminatingInstances`, `GroupTotalCapacity`, `GroupTotalInstances`. | `list(string)` | `[]` | no |
 | encrypt\_primary\_ebs\_volume | Encrypt root EBS Volume? true or false | `bool` | `false` | no |
@@ -105,17 +103,15 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | key\_pair | Name of an existing EC2 KeyPair to enable SSH access to the instances. | `string` | `""` | no |
 | load\_balancer\_names | A list of Classic load balancers associated with this Auto Scaling group. | `list(string)` | `[]` | no |
 | name | Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module | `string` | n/a | yes |
-| network\_in\_target\_value | Enter the target value for 'Network In' metric for Target Tracking Policy. | `string` | `"50"` | no |
-| network\_out\_target\_value | Enter the target value for 'Network Out' metric for Target Tracking Policy. | `string` | `"50"` | no |
 | notification\_topic | List of SNS Topic ARNs to use for customer notifications. | `list(string)` | `[]` | no |
 | perform\_ssm\_inventory\_tag | Determines whether Instance is tracked via System Manager Inventory. | `string` | `"True"` | no |
+| policy\_type | Enter scaling policy type. Allowed values are : SimpleScaling & TargetTrackingScaling | `string` | `"SimpleScaling"` | no |
 | primary\_ebs\_volume\_iops | Iops value required for use with io1 EBS volumes. This value should be 3 times the EBS volume size | `string` | `"0"` | no |
 | primary\_ebs\_volume\_size | EBS Volume Size in GB | `string` | `"60"` | no |
 | primary\_ebs\_volume\_type | EBS Volume Type. e.g. gp2, io1, st1, sc1 | `string` | `"gp2"` | no |
 | provide\_custom\_cw\_agent\_config | Set to true if a custom cloudwatch agent configuration has been provided in variable custom\_cw\_agent\_config\_ssm\_param. | `bool` | `false` | no |
 | rackspace\_alarms\_enabled | Specifies whether alarms will create a Rackspace ticket.  Ignored if rackspace\_managed is set to false. | `bool` | `false` | no |
 | rackspace\_managed | Boolean parameter controlling if instance will be fully managed by Rackspace support teams, created CloudWatch alarms that generate tickets, and utilize Rackspace managed SSM documents. | `bool` | `true` | no |
-| resource\_label | Enter the ALB and Target group in this format : app/<load-balancer-name>/<load-balancer-id>/targetgroup/<target-group-name>/<target-group-id>. If Target Tracking Policy getting configure with 'Application Load Balancer request count per target' metric, then this option is must to use. | `string` | `""` | no |
 | scaling\_max | The maximum size of the Auto Scaling group. | `string` | `"2"` | no |
 | scaling\_min | The minimum count of EC2 instances in the Auto Scaling group. | `string` | `"1"` | no |
 | scaling\_notification\_topic | SNS Topic ARN to notify if there are any scaling operations. OPTIONAL | `string` | `""` | no |
@@ -131,12 +127,10 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | tags | A map of tags to apply to all resources.  These tags will all be propagated to ASG instances and set on all other resources. | `map(string)` | `{}` | no |
 | tags\_asg | A map of tags to apply to the ASG itself.  These tags will not be propagated to ASG instances or set on any other resources. | `map(string)` | `{}` | no |
 | target\_group\_arns | A list of Amazon Resource Names (ARN) of target groups to associate with the Auto Scaling group. | `list(string)` | `[]` | no |
+| target\_value | Enter the target value for Target Scaling Policy metrics. | `string` | `"50"` | no |
 | tenancy | The placement tenancy for EC2 devices. e.g. host, default, dedicated | `string` | `"default"` | no |
 | terminated\_instances | Specifies the maximum number of instances that can be terminated in a six hour period without generating a Cloudwatch Alarm. | `string` | `"30"` | no |
-| tracking\_policy\_alb | Configure Target Tracking Policy with 'ALB Request Count Per Target' metric. If you are using this option make sure you set this 'enable\_scaling\_actions' option as 'false'. Also you would need to pass 'resource\_label' option to pass the Load Balancer information. | `bool` | `false` | no |
-| tracking\_policy\_cpu | Configure Target Tracking Policy with 'Average CPU Utilization' metric. If you are using this option make sure you set this 'enable\_scaling\_actions' option as 'false'. | `bool` | `false` | no |
-| tracking\_policy\_network\_in | Configure Target Tracking Policy with 'Average Network In' metric. If you are using this option make sure you set this 'enable\_scaling\_actions' option as 'false'. | `bool` | `false` | no |
-| tracking\_policy\_network\_out | Configure Target Tracking Policy with 'Average Network Out' metric. If you are using this option make sure you set this 'enable\_scaling\_actions' option as 'false'. | `bool` | `false` | no |
+| tracking\_policy\_metric | Enter Target Tracking Policy's metric name. Allowed Values are: AvgCPUUtilization, AvgNetworkIn, AvgNetworkOut, ALBRequestCount | `string` | `"AvgCPUUtilization"` | no |
 
 ## Outputs
 

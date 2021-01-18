@@ -10,10 +10,10 @@ variable "additional_tags" {
   default     = []
 }
 
-variable "alb_target_value" {
-  description = "Enter the target value for 'Application Load Balancer request count per target' metric for Target Tracking Policy."
+variable "alb_resource_label" {
+  description = "Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id"
   type        = string
-  default     = "50"
+  default     = ""
 }
 
 variable "asg_count" {
@@ -38,12 +38,6 @@ variable "cloudwatch_log_retention" {
   description = "The number of days to retain Cloudwatch Logs for this instance."
   type        = string
   default     = "30"
-}
-
-variable "cpu_target_value" {
-  description = "Enter the target value for 'Average CPU Utilization' metric for Target Tracking Policy."
-  type        = string
-  default     = "50"
 }
 
 variable "custom_cw_agent_config_ssm_param" {
@@ -155,12 +149,6 @@ variable "enable_ebs_optimization" {
 
 variable "enable_rolling_updates" {
   description = "Should this autoscaling group be targeted by the ASG Instance Replacement tool to ensure all instances are using thelatest launch configuration."
-  type        = bool
-  default     = true
-}
-
-variable "enable_scaling_actions" {
-  description = "Should this autoscaling group be configured with scaling alarms to manage the desired count.  Set this variable to false if another process will manage the desired count, such as EKS Cluster Autoscaler."
   type        = bool
   default     = true
 }
@@ -284,18 +272,6 @@ variable "name" {
   type        = string
 }
 
-variable "network_in_target_value" {
-  description = "Enter the target value for 'Network In' metric for Target Tracking Policy."
-  type        = string
-  default     = "50"
-}
-
-variable "network_out_target_value" {
-  description = "Enter the target value for 'Network Out' metric for Target Tracking Policy."
-  type        = string
-  default     = "50"
-}
-
 variable "notification_topic" {
   description = "List of SNS Topic ARNs to use for customer notifications."
   type        = list(string)
@@ -306,6 +282,12 @@ variable "perform_ssm_inventory_tag" {
   description = "Determines whether Instance is tracked via System Manager Inventory."
   type        = string
   default     = "True"
+}
+
+variable "policy_type" {
+  description = "Enter scaling policy type. Allowed values are : SimpleScaling & TargetTrackingScaling"
+  type        = string
+  default     = "SimpleScaling"
 }
 
 variable "primary_ebs_volume_iops" {
@@ -342,12 +324,6 @@ variable "rackspace_managed" {
   description = "Boolean parameter controlling if instance will be fully managed by Rackspace support teams, created CloudWatch alarms that generate tickets, and utilize Rackspace managed SSM documents."
   type        = bool
   default     = true
-}
-
-variable "resource_label" {
-  description = "Enter the ALB and Target group in this format : app/<load-balancer-name>/<load-balancer-id>/targetgroup/<target-group-name>/<target-group-id>. If Target Tracking Policy getting configure with 'Application Load Balancer request count per target' metric, then this option is must to use."
-  type        = string
-  default     = ""
 }
 
 variable "scaling_max" {
@@ -438,6 +414,12 @@ variable "target_group_arns" {
   default     = []
 }
 
+variable "target_value" {
+  description = "Enter the target value for Target Scaling Policy metrics."
+  type        = string
+  default     = "50"
+}
+
 variable "tenancy" {
   description = "The placement tenancy for EC2 devices. e.g. host, default, dedicated"
   type        = string
@@ -450,26 +432,8 @@ variable "terminated_instances" {
   default     = "30"
 }
 
-variable "tracking_policy_alb" {
-  description = "Configure Target Tracking Policy with 'ALB Request Count Per Target' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'. Also you would need to pass 'resource_label' option to pass the Load Balancer information."
-  type        = bool
-  default     = false
-}
-
-variable "tracking_policy_cpu" {
-  description = "Configure Target Tracking Policy with 'Average CPU Utilization' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'."
-  type        = bool
-  default     = false
-}
-
-variable "tracking_policy_network_in" {
-  description = "Configure Target Tracking Policy with 'Average Network In' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'."
-  type        = bool
-  default     = false
-}
-
-variable "tracking_policy_network_out" {
-  description = "Configure Target Tracking Policy with 'Average Network Out' metric. If you are using this option make sure you set this 'enable_scaling_actions' option as 'false'."
-  type        = bool
-  default     = false
+variable "tracking_policy_metric" {
+  description = "Enter Target Tracking Policy's metric name. Allowed Values are: AvgCPUUtilization, AvgNetworkIn, AvgNetworkOut, ALBRequestCount"
+  type        = string
+  default     = "AvgCPUUtilization"
 }
