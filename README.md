@@ -56,7 +56,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | additional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `ssm_bootstrap_list` variable. | `list(map(string))` | `[]` | no |
 | additional\_tags | Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `tags` and `tags_asg` variables. | `list(map(string))` | `[]` | no |
 | alb\_resource\_label | Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id | `string` | `""` | no |
