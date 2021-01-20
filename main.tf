@@ -558,7 +558,7 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
-  count = var.policy_type == "SimpleScaling" ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" && var.enable_scaling_actions == true ? var.asg_count : 0
 
   adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
@@ -568,7 +568,7 @@ resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
-  count = var.policy_type == "SimpleScaling" ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" && var.enable_scaling_actions == true ? var.asg_count : 0
 
   adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
@@ -761,7 +761,7 @@ module "group_terminating_instances" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
-  count = var.policy_type == "SimpleScaling" ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" && var.enable_scaling_actions == true ? var.asg_count : 0
 
   alarm_actions       = [element(aws_autoscaling_policy.ec2_scale_up_policy.*.arn, count.index)]
   alarm_description   = "Scale-up if ${var.cw_scaling_metric} ${var.cw_high_operator} ${var.cw_high_threshold}% for ${var.cw_high_period} seconds ${var.cw_high_evaluations} times."
@@ -780,7 +780,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_low" {
-  count = var.policy_type == "SimpleScaling" ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" && var.enable_scaling_actions == true ? var.asg_count : 0
 
   alarm_actions       = [element(aws_autoscaling_policy.ec2_scale_down_policy.*.arn, count.index)]
   alarm_description   = "Scale-down if ${var.cw_scaling_metric} ${var.cw_low_operator} ${var.cw_low_threshold}% for ${var.cw_low_period} seconds ${var.cw_low_evaluations} times."
