@@ -33,6 +33,10 @@ locals {
 
   cw_config_parameter_name = "CWAgent-${var.resource_name}"
 
+  # Enforce metrics needed for CW
+ 
+  asg_metrics = distinct(concat(var.enabled_asg_metrics, ["GroupTerminatingInstances"]))
+
   # This is a list of ssm main steps
   default_ssm_cmd_list = [
     {
@@ -609,6 +613,7 @@ resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
 resource "aws_autoscaling_group" "autoscalegrp" {
   count = "${var.asg_count}"
 
+  enabled_metrics           = local.asg_metrics
   name_prefix               = "${join("-",compact(list("AutoScaleGrp", var.resource_name, format("%03d-",count.index+1))))}"
   max_size                  = "${var.scaling_max}"
   min_size                  = "${var.scaling_min}"

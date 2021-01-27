@@ -62,6 +62,9 @@ Using [aws-terraform-cloudwatch\_alarm](https://github.com/rackspace-infrastruct
 | enable\_rolling\_updates | Should this autoscaling group be targeted by the ASG Instance Replacement tool to ensure all instances are using thelatest launch configuration. | `string` | `true` | no |
 | enable\_scaling\_actions | Should this autoscaling group be configured with scaling alarms to manage the desired count.  Set this variable to false if another process will manage the desired count, such as EKS Cluster Autoscaler. | `string` | `true` | no |
 | enable\_scaling\_notification | true or false. If 'scaling\_notification\_topic' is set to a non-empty string, this must be set to true. Otherwise, set to false. This variable exists due to a terraform limitation with using count and computed values as conditionals | `string` | `false` | no |
+| enabled\_asg\_metrics | List of ASG metrics desired.  This can only contain the following values: `GroupDesiredCapacity`, `GroupInServiceCapacity`, `GroupPendingCapacity`, `GroupMinSize`, `GroupMaxSize`, `GroupInServiceInstances`, `GroupPendingInstances`, `GroupStandbyInstances`, `GroupStandbyCapacity`, `GroupTerminatingCapacity`, `GroupTerminatingInstances`, `GroupTotalCapacity`, `GroupTotalInstances`. | `list(string)` | `[]` | no |
+| encrypt\_primary\_ebs\_volume | Encrypt root EBS Volume? true or false | `bool` | `false` | no |
+| encrypt\_primary\_ebs\_volume | Encrypt root EBS Volume? t
 | encrypt\_primary\_ebs\_volume | Encrypt root EBS Volume? true or false | `string` | `false` | no |
 | encrypt\_secondary\_ebs\_volume | Encrypt secondary EBS Volume? true or false | `string` | `false` | no |
 | environment | Application environment for which this network is being created. Preferred value are Development, Integration, PreProduction, Production, QA, Staging, or Test | `string` | `"Development"` | no |
