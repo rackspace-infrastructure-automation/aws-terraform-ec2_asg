@@ -183,11 +183,9 @@ variable "enable_ebs_optimization" {
   default     = false
 }
 
-}
-
 variable "enabled_asg_metrics" {
   description = "List of ASG metrics desired.  This can only contain the following values: `GroupDesiredCapacity`, `GroupInServiceCapacity`, `GroupPendingCapacity`, `GroupMinSize`, `GroupMaxSize`, `GroupInServiceInstances`, `GroupPendingInstances`, `GroupStandbyInstances`, `GroupStandbyCapacity`, `GroupTerminatingCapacity`, `GroupTerminatingInstances`, `GroupTotalCapacity`, `GroupTotalInstances`."
-  type        = list(string)
+  type        = "list"
   default     = []
 }
 

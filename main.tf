@@ -34,9 +34,8 @@ locals {
   cw_config_parameter_name = "CWAgent-${var.resource_name}"
 
   # Enforce metrics needed for CW
- 
-  asg_metrics = distinct(concat(var.enabled_asg_metrics, ["GroupTerminatingInstances"]))
 
+  asg_metrics = "${distinct(concat(var.enabled_asg_metrics, ["GroupTerminatingInstances"]))}"
   # This is a list of ssm main steps
   default_ssm_cmd_list = [
     {
@@ -145,7 +144,6 @@ EOF
 EOF
     },
   ]
-
   ssm_codedeploy_include = {
     enabled = <<EOF
     {
@@ -160,7 +158,6 @@ EOF
 
     disabled = ""
   }
-
   ssm_scaleft_include = {
     enabled = <<EOF
     {
@@ -176,12 +173,9 @@ EOF
 
     disabled = ""
   }
-
   codedeploy_install = "${var.install_codedeploy_agent ? "enabled" : "disabled"}"
   scaleft_install    = "${var.install_scaleft_agent ? "enabled" : "disabled"}"
-
-  ssm_command_count = 6
-
+  ssm_command_count  = 6
   ebs_device_map = {
     amazon        = "/dev/sdf"
     amazon2       = "/dev/sdf"
@@ -200,9 +194,7 @@ EOF
     windows2016   = "xvdf"
     windows2019   = "xvdf"
   }
-
   cwagent_config = "${local.ec2_os_windows ? "windows_cw_agent_param.json" : "linux_cw_agent_param.json"}"
-
   tags = [
     {
       key                 = "Backup"
@@ -245,7 +237,6 @@ EOF
       propagate_at_launch = false
     },
   ]
-
   user_data_map = {
     amazon        = "amazon_linux_userdata.sh"
     amazon2       = "amazon_linux_userdata.sh"
@@ -264,7 +255,6 @@ EOF
     windows2016   = "windows_userdata.ps1"
     windows2019   = "windows_userdata.ps1"
   }
-
   ami_owner_mapping = {
     amazon        = "137112412989"
     amazon2       = "137112412989"
@@ -283,7 +273,6 @@ EOF
     windows2016   = "801119661308"
     windows2019   = "801119661308"
   }
-
   ami_name_mapping = {
     amazon        = "amzn-ami-hvm-2018.03.0.*gp2"
     amazon2       = "amzn2-ami-hvm-2.0.*-ebs"
@@ -302,7 +291,6 @@ EOF
     windows2016   = "Windows_Server-2016-English-Full-Base*"
     windows2019   = "Windows_Server-2019-English-Full-Base*"
   }
-
   # Any custom AMI filters for a given OS can be added in this mapping
   image_filter = {
     amazon        = []
@@ -336,7 +324,6 @@ EOF
       },
     ]
   }
-
   standard_filters = [
     {
       name   = "virtualization-type"
@@ -613,7 +600,7 @@ resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
 resource "aws_autoscaling_group" "autoscalegrp" {
   count = "${var.asg_count}"
 
-  enabled_metrics           = local.asg_metrics
+  enabled_metrics           = "${local.asg_metrics}"
   name_prefix               = "${join("-",compact(list("AutoScaleGrp", var.resource_name, format("%03d-",count.index+1))))}"
   max_size                  = "${var.scaling_max}"
   min_size                  = "${var.scaling_min}"
