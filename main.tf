@@ -23,6 +23,13 @@
  *
  * Using [aws-terraform-cloudwatch_alarm](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm) to create the following CloudWatch Alarms:
  * - group_terminating_instances
+ *
+ *  ### Module variables
+ *
+ * The following variables are no longer neccessary and were removed
+ *
+ * - `install_scaleft_agent`
+ *
  */
 
 locals {
@@ -158,23 +165,8 @@ EOF
 
     disabled = ""
   }
-  ssm_scaleft_include = {
-    enabled = <<EOF
-    {
-      "action": "aws:runDocument",
-      "inputs": {
-        "documentPath": "arn:aws:ssm:${data.aws_region.current_region.name}:507897595701:document/Rack-Install_ScaleFT",
-        "documentType": "SSMDocument"
-      },
-      "name": "SetupPassport",
-      "timeoutSeconds": 300
-    }
-EOF
-
-    disabled = ""
-  }
+  
   codedeploy_install = "${var.install_codedeploy_agent ? "enabled" : "disabled"}"
-  scaleft_install    = "${var.install_scaleft_agent ? "enabled" : "disabled"}"
   ssm_command_count  = 6
   ebs_device_map = {
     amazon        = "/dev/sdf"
@@ -773,7 +765,7 @@ data "template_file" "ssm_bootstrap_template" {
   template = "${file(local.ssm_bootstrap_template_file_path)}"
 
   vars {
-    run_command_list = "${join(",",compact(concat(data.template_file.ssm_command_docs.*.rendered, list(local.ssm_codedeploy_include[local.codedeploy_install]), list(local.ssm_scaleft_include[local.scaleft_install]), data.template_file.additional_ssm_docs.*.rendered)))}"
+    run_command_list = "${join(",",compact(concat(data.template_file.ssm_command_docs.*.rendered, list(local.ssm_codedeploy_include[local.codedeploy_install]), data.template_file.additional_ssm_docs.*.rendered)))}"
   }
 }
 

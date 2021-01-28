@@ -16,6 +16,12 @@ module "asg" {
 }
 ```
 
+### Module variables
+
+The following variables are no longer neccessary and were removed:
+
+* `install_scaleft_agent` - the old deprecated instance agent
+
 Full working references are available at [examples](examples)
 
 ## Other TF Modules Used
@@ -72,7 +78,6 @@ Using [aws-terraform-cloudwatch\_alarm](https://github.com/rackspace-infrastruct
 | image\_id | The AMI ID to be used to build the EC2 Instance. If not provided, an AMI ID will be queried with an OS specified in variable ec2\_os. | `string` | `""` | no |
 | initial\_userdata\_commands | Commands to be given at the start of userdata for an instance. This should generally not include bootstrapping or ssm install. | `string` | `""` | no |
 | install\_codedeploy\_agent | Install codedeploy agent on instance(s)? true or false | `string` | `false` | no |
-| install\_scaleft\_agent | Install scaleft agent on instance(s)? true or false | `string` | `true` | no |
 | instance\_profile\_override | Optionally provide an instance profile. Any override profile should contain the permissions required for Rackspace support tooling to continue to function if required. | `string` | `false` | no |
 | instance\_profile\_override\_name | Provide an instance profile name. Any override profile should contain the permissions required for Rackspace support tooling to continue to function if required. To use this set `instance_profile_override` to `true`. | `string` | `""` | no |
 | instance\_role\_managed\_policy\_arn\_count | The number of policy ARNs provided/set in variable 'instance\_role\_managed\_policy\_arns' | `string` | `"0"` | no |
