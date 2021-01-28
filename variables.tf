@@ -67,7 +67,6 @@ variable "install_codedeploy_agent" {
   default     = false
 }
 
-
 variable "instance_type" {
   description = "EC2 Instance Type e.g. 't2.micro'"
   type        = "string"
