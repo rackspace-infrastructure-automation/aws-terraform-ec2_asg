@@ -677,7 +677,7 @@ module "group_terminating_instances" {
 
   alarm_count              = "${var.asg_count}"
   alarm_description        = "Over ${var.terminated_instances} instances terminated in last 6 hours, generating ticket to investigate."
-  alarm_name               = "${var.resource_name}-GroupTerminatingInstances}"
+  alarm_name               = "${var.resource_name}-GroupTerminatingInstances"
   comparison_operator      = "GreaterThanThreshold"
   dimensions               = "${data.null_data_source.alarm_dimensions.*.outputs}"
   evaluation_periods       = 1
