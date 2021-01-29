@@ -13,7 +13,7 @@ variable "additional_tags" {
 variable "alb_resource_label" {
   description = "Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "asg_count" {
@@ -155,7 +155,7 @@ variable "enable_rolling_updates" {
 
 variable "enable_scaling_actions" {
   description = "Should this autoscaling group be configured with scaling alarms to manage the desired count.  Set this variable to false if another process will manage the desired count, such as EKS Cluster Autoscaler."
-  type        = bool
+  type        = booltracking_policy_metric
   default     = true
 }
 
@@ -291,7 +291,7 @@ variable "perform_ssm_inventory_tag" {
 }
 
 variable "policy_type" {
-  description = "Enter scaling policy type. Allowed values are : SimpleScaling & TargetTrackingScaling"
+  description = "Enter scaling policy type. Allowed values are : SimpleScaling or TargetTrackingScaling"
   type        = string
   default     = "SimpleScaling"
 }
@@ -439,7 +439,7 @@ variable "terminated_instances" {
 }
 
 variable "tracking_policy_metric" {
-  description = "Enter Target Tracking Policy's metric name. Allowed Values are: AvgCPUUtilization, AvgNetworkIn, AvgNetworkOut, ALBRequestCount"
+  description = "Allowed Values are: ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, ALBRequestCountPerTarget"
   type        = string
-  default     = "AvgCPUUtilization"
+  default     = "ASGAverageCPUUtilization"
 }
