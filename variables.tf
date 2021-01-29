@@ -67,12 +67,6 @@ variable "install_codedeploy_agent" {
   default     = false
 }
 
-variable "install_scaleft_agent" {
-  description = "Install scaleft agent on instance(s)? true or false"
-  type        = "string"
-  default     = true
-}
-
 variable "instance_type" {
   description = "EC2 Instance Type e.g. 't2.micro'"
   type        = "string"
@@ -181,6 +175,12 @@ variable "enable_ebs_optimization" {
   description = "Use EBS Optimized? true or false"
   type        = "string"
   default     = false
+}
+
+variable "enabled_asg_metrics" {
+  description = "List of ASG metrics desired.  This can only contain the following values: `GroupDesiredCapacity`, `GroupInServiceCapacity`, `GroupPendingCapacity`, `GroupMinSize`, `GroupMaxSize`, `GroupInServiceInstances`, `GroupPendingInstances`, `GroupStandbyInstances`, `GroupStandbyCapacity`, `GroupTerminatingCapacity`, `GroupTerminatingInstances`, `GroupTotalCapacity`, `GroupTotalInstances`."
+  type        = "list"
+  default     = []
 }
 
 variable "encrypt_primary_ebs_volume" {
