@@ -155,7 +155,7 @@ variable "enable_rolling_updates" {
 
 variable "enable_scaling_actions" {
   description = "Should this autoscaling group be configured with scaling alarms to manage the desired count.  Set this variable to false if another process will manage the desired count, such as EKS Cluster Autoscaler."
-  type        = booltracking_policy_metric
+  type        = bool
   default     = true
 }
 
