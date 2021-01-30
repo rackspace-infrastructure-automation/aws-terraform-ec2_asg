@@ -59,7 +59,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 |------|-------------|------|---------|:--------:|
 | additional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `ssm_bootstrap_list` variable. | `list(map(string))` | `[]` | no |
 | additional\_tags | Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `tags` and `tags_asg` variables. | `list(map(string))` | `[]` | no |
-| alb\_resource\_label | Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id | `string` | `""` | no |
+| alb\_resource\_label | Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id | `string` | `null` | no |
 | asg\_count | Number of identical ASG's to deploy | `string` | `"1"` | no |
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | `string` | `"10m"` | no |
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | `string` | `"False"` | no |
@@ -106,7 +106,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | name | Name to be used for the provisioned EC2 instance(s), ASG(s), and other resources provisioned in this module | `string` | n/a | yes |
 | notification\_topic | List of SNS Topic ARNs to use for customer notifications. | `list(string)` | `[]` | no |
 | perform\_ssm\_inventory\_tag | Determines whether Instance is tracked via System Manager Inventory. | `string` | `"True"` | no |
-| policy\_type | Enter scaling policy type. Allowed values are : SimpleScaling & TargetTrackingScaling | `string` | `"SimpleScaling"` | no |
+| policy\_type | Enter scaling policy type. Allowed values are : SimpleScaling or TargetTrackingScaling | `string` | `"SimpleScaling"` | no |
 | primary\_ebs\_volume\_iops | Iops value required for use with io1 EBS volumes. This value should be 3 times the EBS volume size | `string` | `"0"` | no |
 | primary\_ebs\_volume\_size | EBS Volume Size in GB | `string` | `"60"` | no |
 | primary\_ebs\_volume\_type | EBS Volume Type. e.g. gp2, io1, st1, sc1 | `string` | `"gp2"` | no |
@@ -131,7 +131,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | target\_value | Enter the target value for Target Scaling Policy metrics. | `string` | `"50"` | no |
 | tenancy | The placement tenancy for EC2 devices. e.g. host, default, dedicated | `string` | `"default"` | no |
 | terminated\_instances | Specifies the maximum number of instances that can be terminated in a six hour period without generating a Cloudwatch Alarm. | `string` | `"30"` | no |
-| tracking\_policy\_metric | Enter Target Tracking Policy's metric name. Allowed Values are: AvgCPUUtilization, AvgNetworkIn, AvgNetworkOut, ALBRequestCount | `string` | `"AvgCPUUtilization"` | no |
+| tracking\_policy\_metric | Allowed Values are: ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, ALBRequestCountPerTarget | `string` | `"ASGAverageCPUUtilization"` | no |
 
 ## Outputs
 
