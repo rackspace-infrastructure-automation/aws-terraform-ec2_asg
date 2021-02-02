@@ -14,12 +14,12 @@ provider "random" {
 data "aws_region" "current_region" {}
 
 locals {
-  tags = {
+  tags = merge({
     Environment     = "Test"
     Purpose         = "Testing aws-terraform-ec2_asg"
     ServiceProvider = "Rackspace"
     Terraform       = "true"
-  }
+  }, var.tags)
 
   tags_asg = {
     ASG = "true"

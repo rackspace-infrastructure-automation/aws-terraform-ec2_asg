@@ -558,7 +558,7 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
-  count = var.enable_scaling_actions ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" && var.enable_scaling_actions == true ? var.asg_count : 0
 
   adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
@@ -568,13 +568,30 @@ resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_down_policy" {
-  count = var.enable_scaling_actions ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" && var.enable_scaling_actions == true ? var.asg_count : 0
 
   adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
   cooldown               = var.ec2_scale_down_cool_down
   name                   = join("-", compact(["ec2_scale_down_policy", var.name, format("%03d", count.index + 1)]))
   scaling_adjustment     = var.ec2_scale_down_adjustment > 0 ? -var.ec2_scale_down_adjustment : var.ec2_scale_down_adjustment
+}
+
+resource "aws_autoscaling_policy" "ec2_scale_up_down_target_tracking" {
+  count = var.policy_type == "TargetTrackingScaling" ? var.asg_count : 0
+
+  name                      = join("-", compact(["ec2_scale_up_down_target_tracking_policy", var.name, format("%03d", count.index + 1)]))
+  autoscaling_group_name    = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
+  estimated_instance_warmup = var.instance_warm_up_time
+  policy_type               = var.policy_type
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = var.tracking_policy_metric
+      resource_label         = var.alb_resource_label
+    }
+    target_value     = var.target_value
+    disable_scale_in = var.disable_scale_in
+  }
 }
 
 resource "aws_autoscaling_group" "autoscalegrp" {
@@ -696,7 +713,7 @@ module "group_terminating_instances" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
-  count = var.enable_scaling_actions ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" && var.enable_scaling_actions == true ? var.asg_count : 0
 
   alarm_actions       = [element(aws_autoscaling_policy.ec2_scale_up_policy.*.arn, count.index)]
   alarm_description   = "Scale-up if ${var.cw_scaling_metric} ${var.cw_high_operator} ${var.cw_high_threshold}% for ${var.cw_high_period} seconds ${var.cw_high_evaluations} times."
@@ -715,7 +732,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_alarm_high" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_alarm_low" {
-  count = var.enable_scaling_actions ? var.asg_count : 0
+  count = var.policy_type == "SimpleScaling" && var.enable_scaling_actions == true ? var.asg_count : 0
 
   alarm_actions       = [element(aws_autoscaling_policy.ec2_scale_down_policy.*.arn, count.index)]
   alarm_description   = "Scale-down if ${var.cw_scaling_metric} ${var.cw_low_operator} ${var.cw_low_threshold}% for ${var.cw_low_period} seconds ${var.cw_low_evaluations} times."

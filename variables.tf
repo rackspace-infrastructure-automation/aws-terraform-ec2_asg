@@ -10,6 +10,12 @@ variable "additional_tags" {
   default     = []
 }
 
+variable "alb_resource_label" {
+  description = "Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id"
+  type        = string
+  default     = null
+}
+
 variable "asg_count" {
   description = "Number of identical ASG's to deploy"
   type        = string
@@ -98,6 +104,12 @@ variable "detailed_monitoring" {
   description = "Enable Detailed Monitoring? true or false"
   type        = bool
   default     = true
+}
+
+variable "disable_scale_in" {
+  description = "Disable scale in to create only a scale-out policy in Target Tracking Policy."
+  type        = bool
+  default     = false
 }
 
 variable "ec2_os" {
@@ -243,6 +255,12 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
+variable "instance_warm_up_time" {
+  description = "Specify the Instance Warm Up time for Target Tracking Policy."
+  type        = string
+  default     = "300"
+}
+
 variable "key_pair" {
   description = "Name of an existing EC2 KeyPair to enable SSH access to the instances."
   type        = string
@@ -270,6 +288,12 @@ variable "perform_ssm_inventory_tag" {
   description = "Determines whether Instance is tracked via System Manager Inventory."
   type        = string
   default     = "True"
+}
+
+variable "policy_type" {
+  description = "Enter scaling policy type. Allowed values are : SimpleScaling or TargetTrackingScaling"
+  type        = string
+  default     = "SimpleScaling"
 }
 
 variable "primary_ebs_volume_iops" {
@@ -396,6 +420,12 @@ variable "target_group_arns" {
   default     = []
 }
 
+variable "target_value" {
+  description = "Enter the target value for Target Scaling Policy metrics."
+  type        = string
+  default     = "50"
+}
+
 variable "tenancy" {
   description = "The placement tenancy for EC2 devices. e.g. host, default, dedicated"
   type        = string
@@ -406,4 +436,10 @@ variable "terminated_instances" {
   description = "Specifies the maximum number of instances that can be terminated in a six hour period without generating a Cloudwatch Alarm."
   type        = string
   default     = "30"
+}
+
+variable "tracking_policy_metric" {
+  description = "Allowed Values are: ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, ALBRequestCountPerTarget"
+  type        = string
+  default     = "ASGAverageCPUUtilization"
 }
