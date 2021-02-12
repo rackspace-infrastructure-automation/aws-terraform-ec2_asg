@@ -6,7 +6,7 @@ This module creates one or more autoscaling groups.
 
 ```HCL
 module "asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.4"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.12"
 
   ec2_os          = "amazon"
   name            = "my_asg"
@@ -45,6 +45,13 @@ New variables `tags` and `tags_asg` were added to replace the functionality of t
 
 New variable `ssm_bootstrap_list` was added to allow setting the SSM association steps using objects instead of strings, allowing easier linting and formatting of these lines.  The `additional_ssm_bootstrap_list` variable will continue to work, but will be deprecated in a future release.
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+| aws | >= 2.1.0 |
+
 ## Providers
 
 | Name | Version |
@@ -53,13 +60,43 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | null | n/a |
 | template | n/a |
 
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| group_terminating_instances | git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.4 |  |
+
+## Resources
+
+| Name |
+|------|
+| [aws_ami](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/data-sources/ami) |
+| [aws_autoscaling_group](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/autoscaling_group) |
+| [aws_autoscaling_notification](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/autoscaling_notification) |
+| [aws_autoscaling_policy](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/autoscaling_policy) |
+| [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/data-sources/caller_identity) |
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/cloudwatch_log_group) |
+| [aws_cloudwatch_metric_alarm](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/cloudwatch_metric_alarm) |
+| [aws_iam_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/iam_instance_profile) |
+| [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/iam_policy) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/data-sources/iam_policy_document) |
+| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/iam_role) |
+| [aws_iam_role_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/iam_role_policy_attachment) |
+| [aws_launch_configuration](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/launch_configuration) |
+| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/data-sources/region) |
+| [aws_ssm_association](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/ssm_association) |
+| [aws_ssm_document](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/ssm_document) |
+| [aws_ssm_parameter](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/ssm_parameter) |
+| [null_data_source](https://registry.terraform.io/providers/hashicorp/null/latest/docs/data-sources/data_source) |
+| [template_file](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | additional\_ssm\_bootstrap\_list | A list of maps consisting of main step actions, to be appended to SSM associations. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `ssm_bootstrap_list` variable. | `list(map(string))` | `[]` | no |
 | additional\_tags | Additional tags to be added to the ASG instance(s). Format: list of maps. Please see usage.tf.example in this repo for examples.<br><br>(DEPRECATED) This variable will be removed in future releases in favor of the `tags` and `tags_asg` variables. | `list(map(string))` | `[]` | no |
-| alb\_resource\_label | Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id | `string` | n/a | yes |
+| alb\_resource\_label | Enter the ALB and Target group in this format : app/load-balancer-name/load-balancer-id/targetgroup/target-group-name/target-group-id | `string` | `null` | no |
 | asg\_count | Number of identical ASG's to deploy | `string` | `"1"` | no |
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | `string` | `"10m"` | no |
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | `string` | `"False"` | no |
@@ -76,7 +113,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | cw\_scaling\_metric | The metric to be used for scaling. | `string` | `"CPUUtilization"` | no |
 | detailed\_monitoring | Enable Detailed Monitoring? true or false | `bool` | `true` | no |
 | disable\_scale\_in | Disable scale in to create only a scale-out policy in Target Tracking Policy. | `bool` | `false` | no |
-| ec2\_os | Intended Operating System/Distribution of Instance. Valid inputs are: `amazon`, `amazon2`, `amazoneks`, `amazonecs`, `rhel6`, `rhel7`, `rhel8`, `centos6`, `centos7`, `ubuntu14`, `ubuntu16`, `ubuntu18`, `windows2012r2`, `windows2016`, `windows2019` | `string` | n/a | yes |
+| ec2\_os | Intended Operating System/Distribution of Instance. Valid inputs are: `amazon`, `amazon2`, `amazoneks`, `amazonecs`, `rhel6`, `rhel7`, `rhel8`, `centos6`, `centos7`, `ubuntu14`, `ubuntu16`, `ubuntu18`, `ubuntu20`, `windows2012r2`, `windows2016`, `windows2019` | `string` | n/a | yes |
 | ec2\_scale\_down\_adjustment | Number of EC2 instances to scale down by at a time. Positive numbers will be converted to negative. | `string` | `"-1"` | no |
 | ec2\_scale\_down\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | `string` | `"60"` | no |
 | ec2\_scale\_up\_adjustment | Number of EC2 instances to scale up by at a time. | `string` | `"1"` | no |
@@ -141,4 +178,3 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | asg\_image\_id | Image ID used for EC2 provisioning |
 | asg\_name\_list | List of ASG names |
 | iam\_role | Name of the created IAM Instance role. |
-
