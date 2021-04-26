@@ -64,7 +64,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 
 | Name | Source | Version |
 |------|--------|---------|
-| group_terminating_instances | git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=0.12.6 |  |
+| group_terminating_instances | git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.6 |  |
 
 ## Resources
 
