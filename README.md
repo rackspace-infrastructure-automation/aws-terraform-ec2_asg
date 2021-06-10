@@ -10,8 +10,8 @@ module "asg" {
 
   ec2_os          = "amazon"
   name            = "my_asg"
-  security_groups = ["${module.sg.private_web_security_group_id}"]
-  subnets         = ["${module.vpc.private_subnets}"]
+  security_groups = [module.sg.private_web_security_group_id]
+  subnets         = module.vpc.private_subnets
 }
 ```
 
