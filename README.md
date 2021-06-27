@@ -101,9 +101,9 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | asg\_wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. | `string` | `"10m"` | no |
 | backup\_tag\_value | Value of the 'Backup' tag, used to assign te EBSSnapper configuration | `string` | `"False"` | no |
 | cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | `string` | `"30"` | no |
+| custom\_cw\_agent\_config\_ssm\_param | SSM Parameter Store name that contains a custom CloudWatch agent configuration that you would like to use as an alternative to the default provided. | `string` | `""` | no |
 | customer\_alarms\_cleared | Specifies whether alarms will notify customers when returning to an OK status. | `bool` | `false` | no |
 | customer\_alarms\_enabled | Specifies whether alarms will notify customers.  Automatically enabled if rackspace\_managed is set to false | `bool` | `false` | no |
-| custom\_cw\_agent\_config\_ssm\_param | SSM Parameter Store name that contains a custom CloudWatch agent configuration that you would like to use as an alternative to the default provided. | `string` | `""` | no |
 | cw\_high\_evaluations | The number of periods over which data is compared to the specified threshold. | `string` | `"3"` | no |
 | cw\_high\_operator | Math operator used by CloudWatch for alarms and triggers. | `string` | `"GreaterThanThreshold"` | no |
 | cw\_high\_period | Time the specified statistic is applied. Must be in seconds that is also a multiple of 60. | `string` | `"60"` | no |
