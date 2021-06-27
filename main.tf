@@ -703,6 +703,8 @@ module "group_terminating_instances" {
   alarm_description        = "Over ${var.terminated_instances} instances terminated in last 6 hours, generating ticket to investigate."
   alarm_name               = "${var.name}-GroupTerminatingInstances"
   comparison_operator      = "GreaterThanThreshold"
+  customer_alarms_cleared  = var.customer_alarms_cleared
+  customer_alarms_enabled  = var.customer_alarms_enabled
   dimensions               = data.null_data_source.alarm_dimensions.*.outputs
   evaluation_periods       = 1
   metric_name              = "GroupTerminatingInstances"
