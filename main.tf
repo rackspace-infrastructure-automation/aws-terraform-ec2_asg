@@ -170,16 +170,13 @@ EOF
     amazon2       = "/dev/sdf"
     amazoneks     = "/dev/sdf"
     amazonecs     = "/dev/xvdcz"
-    rhel6         = "/dev/sdf"
     rhel7         = "/dev/sdf"
     rhel8         = "/dev/sdf"
-    centos6       = "/dev/sdf"
     centos7       = "/dev/sdf"
     ubuntu14      = "/dev/sdf"
     ubuntu16      = "/dev/sdf"
     ubuntu18      = "/dev/sdf"
     ubuntu20      = "/dev/sdf"
-    windows2008   = "xvdf"
     windows2012r2 = "xvdf"
     windows2016   = "xvdf"
     windows2019   = "xvdf"
@@ -232,16 +229,13 @@ EOF
     amazon2       = "amazon_linux_userdata.sh"
     amazonecs     = "amazon_linux_userdata.sh"
     amazoneks     = "amazon_linux_userdata.sh"
-    rhel6         = "rhel_centos_6_userdata.sh"
     rhel7         = "rhel_centos_7_userdata.sh"
     rhel8         = "rhel_centos_8_userdata.sh"
-    centos6       = "rhel_centos_6_userdata.sh"
     centos7       = "rhel_centos_7_userdata.sh"
     ubuntu14      = "ubuntu_userdata.sh"
     ubuntu16      = "ubuntu_userdata.sh"
     ubuntu18      = "ubuntu_userdata.sh"
     ubuntu20      = "ubuntu_userdata.sh"
-    windows2008   = "windows_userdata.ps1"
     windows2012r2 = "windows_userdata.ps1"
     windows2016   = "windows_userdata.ps1"
     windows2019   = "windows_userdata.ps1"
@@ -251,16 +245,13 @@ EOF
     amazon2       = "137112412989"
     amazonecs     = "591542846629"
     amazoneks     = "602401143452"
-    centos6       = "679593333241"
     centos7       = "679593333241"
-    rhel6         = "309956199498"
     rhel7         = "309956199498"
     rhel8         = "309956199498"
     ubuntu14      = "099720109477"
     ubuntu16      = "099720109477"
     ubuntu18      = "099720109477"
     ubuntu20      = "099720109477"
-    windows2008   = "801119661308"
     windows2012r2 = "801119661308"
     windows2016   = "801119661308"
     windows2019   = "801119661308"
@@ -270,16 +261,13 @@ EOF
     amazon2       = "amzn2-ami-hvm-2.0.*-ebs"
     amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
-    centos6       = "CentOS Linux 6 x86_64 HVM EBS*"
     centos7       = "CentOS Linux 7 x86_64 HVM EBS*"
-    rhel6         = "RHEL-6.*_HVM_GA-*x86_64*"
     rhel7         = "RHEL-7.*_HVM_GA-*x86_64*"
     rhel8         = "RHEL-8.*_HVM-*x86_64*"
     ubuntu14      = "*ubuntu-trusty-14.04-amd64-server*"
     ubuntu16      = "*ubuntu-xenial-16.04-amd64-server*"
     ubuntu18      = "ubuntu/images/hvm-ssd/*ubuntu-bionic-18.04-amd64-server*"
     ubuntu20      = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
-    windows2008   = "Windows_Server-2008-R2_SP1-English-64Bit-Base*"
     windows2012r2 = "Windows_Server-2012-R2_RTM-English-64Bit-Base*"
     windows2016   = "Windows_Server-2016-English-Full-Base*"
     windows2019   = "Windows_Server-2019-English-Full-Base*"
@@ -290,25 +278,15 @@ EOF
     amazon2       = []
     amazonecs     = []
     amazoneks     = []
-    rhel6         = []
     rhel7         = []
     rhel8         = []
     ubuntu14      = []
     ubuntu16      = []
     ubuntu18      = []
     ubuntu20      = []
-    windows2008   = []
     windows2012r2 = []
     windows2016   = []
     windows2019   = []
-
-    # Added to ensure only AMIS under the official CentOS 6 product code are retrieved
-    centos6 = [
-      {
-        name   = "product-code"
-        values = ["6x5jmcajty9edm3f211pqjfn2"]
-      },
-    ]
 
     # Added to ensure only AMIS under the official CentOS 7 product code are retrieved
     centos7 = [
