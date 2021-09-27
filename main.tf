@@ -7,9 +7,9 @@
  *
  * ```HCL
  * module "asg" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.12"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.16"
  *
- *   ec2_os          = "amazon"
+ *   ec2_os          = "amazon2"
  *   name            = "my_asg"
  *   security_groups = [module.sg.private_web_security_group_id]
  *   subnets         = module.vpc.private_subnets
@@ -213,7 +213,6 @@ locals {
   }
 
   diagnostic_packages = {
-    amazon    = local.defaults["diagnostic_packages"]["amazon"]
     amazon2   = local.defaults["diagnostic_packages"]["amazon"]
     amazoneks = local.defaults["diagnostic_packages"]["amazon"]
     amazonecs = local.defaults["diagnostic_packages"]["amazon"]
@@ -228,7 +227,6 @@ locals {
   }
 
   ebs_device_map = {
-    amazon        = "/dev/sdf"
     amazon2       = "/dev/sdf"
     amazoneks     = "/dev/sdf"
     amazonecs     = "/dev/xvdcz"
@@ -271,7 +269,6 @@ locals {
   }
 
   user_data_map = {
-    amazon        = "amazon_linux_userdata.sh"
     amazon2       = "amazon_linux_userdata.sh"
     amazonecs     = "amazon_linux_userdata.sh"
     amazoneks     = "amazon_linux_userdata.sh"
@@ -289,7 +286,6 @@ locals {
   }
 
   ami_owner_mapping = {
-    amazon        = "137112412989"
     amazon2       = "137112412989"
     amazonecs     = "591542846629"
     amazoneks     = "602401143452"
@@ -307,7 +303,6 @@ locals {
   }
 
   ami_name_mapping = {
-    amazon        = "amzn-ami-hvm-2018.03.0.*gp2"
     amazon2       = "amzn2-ami-hvm-2.0.*-ebs"
     amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
@@ -326,7 +321,6 @@ locals {
 
   # Any custom AMI filters for a given OS can be added in this mapping
   image_filter = {
-    amazon        = []
     amazon2       = []
     amazonecs     = []
     amazoneks     = []
