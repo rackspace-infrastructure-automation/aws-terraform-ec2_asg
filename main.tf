@@ -9,7 +9,7 @@
  * module "asg" {
  *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.26"
  *
- *   ec2_os              = "amazon"
+ *   ec2_os              = "amazon2"
  *   subnets             = ["${module.vpc.private_subnets}"]
  *   image_id            = "${var.image_id}"
  *   resource_name       = "my_asg"
@@ -166,7 +166,6 @@ EOF
   codedeploy_install = "${var.install_codedeploy_agent ? "enabled" : "disabled"}"
   ssm_command_count  = 6
   ebs_device_map = {
-    amazon        = "/dev/sdf"
     amazon2       = "/dev/sdf"
     amazoneks     = "/dev/sdf"
     amazonecs     = "/dev/xvdcz"
@@ -225,7 +224,6 @@ EOF
     },
   ]
   user_data_map = {
-    amazon        = "amazon_linux_userdata.sh"
     amazon2       = "amazon_linux_userdata.sh"
     amazonecs     = "amazon_linux_userdata.sh"
     amazoneks     = "amazon_linux_userdata.sh"
@@ -241,7 +239,6 @@ EOF
     windows2019   = "windows_userdata.ps1"
   }
   ami_owner_mapping = {
-    amazon        = "137112412989"
     amazon2       = "137112412989"
     amazonecs     = "591542846629"
     amazoneks     = "602401143452"
@@ -257,7 +254,6 @@ EOF
     windows2019   = "801119661308"
   }
   ami_name_mapping = {
-    amazon        = "amzn-ami-hvm-2018.03.0.*gp2"
     amazon2       = "amzn2-ami-hvm-2.0.*-ebs"
     amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
@@ -274,7 +270,6 @@ EOF
   }
   # Any custom AMI filters for a given OS can be added in this mapping
   image_filter = {
-    amazon        = []
     amazon2       = []
     amazonecs     = []
     amazoneks     = []
