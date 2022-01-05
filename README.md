@@ -115,7 +115,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | cw\_scaling\_metric | The metric to be used for scaling. | `string` | `"CPUUtilization"` | no |
 | detailed\_monitoring | Enable Detailed Monitoring? true or false | `bool` | `true` | no |
 | disable\_scale\_in | Disable scale in to create only a scale-out policy in Target Tracking Policy. | `bool` | `false` | no |
-| ec2\_os | Intended Operating System/Distribution of Instance. Valid inputs are: `amazon2`, `amazoneks`, `amazonecs`, `rhel7`, `rhel8`, `centos7`, `ubuntu14`, `ubuntu16`, `ubuntu18`, `ubuntu20`, `windows2012r2`, `windows2016`, `windows2019` | `string` | n/a | yes |
+| ec2\_os | Intended Operating System/Distribution of Instance. Valid inputs are: `amazon2`, `amazoneks`, `amazonecs`, `rhel7`, `rhel8`, `centos7`, `ubuntu18`, `ubuntu20`, `windows2012r2`, `windows2016`, `windows2019` | `string` | n/a | yes |
 | ec2\_scale\_down\_adjustment | Number of EC2 instances to scale down by at a time. Positive numbers will be converted to negative. | `string` | `"-1"` | no |
 | ec2\_scale\_down\_cool\_down | Time in seconds before any further trigger-related scaling can occur. | `string` | `"60"` | no |
 | ec2\_scale\_up\_adjustment | Number of EC2 instances to scale up by at a time. | `string` | `"1"` | no |

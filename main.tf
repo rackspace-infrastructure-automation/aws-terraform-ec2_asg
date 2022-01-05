@@ -220,8 +220,6 @@ locals {
     rhel8     = local.defaults["diagnostic_packages"]["rhel"]
     centos7   = local.defaults["diagnostic_packages"]["rhel"]
     centos8   = local.defaults["diagnostic_packages"]["rhel"]
-    ubuntu14  = local.defaults["diagnostic_packages"]["ubuntu"]
-    ubuntu16  = local.defaults["diagnostic_packages"]["ubuntu"]
     ubuntu18  = local.defaults["diagnostic_packages"]["ubuntu"]
     ubuntu20  = local.defaults["diagnostic_packages"]["ubuntu"]
   }
@@ -234,8 +232,6 @@ locals {
     rhel8         = "/dev/sdf"
     centos7       = "/dev/sdf"
     centos8       = "/dev/sdf"
-    ubuntu14      = "/dev/sdf"
-    ubuntu16      = "/dev/sdf"
     ubuntu18      = "/dev/sdf"
     ubuntu20      = "/dev/sdf"
     windows2012r2 = "xvdf"
@@ -277,8 +273,6 @@ locals {
     rhel8         = "rhel_centos_8_userdata.sh"
     centos7       = "rhel_centos_7_userdata.sh"
     centos8       = "rhel_centos_8_userdata.sh"
-    ubuntu14      = "ubuntu_userdata.sh"
-    ubuntu16      = "ubuntu_userdata.sh"
     ubuntu18      = "ubuntu_userdata.sh"
     ubuntu20      = "ubuntu_userdata.sh"
     windows2012r2 = "windows_userdata.ps1"
@@ -295,8 +289,6 @@ locals {
     centos8       = "125523088429"
     rhel7         = "309956199498"
     rhel8         = "309956199498"
-    ubuntu14      = "099720109477"
-    ubuntu16      = "099720109477"
     ubuntu18      = "099720109477"
     ubuntu20      = "099720109477"
     windows2012r2 = "801119661308"
@@ -313,8 +305,6 @@ locals {
     centos8       = "CentOS 8.* x86_64*"
     rhel7         = "RHEL-7.*_HVM_GA-*x86_64*"
     rhel8         = "RHEL-8.*_HVM-*x86_64*"
-    ubuntu14      = "*ubuntu-trusty-14.04-amd64-server*"
-    ubuntu16      = "*ubuntu-xenial-16.04-amd64-server*"
     ubuntu18      = "ubuntu/images/hvm-ssd/*ubuntu-bionic-18.04-amd64-server*"
     ubuntu20      = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
     windows2012r2 = "Windows_Server-2012-R2_RTM-English-64Bit-Base*"
@@ -332,8 +322,6 @@ locals {
     centos8       = []
     rhel7         = []
     rhel8         = []
-    ubuntu14      = []
-    ubuntu16      = []
     ubuntu18      = []
     ubuntu20      = []
     windows2012r2 = []
