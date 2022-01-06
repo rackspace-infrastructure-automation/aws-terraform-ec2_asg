@@ -29,7 +29,7 @@ variable "asg_wait_for_capacity_timeout" {
 }
 
 variable "backup_tag_value" {
-  description = "Value of the 'Backup' tag, used to assign te EBSSnapper configuration"
+  description = "Value of the 'Backup' tag, used to assign to the AWS Backup configuration"
   type        = string
   default     = "False"
 }
