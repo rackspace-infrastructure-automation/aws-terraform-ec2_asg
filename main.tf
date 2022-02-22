@@ -219,7 +219,6 @@ locals {
     rhel7     = local.defaults["diagnostic_packages"]["rhel"]
     rhel8     = local.defaults["diagnostic_packages"]["rhel"]
     centos7   = local.defaults["diagnostic_packages"]["rhel"]
-    centos8   = local.defaults["diagnostic_packages"]["rhel"]
     ubuntu18  = local.defaults["diagnostic_packages"]["ubuntu"]
     ubuntu20  = local.defaults["diagnostic_packages"]["ubuntu"]
   }
@@ -231,7 +230,6 @@ locals {
     rhel7         = "/dev/sdf"
     rhel8         = "/dev/sdf"
     centos7       = "/dev/sdf"
-    centos8       = "/dev/sdf"
     ubuntu18      = "/dev/sdf"
     ubuntu20      = "/dev/sdf"
     windows2012r2 = "xvdf"
@@ -272,7 +270,6 @@ locals {
     rhel7         = "rhel_centos_7_userdata.sh"
     rhel8         = "rhel_centos_8_userdata.sh"
     centos7       = "rhel_centos_7_userdata.sh"
-    centos8       = "rhel_centos_8_userdata.sh"
     ubuntu18      = "ubuntu_userdata.sh"
     ubuntu20      = "ubuntu_userdata.sh"
     windows2012r2 = "windows_userdata.ps1"
@@ -286,7 +283,6 @@ locals {
     amazonecs     = "591542846629"
     amazoneks     = "602401143452"
     centos7       = "125523088429"
-    centos8       = "125523088429"
     rhel7         = "309956199498"
     rhel8         = "309956199498"
     ubuntu18      = "099720109477"
@@ -302,7 +298,6 @@ locals {
     amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
     centos7       = "CentOS 7.* x86_64*"
-    centos8       = "CentOS 8.* x86_64*"
     rhel7         = "RHEL-7.*_HVM_GA-*x86_64*"
     rhel8         = "RHEL-8.*_HVM-*x86_64*"
     ubuntu18      = "ubuntu/images/hvm-ssd/*ubuntu-bionic-18.04-amd64-server*"
@@ -319,7 +314,6 @@ locals {
     amazonecs     = []
     amazoneks     = []
     centos7       = []
-    centos8       = []
     rhel7         = []
     rhel8         = []
     ubuntu18      = []
