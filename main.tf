@@ -47,6 +47,13 @@
  * New variable `ssm_bootstrap_list` was added to allow setting the SSM association steps using objects instead of strings, allowing easier linting and formatting of these lines.  The `additional_ssm_bootstrap_list` variable will continue to work, but will be deprecated in a future release.
  */
 
+locals {
+  user_data_vars = {
+    initial_commands = var.initial_userdata_commands
+    final_commands   = var.final_userdata_commands
+  }
+}
+
 terraform {
   required_version = ">= 0.12"
 
@@ -354,15 +361,6 @@ data "aws_ami" "asg_ami" {
   }
 }
 
-data "template_file" "user_data" {
-  template = file("${path.module}/text/${local.user_data_map[local.ec2_os]}")
-
-  vars = {
-    initial_commands = var.initial_userdata_commands
-    final_commands   = var.final_userdata_commands
-  }
-}
-
 data "aws_region" "current_region" {}
 
 data "aws_caller_identity" "current_account" {}
@@ -510,7 +508,7 @@ resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
   name_prefix       = join("-", compact(["LaunchConfigWith2ndEbs", var.name, format("%03d-", count.index + 1)]))
   placement_tenancy = var.tenancy
   security_groups   = var.security_groups
-  user_data_base64  = base64encode(data.template_file.user_data.rendered)
+  user_data_base64  = base64encode(templatefile("${path.module}/text/${local.user_data_map[local.ec2_os]}", local.user_data_vars))
 
   ebs_block_device {
     device_name = local.ebs_device_map[local.ec2_os]
@@ -552,7 +550,7 @@ resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
   name_prefix       = join("-", compact(["LaunchConfigNo2ndEbs", var.name, format("%03d-", count.index + 1)]))
   placement_tenancy = var.tenancy
   security_groups   = var.security_groups
-  user_data_base64  = base64encode(data.template_file.user_data.rendered)
+  user_data_base64  = base64encode(templatefile("${path.module}/text/${local.user_data_map[local.ec2_os]}", local.user_data_vars))
 
   iam_instance_profile = element(
     coalescelist(

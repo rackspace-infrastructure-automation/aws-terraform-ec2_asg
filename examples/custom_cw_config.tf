@@ -1,9 +1,16 @@
+locals {
+  cwagent_vars = {
+    application_log_group_name = "custom_app_log_group_name"
+    system_log_group_name      = "custom_system_log_group_name"
+  }
+}
+
 terraform {
   required_version = ">= 0.12"
 }
 
 provider "aws" {
-  version = "~> 2.2"
+  version = "~> 3.0"
   region  = "us-west-2"
 }
 
@@ -135,14 +142,5 @@ resource "aws_ssm_parameter" "custom_cwagentparam" {
   description = "Custom Cloudwatch Agent configuration"
   name        = "custom_cw_param-${random_string.res_name.result}"
   type        = "String"
-  value       = data.template_file.custom_cwagentparam.rendered
-}
-
-data "template_file" "custom_cwagentparam" {
-  template = file("./text/linux_cw_agent_param.json")
-
-  vars = {
-    application_log_group_name = "custom_app_log_group_name"
-    system_log_group_name      = "custom_system_log_group_name"
-  }
+  value       = templatefile("./text/linux_cw_agent_param.json", local.cwagent_vars)
 }
