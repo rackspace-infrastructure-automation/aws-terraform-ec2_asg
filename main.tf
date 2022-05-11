@@ -698,12 +698,11 @@ resource "aws_autoscaling_notification" "rs_support_emergency" {
 #
 # Provisioning of CloudWatch related resources
 #
-data "null_data_source" "alarm_dimensions" {
-  count = var.asg_count
 
-  inputs = {
-    AutoScalingGroupName = element(aws_autoscaling_group.autoscalegrp.*.name, count.index)
-  }
+locals {
+  asg_names = [for n in range(var.asg_count) : element(aws_autoscaling_group.autoscalegrp.*.name, n)]
+
+  alarm_dimensions = tolist([for n in range(var.asg_count) : tomap({ "AutoScalingGroupName" = tostring(local.asg_names[n]) })])
 }
 
 module "group_terminating_instances" {
@@ -715,7 +714,7 @@ module "group_terminating_instances" {
   comparison_operator      = "GreaterThanThreshold"
   customer_alarms_cleared  = var.customer_alarms_cleared
   customer_alarms_enabled  = var.customer_alarms_enabled
-  dimensions               = data.null_data_source.alarm_dimensions.*.outputs
+  dimensions               = local.alarm_dimensions[*]
   evaluation_periods       = 1
   metric_name              = "GroupTerminatingInstances"
   namespace                = "AWS/AutoScaling"
