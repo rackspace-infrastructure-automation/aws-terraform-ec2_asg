@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13.7"
 }
 
 provider "aws" {
@@ -8,7 +8,7 @@ provider "aws" {
 }
 
 provider "random" {
-  version = "~> 2.0"
+  version = "~> 3.0"
 }
 
 data "aws_region" "current_region" {}
@@ -38,7 +38,7 @@ resource "random_string" "name_rstring" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=master"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.7"
 
   name = "${random_string.name_rstring.result}-ec2-asg-basenetwork-test1"
 }
@@ -48,7 +48,7 @@ resource "aws_sqs_queue" "ec2_asg_test_sqs" {
 }
 
 module "sns" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=master"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=v0.12.2"
 
   create_subscription_1 = true
   endpoint_1            = aws_sqs_queue.ec2_asg_test_sqs.arn

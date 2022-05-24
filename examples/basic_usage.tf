@@ -1,14 +1,14 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13.7"
 }
 
 provider "aws" {
-  version = "~> 2.2"
+  version = "~> 3.0"
   region  = "us-west-2"
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.1"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.7"
 
   name = "EC2-ASG-BaseNetwork-Test1"
 }
@@ -26,7 +26,7 @@ resource "aws_sqs_queue" "ec2_asg_test_sqs" {
 }
 
 module "sns_sqs" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=v0.12.1"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=v0.12.2"
 
   create_subscription_1 = true
   endpoint_1            = aws_sqs_queue.ec2_asg_test_sqs.arn
@@ -35,7 +35,7 @@ module "sns_sqs" {
 }
 
 module "ec2_asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.4"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.12.22"
 
   asg_count                              = "2"
   asg_wait_for_capacity_timeout          = "10m"
