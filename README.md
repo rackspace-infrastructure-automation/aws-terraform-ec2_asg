@@ -49,15 +49,14 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12 |
-| aws | >= 2.1.0 |
+| terraform | >= 0.13.7 |
+| aws | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.1.0 |
-| null | n/a |
+| aws | ~> 3.0 |
 
 ## Modules
 
@@ -69,24 +68,23 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 
 | Name |
 |------|
-| [aws_ami](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/data-sources/ami) |
-| [aws_autoscaling_group](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/autoscaling_group) |
-| [aws_autoscaling_notification](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/autoscaling_notification) |
-| [aws_autoscaling_policy](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/autoscaling_policy) |
-| [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/data-sources/caller_identity) |
-| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/cloudwatch_log_group) |
-| [aws_cloudwatch_metric_alarm](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/cloudwatch_metric_alarm) |
-| [aws_iam_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/iam_instance_profile) |
-| [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/iam_policy) |
-| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/data-sources/iam_policy_document) |
-| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/iam_role) |
-| [aws_iam_role_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/iam_role_policy_attachment) |
-| [aws_launch_configuration](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/launch_configuration) |
-| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/data-sources/region) |
-| [aws_ssm_association](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/ssm_association) |
-| [aws_ssm_document](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/ssm_document) |
-| [aws_ssm_parameter](https://registry.terraform.io/providers/hashicorp/aws/2.1.0/docs/resources/ssm_parameter) |
-| [null_data_source](https://registry.terraform.io/providers/hashicorp/null/latest/docs/data-sources/data_source) |
+| [aws_ami](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/ami) |
+| [aws_autoscaling_group](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/autoscaling_group) |
+| [aws_autoscaling_notification](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/autoscaling_notification) |
+| [aws_autoscaling_policy](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/autoscaling_policy) |
+| [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/caller_identity) |
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/cloudwatch_log_group) |
+| [aws_cloudwatch_metric_alarm](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/cloudwatch_metric_alarm) |
+| [aws_iam_instance_profile](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_instance_profile) |
+| [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_policy) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/iam_policy_document) |
+| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_role) |
+| [aws_iam_role_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_role_policy_attachment) |
+| [aws_launch_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/launch_configuration) |
+| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/region) |
+| [aws_ssm_association](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/ssm_association) |
+| [aws_ssm_document](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/ssm_document) |
+| [aws_ssm_parameter](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/ssm_parameter) |
 
 ## Inputs
 

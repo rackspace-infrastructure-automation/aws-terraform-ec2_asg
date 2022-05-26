@@ -1,16 +1,21 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13.7"
 }
 
 provider "aws" {
-  version = "~> 2.2"
+  version = "~> 3.0"
   region  = "us-west-2"
 }
 
-module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.1"
+resource "random_string" "name_rstring" {
+  length  = 8
+  special = false
+}
 
-  name = "EC2-ASG-BaseNetwork-Test1"
+module "vpc" {
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.7"
+
+  name = "${random_string.name_rstring.result}-ec2-asg-basenetwork-example"
 }
 
 data "aws_region" "current_region" {}
@@ -25,8 +30,8 @@ resource "aws_sqs_queue" "ec2_asg_test_sqs" {
   name = "${random_string.sqs_rstring.result}-my-example-queue"
 }
 
-module "sns_sqs" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=v0.12.1"
+module "sns" {
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=v0.12.2"
 
   create_subscription_1 = true
   endpoint_1            = aws_sqs_queue.ec2_asg_test_sqs.arn
@@ -34,8 +39,34 @@ module "sns_sqs" {
   protocol_1            = "sqs"
 }
 
+
+module "clb" {
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-clb?ref=v0.12.4"
+
+  name                  = "${random_string.name_rstring.result}-ec2-asg-clb-example"
+  security_groups       = [module.vpc.default_sg]
+  subnets               = module.vpc.public_subnets
+  internal_loadbalancer = false
+  create_logging_bucket = false
+  rackspace_managed     = false
+
+  tags = {
+    Example = "Example-clb"
+  }
+
+
+  listeners = [
+    {
+      instance_port     = 8000
+      instance_protocol = "HTTP"
+      lb_port           = 80
+      lb_protocol       = "HTTP"
+    },
+  ]
+}
+
 module "ec2_asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.4"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.12.23"
 
   asg_count                              = "2"
   asg_wait_for_capacity_timeout          = "10m"
@@ -63,12 +94,10 @@ module "ec2_asg" {
   health_check_grace_period              = "300"
   health_check_type                      = "EC2"
   install_codedeploy_agent               = false
-  instance_role_managed_policy_arn_count = "2"
-  instance_role_managed_policy_arns      = [aws_iam_policy.test_policy_1.arn, aws_iam_policy.test_policy_2.arn]
+  instance_role_managed_policy_arn_count = "3"
   instance_type                          = "t2.micro"
-  key_pair                               = "my_ec2_key_name"
-  load_balancer_names                    = [aws_elb.my_elb.name]
-  name                                   = "my_test_instance"
+  load_balancer_names                    = [module.clb.name]
+  name                                   = "${random_string.name_rstring.result}-ec2-asg-instance-example"
   perform_ssm_inventory_tag              = "True"
   primary_ebs_volume_iops                = "0"
   primary_ebs_volume_size                = "60"
@@ -76,7 +105,7 @@ module "ec2_asg" {
   rackspace_managed                      = true
   scaling_max                            = "2"
   scaling_min                            = "1"
-  scaling_notification_topic             = aws_sns_topic.my_test_sns.arn
+  scaling_notification_topic             = module.sns.topic_arn
   secondary_ebs_volume_iops              = "0"
   secondary_ebs_volume_size              = "60"
   secondary_ebs_volume_type              = "gp2"
@@ -86,6 +115,13 @@ module "ec2_asg" {
   subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   tenancy                                = "default"
   terminated_instances                   = "30"
+
+
+  instance_role_managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole",
+    "arn:aws:iam::aws:policy/CloudWatchActionsEC2Access",
+  ]
 
   ssm_bootstrap_list = [
     {

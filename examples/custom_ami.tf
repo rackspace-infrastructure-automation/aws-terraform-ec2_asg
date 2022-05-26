@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13.7"
 }
 
 provider "aws" {
@@ -7,32 +7,58 @@ provider "aws" {
   region  = "us-west-2"
 }
 
-module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.1"
-
-  name = "EC2-ASG-BaseNetwork-Test1"
+resource "random_string" "name_rstring" {
+  length  = 8
+  special = false
 }
+
+module "vpc" {
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.7"
+
+  name = "${random_string.name_rstring.result}-ec2-asg-basenetwork-example"
+}
+
+module "alb" {
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-alb//?ref=v0.12.10"
+
+  create_logging_bucket = false
+  http_listeners_count  = 1
+  name                  = "${random_string.name_rstring.result}-test-alb"
+  rackspace_managed     = false
+  security_groups       = [module.vpc.default_sg]
+  subnets               = module.vpc.public_subnets
+  target_groups_count   = 1
+  vpc_id                = module.vpc.vpc_id
+
+  http_listeners = [
+    {
+      port     = 80
+      protocol = "HTTP"
+    },
+  ]
+
+  target_groups = [
+    {
+      backend_port     = 80
+      backend_protocol = "HTTP"
+      name             = "ExampleTargetGroup"
+      tagert_type      = "alb"
+
+    }
+  ]
+}
+
+
 
 data "aws_region" "current_region" {}
 
-data "aws_ami" "my_custom_ami" {
-  executable_users = ["self"]
-  most_recent      = true
-  owners           = ["self"]
-
-  filter {
-    name   = "name"
-    values = ["MyCustomAMI"]
-  }
-}
-
-data "aws_ami" "community_ami" {
+data "aws_ami" "centos7_marketplace" {
+  owners      = ["aws-marketplace"]
   most_recent = true
-  owners      = ["679593333241"]
 
   filter {
-    name   = "name"
-    values = ["CentOS Linux 7 x86_64 HVM EBS*"]
+    name   = "product-code"
+    values = ["cvugziknvmxgqna9noibqnnsy"]
   }
 }
 
@@ -46,8 +72,8 @@ resource "aws_sqs_queue" "ec2_asg_test_sqs" {
   name = "${random_string.sqs_rstring.result}-my-example-queue"
 }
 
-module "sns_sqs" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=v0.12.1"
+module "sns" {
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-sns?ref=v0.12.2"
 
   create_subscription_1 = true
   endpoint_1            = aws_sqs_queue.ec2_asg_test_sqs.arn
@@ -56,7 +82,7 @@ module "sns_sqs" {
 }
 
 module "ec2_asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.4"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg?ref=v0.12.23"
 
   asg_count                              = "2"
   asg_wait_for_capacity_timeout          = "10m"
@@ -83,14 +109,12 @@ module "ec2_asg" {
   environment                            = "Development"
   health_check_grace_period              = "300"
   health_check_type                      = "EC2"
-  image_id                               = data.aws_ami.community_ami.ami_id
+  image_id                               = data.aws_ami.centos7_marketplace.id
   install_codedeploy_agent               = false
-  instance_role_managed_policy_arn_count = "2"
-  instance_role_managed_policy_arns      = [aws_iam_policy.test_policy_1.arn, aws_iam_policy.test_policy_2.arn]
+  instance_role_managed_policy_arn_count = "3"
   instance_type                          = "t2.micro"
-  key_pair                               = "my_ec2_key_name"
-  load_balancer_names                    = [aws_elb.my_elb.name]
-  name                                   = "my_test_instance"
+  target_group_arns                      = module.alb.target_group_arns
+  name                                   = "${random_string.name_rstring.result}-ec2-asg-custom-ami-example"
   perform_ssm_inventory_tag              = "True"
   primary_ebs_volume_iops                = "0"
   primary_ebs_volume_size                = "60"
@@ -98,7 +122,7 @@ module "ec2_asg" {
   rackspace_managed                      = true
   scaling_max                            = "2"
   scaling_min                            = "1"
-  scaling_notification_topic             = aws_sns_topic.my_test_sns.arn
+  scaling_notification_topic             = module.sns.topic_arn
   secondary_ebs_volume_iops              = "0"
   secondary_ebs_volume_size              = "60"
   secondary_ebs_volume_type              = "gp2"
@@ -108,6 +132,13 @@ module "ec2_asg" {
   subnets                                = [element(module.vpc.public_subnets, 0), element(module.vpc.public_subnets, 1)]
   tenancy                                = "default"
   terminated_instances                   = "30"
+
+  instance_role_managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole",
+    "arn:aws:iam::aws:policy/CloudWatchActionsEC2Access",
+  ]
+
 
   ssm_bootstrap_list = [
     {
@@ -142,3 +173,4 @@ module "ec2_asg" {
     MyTag3 = "Myvalue3"
   }
 }
+
