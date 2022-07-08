@@ -49,7 +49,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 
 | Name | Version |
 |------|---------|
-| terraform | >= 1.1.9 |
+| terraform | >= 1.0.0 |
 | aws | ~> 3.0 |
 
 ## Providers
