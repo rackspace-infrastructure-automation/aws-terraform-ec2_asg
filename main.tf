@@ -216,6 +216,7 @@ locals {
       amazon = "sysstat ltrace strace iptraf tcpdump"
       rhel   = "sysstat ltrace strace lsof iotop iptraf-ng tcpdump"
       ubuntu = "sysstat iotop iptraf-ng"
+      debian = "sysstat iotop iptraf-ng"
     }
   }
 
@@ -228,6 +229,8 @@ locals {
     centos7   = local.defaults["diagnostic_packages"]["rhel"]
     ubuntu18  = local.defaults["diagnostic_packages"]["ubuntu"]
     ubuntu20  = local.defaults["diagnostic_packages"]["ubuntu"]
+    debian10  = local.defaults["diagnostic_packages"]["debian"]
+    debian11  = local.defaults["diagnostic_packages"]["debian"]
   }
 
   ebs_device_map = {
@@ -239,6 +242,8 @@ locals {
     centos7       = "/dev/sdf"
     ubuntu18      = "/dev/sdf"
     ubuntu20      = "/dev/sdf"
+    debian10      = "/dev/sdf"
+    debian11      = "/dev/sdf"
     windows2012r2 = "xvdf"
     windows2016   = "xvdf"
     windows2019   = "xvdf"
@@ -279,6 +284,8 @@ locals {
     centos7       = "rhel_centos_7_userdata.sh"
     ubuntu18      = "ubuntu_userdata.sh"
     ubuntu20      = "ubuntu_userdata.sh"
+    debian10      = "debian_userdata.sh"
+    debian11      = "debian_userdata.sh"
     windows2012r2 = "windows_userdata.ps1"
     windows2016   = "windows_userdata.ps1"
     windows2019   = "windows_userdata.ps1"
@@ -294,6 +301,8 @@ locals {
     rhel8         = "309956199498"
     ubuntu18      = "099720109477"
     ubuntu20      = "099720109477"
+    debian10      = "136693071363"
+    debian11      = "136693071363"
     windows2012r2 = "801119661308"
     windows2016   = "801119661308"
     windows2019   = "801119661308"
@@ -307,6 +316,8 @@ locals {
     centos7       = "CentOS 7.* x86_64*"
     rhel7         = "RHEL-7.*_HVM_GA-*x86_64*"
     rhel8         = "RHEL-8.*_HVM-*x86_64*"
+    debian10      = "debian-10-amd64-*"
+    debian11      = "debian-11-amd64-*"
     ubuntu18      = "ubuntu/images/hvm-ssd/*ubuntu-bionic-18.04-amd64-server*"
     ubuntu20      = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
     windows2012r2 = "Windows_Server-2012-R2_RTM-English-64Bit-Base*"
@@ -325,6 +336,8 @@ locals {
     rhel8         = []
     ubuntu18      = []
     ubuntu20      = []
+    debian10      = []
+    debian11      = []
     windows2012r2 = []
     windows2016   = []
     windows2019   = []
