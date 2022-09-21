@@ -314,7 +314,7 @@ locals {
     amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
     centos7       = "CentOS 7.* x86_64*"
-    rhel7         = "RHEL-7.*_HVM_GA-*x86_64*"
+    rhel7         = "RHEL-7.*_HVM-*x86_64*"
     rhel8         = "RHEL-8.*_HVM-*x86_64*"
     debian10      = "debian-10-amd64-*"
     debian11      = "debian-11-amd64-*"
