@@ -245,6 +245,21 @@ locals {
     windows2022   = "xvdf"
   }
 
+  root_device_map = {
+    amazon2       = "/dev/xvda"
+    amazoneks     = "/dev/xvda"
+    amazonecs     = "/dev/xvda"
+    rhel7         = "/dev/sda1"
+    rhel8         = "/dev/sda1"
+    centos7       = "/dev/sda1"
+    ubuntu18      = "/dev/sda1"
+    ubuntu20      = "/dev/sda1"
+    windows2012r2 = "/dev/sda1"
+    windows2016   = "/dev/sda1"
+    windows2019   = "/dev/sda1"
+    windows2022   = "/dev/sda1"
+  }
+
   cwagent_config = local.ec2_os_windows ? "windows_cw_agent_param.json" : "linux_cw_agent_param.json"
 
   # local.tags can and should be applied to all taggable resources
@@ -304,8 +319,8 @@ locals {
     amazon2       = "amzn2-ami-hvm-2.0.*-ebs"
     amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
-    centos7       = "CentOS 7.* x86_64*"
-    rhel7         = "RHEL-7.*_HVM_GA-*x86_64*"
+    centos7       = "CentOS Linux 7 x86_64*"
+    rhel7         = "RHEL-7.*_HVM-*x86_64*"
     rhel8         = "RHEL-8.*_HVM-*x86_64*"
     ubuntu18      = "ubuntu/images/hvm-ssd/*ubuntu-bionic-18.04-amd64-server*"
     ubuntu20      = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
@@ -497,78 +512,94 @@ resource "aws_iam_instance_profile" "instance_role_instance_profile" {
 # Provisioning of ASG related resources
 #
 
-resource "aws_launch_configuration" "launch_config_with_secondary_ebs" {
+resource "aws_launch_template" "launch_template_with_secondary_ebs" {
   count = var.secondary_ebs_volume_size != "" ? 1 : 0
 
-  ebs_optimized     = var.enable_ebs_optimization
-  enable_monitoring = var.detailed_monitoring
-  image_id          = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
-  instance_type     = var.instance_type
-  key_name          = var.key_pair
-  name_prefix       = join("-", compact(["LaunchConfigWith2ndEbs", var.name, format("%03d-", count.index + 1)]))
-  placement_tenancy = var.tenancy
-  security_groups   = var.security_groups
-  user_data_base64  = base64encode(templatefile("${path.module}/text/${local.user_data_map[local.ec2_os]}", local.user_data_vars))
+  ebs_optimized          = var.enable_ebs_optimization
+  image_id               = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
+  instance_type          = var.instance_type
+  key_name               = var.key_pair
+  name_prefix            = join("-", compact(["LaunchConfigWith2ndEbs", var.name, format("%03d-", count.index + 1)]))
+  vpc_security_group_ids = var.security_groups
+  user_data              = base64encode(templatefile("${path.module}/text/${local.user_data_map[local.ec2_os]}", local.user_data_vars))
 
-  ebs_block_device {
+  # Root block device
+  block_device_mappings {
+    device_name = local.root_device_map[local.ec2_os]
+    ebs {
+      iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
+      volume_size = var.primary_ebs_volume_size
+      volume_type = var.primary_ebs_volume_type
+      encrypted   = var.encrypt_primary_ebs_volume
+    }
+  }
+  block_device_mappings {
     device_name = local.ebs_device_map[local.ec2_os]
-    encrypted   = var.secondary_ebs_volume_existing_id == "" ? var.encrypt_secondary_ebs_volume : false
-    iops        = var.secondary_ebs_volume_iops
-    snapshot_id = var.secondary_ebs_volume_existing_id
-    volume_size = var.secondary_ebs_volume_size
-    volume_type = var.secondary_ebs_volume_type
+    ebs {
+      encrypted   = var.secondary_ebs_volume_existing_id == "" ? var.encrypt_secondary_ebs_volume : false
+      iops        = var.secondary_ebs_volume_iops
+      snapshot_id = var.secondary_ebs_volume_existing_id
+      volume_size = var.secondary_ebs_volume_size
+      volume_type = var.secondary_ebs_volume_type
+    }
   }
-
-  iam_instance_profile = element(
-    coalescelist(
-      aws_iam_instance_profile.instance_role_instance_profile.*.name,
-      [var.instance_profile_override_name],
-    ),
-    0,
-  )
-
-  root_block_device {
-    iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
-    volume_size = var.primary_ebs_volume_size
-    volume_type = var.primary_ebs_volume_type
-    encrypted   = var.encrypt_primary_ebs_volume
+  iam_instance_profile {
+    name = element(
+      coalescelist(aws_iam_instance_profile.instance_role_instance_profile.*.name,
+        [var.instance_profile_override_name],
+      ),
+      0,
+    )
   }
-
   lifecycle {
     create_before_destroy = true
+  }
+  monitoring {
+    enabled = var.detailed_monitoring
+  }
+  placement {
+    tenancy = var.tenancy
   }
 }
 
-resource "aws_launch_configuration" "launch_config_no_secondary_ebs" {
+
+resource "aws_launch_template" "launch_template_with_no_secondary_ebs" {
   count = var.secondary_ebs_volume_size != "" ? 0 : 1
 
-  ebs_optimized     = var.enable_ebs_optimization
-  enable_monitoring = var.detailed_monitoring
-  image_id          = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
-  instance_type     = var.instance_type
-  key_name          = var.key_pair
-  name_prefix       = join("-", compact(["LaunchConfigNo2ndEbs", var.name, format("%03d-", count.index + 1)]))
-  placement_tenancy = var.tenancy
-  security_groups   = var.security_groups
-  user_data_base64  = base64encode(templatefile("${path.module}/text/${local.user_data_map[local.ec2_os]}", local.user_data_vars))
+  ebs_optimized          = var.enable_ebs_optimization
+  image_id               = var.image_id != "" ? var.image_id : data.aws_ami.asg_ami.image_id
+  instance_type          = var.instance_type
+  key_name               = var.key_pair
+  name_prefix            = join("-", compact(["LaunchConfigWith2ndEbs", var.name, format("%03d-", count.index + 1)]))
+  vpc_security_group_ids = var.security_groups
+  user_data              = base64encode(templatefile("${path.module}/text/${local.user_data_map[local.ec2_os]}", local.user_data_vars))
 
-  iam_instance_profile = element(
-    coalescelist(
-      aws_iam_instance_profile.instance_role_instance_profile.*.name,
-      [var.instance_profile_override_name],
-    ),
-    0,
-  )
-
-  root_block_device {
-    volume_type = var.primary_ebs_volume_type
-    volume_size = var.primary_ebs_volume_size
-    iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
-    encrypted   = var.encrypt_primary_ebs_volume
+  # Root block device
+  block_device_mappings {
+    device_name = local.root_device_map[local.ec2_os]
+    ebs {
+      iops        = var.primary_ebs_volume_type == "io1" ? var.primary_ebs_volume_size : 0
+      volume_size = var.primary_ebs_volume_size
+      volume_type = var.primary_ebs_volume_type
+      encrypted   = var.encrypt_primary_ebs_volume
+    }
   }
-
+  iam_instance_profile {
+    name = element(
+      coalescelist(aws_iam_instance_profile.instance_role_instance_profile.*.name,
+        [var.instance_profile_override_name],
+      ),
+      0,
+    )
+  }
   lifecycle {
     create_before_destroy = true
+  }
+  monitoring {
+    enabled = var.detailed_monitoring
+  }
+  placement {
+    tenancy = var.tenancy
   }
 }
 
@@ -624,10 +655,13 @@ resource "aws_autoscaling_group" "autoscalegrp" {
   vpc_zone_identifier       = var.subnets
   wait_for_capacity_timeout = var.asg_wait_for_capacity_timeout
 
-  launch_configuration = element(coalescelist(
-    aws_launch_configuration.launch_config_with_secondary_ebs.*.name,
-    aws_launch_configuration.launch_config_no_secondary_ebs.*.name),
-  count.index)
+  launch_template {
+    id = element(coalescelist(
+      aws_launch_template.launch_template_with_secondary_ebs.*.id,
+      aws_launch_template.launch_template_with_no_secondary_ebs.*.id, ),
+    count.index)
+    version = "$Latest"
+  }
 
   # This block sets tags provided as objects, allowing the propagate at launch field to be set to False
   dynamic "tag" {
