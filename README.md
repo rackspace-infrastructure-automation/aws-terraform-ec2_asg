@@ -80,7 +80,7 @@ New variable `ssm_bootstrap_list` was added to allow setting the SSM association
 | [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/iam_policy_document) |
 | [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_role) |
 | [aws_iam_role_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_role_policy_attachment) |
-| [aws_launch_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/launch_configuration) |
+| [aws_launch_template](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/launch_template) |
 | [aws_region](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/region) |
 | [aws_ssm_association](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/ssm_association) |
 | [aws_ssm_document](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/ssm_document) |
