@@ -582,6 +582,10 @@ resource "aws_launch_template" "launch_template_with_secondary_ebs" {
   placement {
     tenancy = var.tenancy
   }
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 }
 
 
@@ -623,6 +627,10 @@ resource "aws_launch_template" "launch_template_with_no_secondary_ebs" {
   placement {
     tenancy = var.tenancy
   }
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 }
 
 resource "aws_autoscaling_policy" "ec2_scale_up_policy" {
@@ -660,6 +668,7 @@ resource "aws_autoscaling_policy" "ec2_scale_up_down_target_tracking" {
     target_value     = var.target_value
     disable_scale_in = var.disable_scale_in
   }
+  
 }
 
 resource "aws_autoscaling_group" "autoscalegrp" {
