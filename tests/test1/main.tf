@@ -220,3 +220,22 @@ module "ec2_asg_windows_no_codedeploy_test" {
 
   tags_asg = local.tags_asg
 }
+
+module "ec2_asg_amazon2023_no_codedeploy_test" {
+  source = "../../module"
+
+  ec2_os                      = "amazon2023"
+  enable_scaling_notification = true
+  install_codedeploy_agent    = false
+  key_pair                    = "CircleCI"
+  name                        = "${random_string.name_rstring.result}-ec2_asg_amazon2023_no_codedeploy"
+  scaling_notification_topic  = module.sns.topic_arn
+  secondary_ebs_volume_size   = "60"
+  security_groups             = [module.vpc.default_sg]
+  ssm_patching_group          = "Group1Patching"
+  subnets                     = slice(module.vpc.public_subnets, 0, 2)
+
+  tags = local.tags
+
+  tags_asg = local.tags_asg
+}

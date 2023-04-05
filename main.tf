@@ -222,7 +222,7 @@ locals {
 
   diagnostic_packages = {
     amazon2    = local.defaults["diagnostic_packages"]["amazon"]
-    amazon2022 = local.defaults["diagnostic_packages"]["amazon"]
+    amazon2023 = local.defaults["diagnostic_packages"]["amazon"]
     amazoneks  = local.defaults["diagnostic_packages"]["amazon"]
     amazonecs  = local.defaults["diagnostic_packages"]["amazon"]
     rhel7      = local.defaults["diagnostic_packages"]["rhel"]
@@ -236,7 +236,7 @@ locals {
 
   ebs_device_map = {
     amazon2       = "/dev/sdf"
-    amazon2022    = "/dev/sdf"
+    amazon2023    = "/dev/sdf"
     amazoneks     = "/dev/sdf"
     amazonecs     = "/dev/xvdcz"
     rhel7         = "/dev/sdf"
@@ -254,7 +254,7 @@ locals {
 
   root_device_map = {
     amazon2       = "/dev/xvda"
-    amazon2022    = "/dev/xvda"
+    amazon2023    = "/dev/xvda"
     amazoneks     = "/dev/xvda"
     amazonecs     = "/dev/xvda"
     rhel7         = "/dev/sda1"
@@ -297,7 +297,7 @@ locals {
 
   user_data_map = {
     amazon2       = "amazon_linux_userdata.sh"
-    amazon2022    = "amazon_linux_userdata.sh"
+    amazon2023    = "amazon_linux_userdata.sh"
     amazonecs     = "amazon_linux_userdata.sh"
     amazoneks     = "amazon_linux_userdata.sh"
     rhel7         = "rhel_centos_7_userdata.sh"
@@ -315,7 +315,7 @@ locals {
 
   ami_owner_mapping = {
     amazon2       = "137112412989"
-    amazon2022    = "137112412989"
+    amazon2023    = "137112412989"
     amazonecs     = "591542846629"
     amazoneks     = "602401143452"
     centos7       = "125523088429"
@@ -333,7 +333,7 @@ locals {
 
   ami_name_mapping = {
     amazon2       = "amzn2-ami-hvm-2.0.*-ebs"
-    amazon2022    = "al2022-ami-2022*-kernel-*-x86_64"
+    amazon2023    = "al2023-ami-2023*-kernel-*-x86_64"
     amazonecs     = "amzn2-ami-ecs-hvm-2*-x86_64-ebs"
     amazoneks     = "amazon-eks-node-*"
     centos7       = "CentOS Linux 7 x86_64*"
@@ -352,7 +352,7 @@ locals {
   # Any custom AMI filters for a given OS can be added in this mapping
   image_filter = {
     amazon2       = []
-    amazon2022    = []
+    amazon2023    = []
     amazonecs     = []
     amazoneks     = []
     centos7       = []
